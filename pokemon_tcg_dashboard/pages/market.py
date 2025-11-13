@@ -1,10 +1,14 @@
-# layout.py
+import dash
 from dash import html
-from template import base_layout
 
-content = html.Div([
-    html.H3("Dashboard"),
-    html.P("This is my dashboard page.")
+import dash_bootstrap_components as dbc
+
+dash.register_page(__name__, path="/",
+                    title="Market", 
+                    name="Market",
+                    order=1)
+
+layout = html.Div([
+    html.H1('This is our Home page'),
+    html.Div('This is our Home page content.'),
 ])
-
-layout = base_layout(content, title="Sales Dashboard")
