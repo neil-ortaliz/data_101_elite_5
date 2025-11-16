@@ -20,10 +20,6 @@ class MarketCalculator:
         # Ensure date column is datetime
         self.price_history['date'] = pd.to_datetime(self.price_history['date'], errors='coerce').dt.tz_localize(None)
 
-        # Drop rows with missing essential data
-        self.price_history.dropna(subset=['id', 'market', 'date', 'volume'], inplace=True)
-        self.card_metadata.dropna(subset=['id', 'setName'], inplace=True)
-
     @lru_cache(maxsize=32)
     def calculate_total_market_value(self):
         """Calculate total market value of all tracked cards"""
@@ -137,6 +133,98 @@ class MarketCalculator:
             'active_listings': self.count_active_listings()
         }
     
+    def calculate_top_movers(self, period='24h', n=20, min_volume=None):
+        """
+        Calculate top gainers and losers in the card market.
+
+        Args:
+            period (str): '24h' or '7d' (time window for changes)
+            n (int): Number of top movers to return
+            min_volume (float, optional): Minimum total volume to include a card
+
+        Returns:
+            dict: {
+                'gainers': list of dicts,
+                'losers': list of dicts
+            }
+        """
+
+        # --- Determine time window ---
+        if period == '24h':
+            days = 1
+        elif period == '7d':
+            days = 7
+        else:
+            raise ValueError("Period must be '24h' or '7d'")
+
+        # Use the latest date in the dataset as reference
+        if self.price_history.empty:
+            return {'gainers': [], 'losers': []}
+
+        latest_date = self.price_history['date'].max()
+        cutoff_date = latest_date - timedelta(days=days)
+
+        # Filter price history for the period
+        period_data = self.price_history[self.price_history['date'] >= cutoff_date].sort_values('date')
+
+        if period_data.empty:
+            return {'gainers': [], 'losers': []}
+
+        # --- Calculate changes per card ---
+        changes = []
+
+        for card_id in period_data['id'].unique():
+            card_data = period_data[period_data['id'] == card_id].sort_values('date')
+
+            # Skip cards with insufficient data
+            if len(card_data) < 2:
+                continue
+
+            start_price = card_data.iloc[0]['market']
+            end_price = card_data.iloc[-1]['market']
+
+            if start_price <= 0:
+                continue
+
+            # Filter by minimum volume if specified
+            if min_volume is not None and 'volume' in card_data.columns:
+                total_volume = card_data['volume'].sum()
+                if total_volume < min_volume:
+                    continue
+
+            change_pct = ((end_price - start_price) / start_price) * 100
+            change_value = end_price - start_price
+
+            # Get metadata if available
+            card_info = self.card_metadata[self.card_metadata['id'] == card_id].iloc[0] \
+                        if len(self.card_metadata[self.card_metadata['id'] == card_id]) > 0 \
+                        else {'name': str(card_id), 'setName': 'Unknown'}
+
+            changes.append({
+                'card_id': card_id,
+                'name': card_info['name'],
+                'set': card_info['setName'],
+                'current_price': end_price,
+                'change_pct': change_pct,
+                'change_value': change_value,
+                'change_pct_formatted': f"{'+' if change_pct >= 0 else ''}{change_pct:.1f}%",
+                'change_value_formatted': f"{'+' if change_value >= 0 else ''}${change_value:.2f}"
+            })
+
+        if not changes:
+            return {'gainers': [], 'losers': []}
+
+        changes_df = pd.DataFrame(changes)
+
+        # --- Handle ties ---
+        cutoff_gain = changes_df['change_pct'].nlargest(n).min()
+        cutoff_loss = changes_df['change_pct'].nsmallest(n).max()
+
+        gainers = changes_df[changes_df['change_pct'] >= cutoff_gain].sort_values('change_pct', ascending=False).to_dict('records')
+        losers = changes_df[changes_df['change_pct'] <= cutoff_loss].sort_values('change_pct', ascending=True).to_dict('records')
+
+        return {'gainers': gainers, 'losers': losers}
+
 #Testing Zone
 if __name__ == "__main__":
     #Get all CSV files (I added the flattened CSV files)
@@ -161,9 +249,13 @@ if __name__ == "__main__":
     #Test all
     all_func = market_calc.get_all_market_metrics()
 
+    #Test top movers
+    top_movers = market_calc.calculate_top_movers(period='7d', n=10)
+
     print(tot_market_val)
     print(market_change)
     print(best_perf_set)
     print(active_listings)
 
     print(all_func)
+    print(top_movers)
