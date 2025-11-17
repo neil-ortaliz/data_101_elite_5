@@ -32,3 +32,11 @@ body {
 .nav-pills .nav-link.active {
     background-color: #0075BE; 
 }
+
+.card-selected {
+    border: 4px solid dodgerblue !important;
+}
+
+.card-normal {
+    border: 1px solid #ccc !important;
+}

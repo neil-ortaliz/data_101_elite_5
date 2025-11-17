@@ -10,4 +10,4 @@ def load_data(filename: str) -> pd.DataFrame:
 
 def get_image_urls(filename: str="cards_metadata_table.csv") -> pd.DataFrame:
     metadata_df = load_data(filename)
-    return metadata_df[['setName','name', 'rarity','imageUrl']]
+    return metadata_df[['tcgPlayerId','setName','name', 'rarity','imageUrl']]
