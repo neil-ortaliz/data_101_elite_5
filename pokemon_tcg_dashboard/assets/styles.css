@@ -66,3 +66,18 @@ body {
     font-size: 1.1rem;
     font-weight: 600;
 }
+
+.card-row {
+    display: flex;
+    align-items: stretch;
+}
+
+.card-row .card-normal {
+    height: 100%;
+}
+
+.card-row .card-normal img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}

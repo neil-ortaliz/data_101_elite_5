@@ -11,10 +11,18 @@ def layout(card_id="", **kwargs):
         dbc.Row([
             dbc.Col(
                 dbc.Card(
-                    dbc.CardImg(src="", top=True, id="card-image")
+                    dbc.CardImg(src="", top=True, id="card-image", class_name="h-100", style={"height": "100%", "object-fit": "cover"})
                 ),
                 width=3,
-                class_name="card-normal",
+                class_name="card-normal h-100",
+                style={"padding": 0, 
+                    "border": "none",
+                    "background": "none",
+                    "maxWidth": "300px",
+                    #"maxHeight": "200px",
+                    #"width": "100%",
+                    "height": "auto",
+                    },
             ),
             dbc.Col([
                 dbc.Row([
@@ -46,7 +54,7 @@ def layout(card_id="", **kwargs):
                     html.Div([graph_container(fig=" current market price fig here", title="Current Market Price")])
                 ])
             ])
-        ], class_name="g-3 mb-3")
+        ], class_name="g-3 mb-3 card-row")
     ])
     return html.Div([
         dcc.Location(id="url"),
@@ -70,7 +78,7 @@ def layout(card_id="", **kwargs):
 )
 def update_card_page(pathname):
     card_number = pathname.split("/")[-1]
-    print(f"card_number: {card_number}")
+    #print(f"card_number: {card_number}")
     card_metadata = get_card_metadata(card_number)
 
     if card_metadata.empty:
@@ -90,7 +98,7 @@ def update_card_page(pathname):
         return (
             f"🎴 Card Details: {card_metadata['name']}",
             card_metadata['imageUrl'],
-            html.H1(card_metadata['name']),
+            card_metadata['name'],
             card_metadata['setName'],
             card_metadata['cardNumber'],
             card_metadata['rarity'],
