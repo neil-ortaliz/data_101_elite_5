@@ -35,47 +35,50 @@ class CardDataFetcher:
               .dt.tz_localize(None)
         )
 
+        # FIXED BUG: use ebay_prices['date'], not price_history['date']
         self.ebay_prices['date'] = (
-            pd.to_datetime(self.price_history['date'], errors='coerce')
+            pd.to_datetime(self.ebay_prices['date'], errors='coerce')
               .dt.tz_localize(None)
         )
 
         # Cache dictionary
         self._cache = {}
 
-    def get_card_by_id(self, card_id, use_cache=True, days=None, psa='psa9'):
-        """Get all data for a specific card
+    # -----------------------------------------------------------
+    # Main function — Now supports CONDITION filtering
+    # -----------------------------------------------------------
+    def get_card_by_id(self, card_id, use_cache=True, days=None, psa='psa9', condition='any'):
+        """
+        Get all data for a specific card, now with condition filtering.
 
         Args:
             card_id: Card identifier
             use_cache: Whether to return cached data if available
             days: Number of days of price history to retrieve (None = all-time)
-            psa: PSA grade to use for pricing (e.g., 'psa9', 'psa10')
-
-        Returns:
-            dict with card data
+            psa: PSA grade to use for pricing
+            condition: Condition filter ('Near Mint', 'Lightly Played', 'any')
         """
 
-        cache_key = (card_id, days, psa)  # Include `psa` in cache key
+        cache_key = (card_id, days, psa, condition)
         if use_cache and cache_key in self._cache:
             return self._cache[cache_key]
 
-        # Get card metadata
+        # Metadata
         card_info = self.card_metadata[self.card_metadata['id'] == card_id]
         if len(card_info) == 0:
             return None
         card_info = card_info.iloc[0]
 
-        # Get prices
-        current_price = self.get_current_market_price(card_id, days=days)
+        # Pricing
+        current_price = self.get_current_market_price(card_id, days=days, condition=condition)
         psa_price = self.get_psa_price(card_id, psa)
-        ungraded_price = self.get_ungraded_price(card_id, days=days)
+        ungraded_price = self.get_ungraded_price(card_id, days=days, condition=condition)
 
-        # Get listings count
-        total_listings = self.count_active_listings(card_id, days=days)
+        # Listings
+        total_listings = self.count_active_listings(card_id, days=days, condition=condition)
 
-        # Get price history
-        price_history = self.get_price_history(card_id, days=days)
+        # Price history
+        price_history = self.get_price_history(card_id, days=days, condition=condition)
 
         card_data = {
             'card_id': card_id,
@@ -85,22 +88,28 @@ class CardDataFetcher:
             'card_number': card_info.get('cardNumber', 'N/A'),
             'image_url': card_info.get('imageUrl', ''),
             'current_price': current_price,
-            'psa_grade': psa,          # Show which PSA grade was used
+            'psa_grade': psa,
             'psa_price': psa_price,
             'ungraded_price': ungraded_price,
             'total_listings': total_listings,
-            'price_history': price_history
+            'price_history': price_history,
+            'condition': condition
         }
 
-        # Cache the result
         self._cache[cache_key] = card_data
         return card_data
 
-    def get_current_market_price(self, card_id, days=7):
-        """Get current market price (average of recent listings)"""
-
+    # -----------------------------------------------------------
+    # PRICE FUNCTIONS WITH CONDITION SUPPORT
+    # -----------------------------------------------------------
+    def get_current_market_price(self, card_id, days=7, condition='any'):
         cutoff_date = None if days is None else datetime.now() - timedelta(days=days)
+
         recent_prices = self.price_history[self.price_history['id'] == card_id]
+
+        if condition != 'any':
+            recent_prices = recent_prices[recent_prices['condition'] == condition]
+
         if cutoff_date:
             recent_prices = recent_prices[recent_prices['date'] >= cutoff_date]
 
@@ -111,17 +120,6 @@ class CardDataFetcher:
         return f"${avg_price:.2f}"
 
     def get_psa_price(self, card_id, grade):
-        """
-        Get the price for a specific PSA grade.
-
-        Args:
-            card_id: Card identifier
-            grade: PSA grade as string, e.g., 'psa8', 'psa9', 'psa 10'
-
-        Returns:
-            str: Price formatted as '$XX.XX', or 'N/A' if no data
-        """
-        # Normalize grade string
         grade_norm = grade.lower().replace(" ", "")
         psa_data = self.ebay_prices[self.ebay_prices['id'] == card_id]
         psa_data = psa_data[psa_data['grade'].str.lower().str.replace(" ", "") == grade_norm]
@@ -129,62 +127,72 @@ class CardDataFetcher:
         if len(psa_data) == 0:
             return "N/A"
 
-        # Take the latest price by date
         latest_price = psa_data.sort_values('date').iloc[-1]['average']
         return f"${latest_price:.2f}"
 
-    def get_ungraded_price(self, card_id, days=30):
-        """Get ungraded (Near Mint) price"""
+    def get_ungraded_price(self, card_id, days=30, condition='Near Mint'):
+        ungraded_data = self.price_history[self.price_history['id'] == card_id]
 
-        ungraded_data = self.price_history[(self.price_history['id'] == card_id) & (self.price_history['condition'] == 'Near Mint')]
+        if condition != 'any':
+            ungraded_data = ungraded_data[ungraded_data['condition'] == condition]
+
         if len(ungraded_data) == 0:
             return "$0.00"
 
         cutoff_date = None if days is None else datetime.now() - timedelta(days=days)
         recent = ungraded_data if cutoff_date is None else ungraded_data[ungraded_data['date'] >= cutoff_date]
+
         avg_price = recent['market'].mean() if len(recent) > 0 else ungraded_data['market'].mean()
         return f"${avg_price:.2f}"
 
-    def count_active_listings(self, card_id, days=7):
-        """Count active listings for card (based on unique dates in price history)"""
-
+    # -----------------------------------------------------------
+    # LISTINGS + HISTORY WITH CONDITION SUPPORT
+    # -----------------------------------------------------------
+    def count_active_listings(self, card_id, days=7, condition='any'):
         cutoff_date = None if days is None else datetime.now() - timedelta(days=days)
+
         listings = self.price_history[self.price_history['id'] == card_id]
+
+        if condition != 'any':
+            listings = listings[listings['condition'] == condition]
+
         if cutoff_date:
             listings = listings[listings['date'] >= cutoff_date]
-        # Use number of unique dates as a proxy for listings
+
         return listings['date'].nunique()
 
-    def get_price_history(self, card_id, days=None):
-        """Get price history for charting"""
-
+    def get_price_history(self, card_id, days=None, condition='any'):
         cutoff_date = None if days is None else datetime.now() - timedelta(days=days)
         history = self.price_history[self.price_history['id'] == card_id]
+
+        if condition != 'any':
+            history = history[history['condition'] == condition]
+
         if cutoff_date:
             history = history[history['date'] >= cutoff_date]
+
         history = history.sort_values('date')
 
         if len(history) == 0:
             return []
 
         daily_avg = history.groupby('date')['market'].mean().reset_index()
+
         return [
             {'date': row['date'].strftime('%Y-%m-%d'), 'price': float(row['market'])}
             for _, row in daily_avg.iterrows()
         ]
-    
-    def aggregate_prices(self, card_id, condition='any', grade=None, days=None):
-        """Aggregate prices from multiple sources with weighting"""
 
-        # Select dataset
+    # -----------------------------------------------------------
+    # AGGREGATION — unchanged, but works fine with condition
+    # -----------------------------------------------------------
+    def aggregate_prices(self, card_id, condition='any', grade=None, days=None):
         if grade:
-            # eBay PSA grades
             grade_norm = grade.lower().replace(" ", "")
             data = self.ebay_prices[self.ebay_prices['id'] == card_id]
             data = data[data['grade'].str.lower().str.replace(" ", "") == grade_norm]
             price_col = 'average'
         else:
-            # Ungraded price history
             data = self.price_history[self.price_history['id'] == card_id]
             if condition != 'any':
                 data = data[data['condition'] == condition]
@@ -200,7 +208,6 @@ class CardDataFetcher:
                 'sample_size': 0
             }
 
-        # Filter by days
         if days is not None:
             cutoff = datetime.now() - timedelta(days=days)
             recent_data = data[data['date'] >= cutoff]
@@ -211,7 +218,7 @@ class CardDataFetcher:
 
         prices = recent_data[price_col]
 
-        # Remove outliers using IQR
+        # IQR outlier removal
         Q1 = prices.quantile(0.25)
         Q3 = prices.quantile(0.75)
         IQR = Q3 - Q1
@@ -221,16 +228,15 @@ class CardDataFetcher:
         if len(filtered_prices) == 0:
             filtered_prices = prices
 
-        # Statistics
         avg_price = filtered_prices.mean()
         median_price = filtered_prices.median()
         min_price = filtered_prices.min()
         max_price = filtered_prices.max()
         sample_size = len(filtered_prices)
 
-        # Confidence
         spread = max_price - min_price
         rel_spread = (spread / avg_price) * 100 if avg_price > 0 else 100
+
         if sample_size >= 20 and rel_spread < 20:
             confidence = 'high'
         elif sample_size >= 10 and rel_spread < 40:
@@ -248,30 +254,52 @@ class CardDataFetcher:
         }
 
     def get_price_comparison(self, card_id, days=None):
-        """Compare prices across grades and conditions"""
-
         return {
             'ungraded_nm': self.aggregate_prices(card_id, condition='Near Mint', days=days),
             'psa_8': self.aggregate_prices(card_id, grade='psa8', days=days),
             'psa_9': self.aggregate_prices(card_id, grade='psa9', days=days),
-            'psa_10': self.aggregate_prices(card_id, grade='psa 10', days=days)
+            'psa_10': self.aggregate_prices(card_id, grade='psa10', days=days)
         }
-
-#Testing Zone
+    
+# Testing Zone
 if __name__ == "__main__":
-    #Get all CSV files (I added the flattened CSV files)
+    # Get all CSV files
     price_history_df = pd.read_csv('pokemon_tcg_dashboard/data/price_history.csv', parse_dates=['date'])
     card_metadata_df = pd.read_csv('pokemon_tcg_dashboard/data/cards_metadata_table.csv')
     ebay_price_history_df = pd.read_csv('pokemon_tcg_dashboard/data/ebay_price_history.csv', parse_dates=['date'])
 
+    # Create fetcher
     fetcher = CardDataFetcher(card_metadata_df, price_history_df, ebay_price_history_df)
 
-    card_data = fetcher.get_card_by_id(card_id = '68af6bbbd14a00763202573c', days = 7, psa = 'psa10')
+    # -------------------------------
+    # Choose testing parameters
+    # -------------------------------
+    test_card_id = '68af6bbbd14a00763202573c'
+    test_days = 7
+    test_psa_grade = 'psa10'
+    test_condition = 'Near Mint'   # or 'Lightly Played', 'Moderately Played', 'any'
 
-    price_comparison = fetcher.get_price_comparison(card_id = '68af6bbbd14a00763202573c', days = 7)
-    
+    # -------------------------------
+    # Fetch card with condition support
+    # -------------------------------
+    card_data = fetcher.get_card_by_id(
+        card_id=test_card_id,
+        days=test_days,
+        psa=test_psa_grade,
+        condition=test_condition
+    )
+
+    # -------------------------------
+    # Price comparison (ungraded NM + PSA grades)
+    # -------------------------------
+    price_comparison = fetcher.get_price_comparison(
+        card_id=test_card_id,
+        days=test_days
+    )
+
+    # Output results
+    print("\n=== CARD DATA ===")
     print(card_data)
 
-    print('\n')
-
+    print("\n=== PRICE COMPARISON ===")
     print(price_comparison)
