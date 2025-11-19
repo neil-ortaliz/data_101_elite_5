@@ -2,6 +2,7 @@ import dash
 from dash import html, dcc, Input, Output, callback, State, ALL, ctx
 import dash_bootstrap_components as dbc
 from utils import get_image_urls
+from components.portfolio_ui import create_portfolio_summary_metrics
 
 dash.register_page(__name__, path="/portfolio",
                     title="Portfolio", 
@@ -19,8 +20,9 @@ owned_cards = html.Div(
         )
 
 portfolio = html.Div([
-    html.H1('This is our Portfolio page'),
-    html.Div('This is our Portfolio page content.'),
+    create_portfolio_summary_metrics(),
+    html.H3('Portfolio Details'),
+    html.Div('More portfolio content will go here.'),
 ])
 
 tabs = dbc.Tabs(
