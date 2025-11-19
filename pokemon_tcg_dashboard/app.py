@@ -19,6 +19,7 @@ nav = dbc.Nav(
 )
 
 app.layout = html.Div([
+        dcc.Store(id="selected-cards", storage_type="session"),
         html.Header([
             html.H1("Pokémon TCG Dashboard", style={"color": "white", "padding": "10px"}),
             nav
