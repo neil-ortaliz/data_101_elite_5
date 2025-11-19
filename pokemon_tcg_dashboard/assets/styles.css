@@ -38,5 +38,31 @@ body {
 }
 
 .card-normal {
-    border: 1px solid #ccc !important;
+    border: 0px solid #ccc !important;
+}
+
+.card-text {
+    font-size: 0.7rem;
+}
+
+.card-normal .hover-overlay {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card-normal .card-image {
+    transition: opacity 0.3s ease;
+}
+
+.card-normal:hover .hover-overlay {
+    opacity: 1;
+}
+
+.card-normal:hover .card-image {
+    opacity: 0.3;
+}
+
+.card .card-body{
+    font-size: 1.1rem;
+    font-weight: 600;
 }

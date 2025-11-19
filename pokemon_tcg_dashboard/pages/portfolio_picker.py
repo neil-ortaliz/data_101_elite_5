@@ -33,7 +33,7 @@ set_select = dcc.Dropdown(
     id="set-select",
     options=sorted(image_df["setName"].unique()),
     multi=True,
-    placeholder="Filter A Set"
+    placeholder="Filter By Set"
 )
 
 rarity_select = dcc.Dropdown(
@@ -49,10 +49,10 @@ layout = html.Div([
     # Store current page number
     dcc.Store(id="page-number", data=0),
 
-    # Debug window
-    html.Pre(id="debug-output",
-             style={"whiteSpace": "pre-wrap", "background": "#222",
-                    "color": "lime", "padding": "10px"}),
+    # Debug 
+    #html.Pre(id="debug-output",
+    #         style={"whiteSpace": "pre-wrap", "background": "#222",
+    #                "color": "lime", "padding": "10px"}),
 
     dbc.Stack([
         html.Div([
@@ -97,25 +97,20 @@ layout = html.Div([
     Output("page-label", "children"),
     Output("page-prev", "disabled"),
     Output("page-next", "disabled"),
-
     Input("page-prev", "n_clicks"),
     Input("page-next", "n_clicks"),
-
     State("page-number", "data"),
     State("set-select", "value"),
     State("rarity-select", "value"),
     State("card_search","value"),
-
-    prevent_initial_call=True
 )
 def change_page(prev, next_, current_page, selected_sets, selected_types, searched_text):
     prev = prev or 0
     next_ = next_ or 0
-
     trigger = ctx.triggered_id
     current_page = int(current_page or 0)
-    filtered = image_df.copy()
 
+    filtered = image_df.copy()
     if selected_sets:
         filtered = filtered[filtered["setName"].isin(selected_sets)]
     if selected_types:
@@ -130,13 +125,12 @@ def change_page(prev, next_, current_page, selected_sets, selected_types, search
     total_cards = len(filtered)
     total_pages = max(1, (total_cards + CARDS_PER_PAGE - 1) // CARDS_PER_PAGE)
 
-    # ----- 2. Apply page change -----
+    # Only change page if a button was clicked
     if trigger == "page-prev" and current_page > 0:
         current_page -= 1
     elif trigger == "page-next" and current_page < total_pages - 1:
         current_page += 1
 
-    # ----- 3. Disable logic -----
     disable_prev = current_page == 0
     disable_next = current_page >= total_pages - 1
 
@@ -146,6 +140,8 @@ def change_page(prev, next_, current_page, selected_sets, selected_types, search
         disable_prev,
         disable_next
     )
+
+
 
 @callback(
     Output("image-grid", "children"),
@@ -178,12 +174,25 @@ def update_images(selected_sets, selected_types, searched_text,page):
         cards.append(
             html.Button(
                 dbc.Card(
-                    dbc.CardImg(src=row["imageUrl"], top=True),
-                    className="card-normal",
-                    style={"borderRadius": "8px"}
+                    [
+                        dbc.CardImg(src=row["imageUrl"], top=True),
+                        dbc.CardFooter([
+                            html.P(row["name"], className="card-text")])
+                    ],
+                    class_name="card-normal",
+                    style={
+                        "borderRadius": "0px"
+                    }
                 ),
                 id={"type": "card-button", "index": row["tcgPlayerId"]},
-                style={"padding": 0, "border": "none", "background": "none"}
+                style={"padding": 5, 
+                    "border": "none",
+                    "background": "none",
+                    "maxWidth": "200px",
+                    "maxHeight": "250px",
+                    "width": "100%",
+                    "height": "auto",},
+                
             )
         )
 
@@ -243,9 +252,10 @@ def update_classes(selected_ids, ids):
     return classes
 
 
-@callback(
+'''@callback(
     Output("debug-output", "children"),
     Input("selected-cards", "data")
 )
 def show_debug(selected):
     return f"Selected IDs = {selected}"
+'''
