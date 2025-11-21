@@ -4,7 +4,7 @@ from dash import html, dcc
 import dash_bootstrap_components as dbc
 
 from components import ban_card_container, graph_container
-from components.market_ui import create_market_overview_metrics
+from components import create_market_overview_metrics
 
 dash.register_page(__name__, path="/",
                     title="Market", 
@@ -30,7 +30,7 @@ layout = html.Div([
     dbc.Stack([
             ban_row,
             html.Div([
-                graph_container(fig="market graph goes here", title="Top Price Movers")
+                graph_container(fig=portfolio_view_performance_line_chart(), title="Top Price Movers")
             ])
         ],
         gap=2),
