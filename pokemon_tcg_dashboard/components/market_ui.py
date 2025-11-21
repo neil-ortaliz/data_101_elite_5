@@ -53,7 +53,7 @@ def create_metric_card(title, value, change=None, change_type="neutral"):
     
     return card
 
-def create_market_overview_metrics(df:pd.DataFrame=None, date_range:int=None):
+def create_market_overview_metrics(days:int=1):
     """
     Create the 4 metric cards for Market View
     
@@ -63,17 +63,17 @@ def create_market_overview_metrics(df:pd.DataFrame=None, date_range:int=None):
     # TODO: These values will come from Member 2's calculations
     # For now, use placeholder values
     
-    if df is None:
-        df = load_data("cards_metadata_table.csv")
-    market_calculator = MarketCalculator(df)
+    price_history_df = load_data("price_history.csv")
+    card_metadata_df = load_data("cards_metadata_table.csv")
+    market_calculator = MarketCalculator(price_history_df, card_metadata_df)
 
 
     metrics_row = dbc.Row([
         dbc.Col(
             create_metric_card(
                 title="Total Market Value",
-                value=market_calculator.calculate_total_market_value(),
-                change="+2.3%",
+                value=market_calculator.calculate_total_market_value()['formatted'],
+                change=market_calculator.calculate_change(days)['formatted_value'],
                 change_type="positive"
             ),
             width=12, md=6, lg=3, className="mb-3"
