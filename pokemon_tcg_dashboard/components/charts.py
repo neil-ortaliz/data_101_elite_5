@@ -27,12 +27,16 @@ import plotly.graph_objects as go
 import plotly.express as px
 import pandas as pd
 from datetime import timedelta
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent     # project root
+DATA_DIR = BASE_DIR / "data"
 
 # ----------------------------- Call data -------------------------------------
-market_ebay_data = 'data/ebay_price_history.csv'
-market_metadata = 'data/cards_metadata_table.csv'
-market_price_history = 'data/price_history.csv'
-portfolio_sample_data = 'data/portfolio_cards_metadata_table.csv'
+market_ebay_data = BASE_DIR/'data/ebay_price_history.csv'
+market_metadata = BASE_DIR/'data/cards_metadata_table.csv'
+market_price_history = BASE_DIR/'data/price_history.csv'
+portfolio_sample_data = BASE_DIR/'data/sample_portfolio_cards_metadata_table.csv'
 
 ebay_df = pd.read_csv(market_ebay_data)
 metadata_df = pd.read_csv(market_metadata)
@@ -67,7 +71,10 @@ market_df = ebay_metadata.merge(
     on=['id'],
     how='left',
 )
-market_df = market_df.dropna(subset='setName')
+
+print(f"market_df columns: {market_df.columns}")
+
+market_df = market_df.dropna(subset='setName_x')
 
 # Date Format
 ebay_metadata['date'] = pd.to_datetime(ebay_metadata['date'])

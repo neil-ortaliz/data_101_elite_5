@@ -2,7 +2,6 @@ import dash
 from dash import Dash, html, dcc
 import dash_bootstrap_components as dbc
 
-from pages.template import base_layout
 
 app = Dash(__name__, use_pages=True, 
            external_stylesheets=[
