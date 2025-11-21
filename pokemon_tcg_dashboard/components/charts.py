@@ -25,6 +25,8 @@ I just have some simple questions:
 - Can I commit in Develop branch even though the charts aren't perfect yet?
 - Do we use the sample_portfolio data for testing the charts for the portfolio view?
 Neil: Paramaters just accept one df, mention 
+- Portfolio - Neil will give list of IDs
+- Market 
 '''
 import plotly.graph_objects as go
 import plotly.express as px
@@ -429,10 +431,11 @@ fig = card_view_price_history_line_chart(card_id, card_name)
 fig.show()
 '''
 # ----------------- FUNCTION 5: Grade Price Comparison  -----------
-def card_view_grade_price_bar_chart():
 
-    graded_data = graded_merged[graded_merged['name'] == card_name].copy()
-    ungraded_data = ungraded_merged[ungraded_merged['name'] == card_name].copy()
+
+def card_view_grade_price_bar_chart():
+    graded_data = ebay_metadata[ebay_metadata['name'] == card_name].copy()
+    ungraded_data = price_history_metadata[price_history_metadata['name'] == card_name].copy()
 
     if len(graded_data) == 0:
         print(f"No graded data found for: {card_name}")
