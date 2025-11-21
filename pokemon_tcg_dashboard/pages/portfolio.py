@@ -72,7 +72,7 @@ portfolio = html.Div([
     graph_row,
     grade_distribution_row,
     risk_row,
-    holding_row
+    holding_row,
     create_portfolio_summary_metrics(),
     create_risk_indicators(),
     html.H3('Portfolio Details'),
