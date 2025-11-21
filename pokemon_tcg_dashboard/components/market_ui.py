@@ -1,5 +1,9 @@
 import dash_bootstrap_components as dbc
 from dash import html
+import pandas as pd
+
+from utils.market_calcs import MarketCalculator
+from utils.loader import load_data
 
 def create_metric_card(title, value, change=None, change_type="neutral"):
     """
@@ -49,7 +53,7 @@ def create_metric_card(title, value, change=None, change_type="neutral"):
     
     return card
 
-def create_market_overview_metrics():
+def create_market_overview_metrics(df:pd.DataFrame=None, date_range:int=None):
     """
     Create the 4 metric cards for Market View
     
@@ -59,11 +63,16 @@ def create_market_overview_metrics():
     # TODO: These values will come from Member 2's calculations
     # For now, use placeholder values
     
+    if df is None:
+        df = load_data("cards_metadata_table.csv")
+    market_calculator = MarketCalculator(df)
+
+
     metrics_row = dbc.Row([
         dbc.Col(
             create_metric_card(
                 title="Total Market Value",
-                value="$45.2M",
+                value=market_calculator.calculate_total_market_value(),
                 change="+2.3%",
                 change_type="positive"
             ),
@@ -99,3 +108,84 @@ def create_market_overview_metrics():
     ], className="mb-4")
     
     return metrics_row
+
+def create_market_filters():
+    """
+    Create filter controls for Market View
+    
+    Returns:
+        dbc.Row with search and filter components
+    """
+    # TODO: Dropdown options will come from Member 2's data
+    # Placeholder options for now
+    
+    from dash import dcc
+    
+    set_options = [
+        {"label": "All Sets", "value": "all"},
+        {"label": "Scarlet & Violet 151", "value": "sv151"},
+        {"label": "Obsidian Flames", "value": "obf"},
+        {"label": "Paldea Evolved", "value": "pev"},
+        {"label": "Temporal Forces", "value": "tef"},
+        {"label": "Twilight Masquerade", "value": "twm"},
+    ]
+    
+    rarity_options = [
+        {"label": "All Rarities", "value": "all"},
+        {"label": "Common", "value": "common"},
+        {"label": "Uncommon", "value": "uncommon"},
+        {"label": "Rare", "value": "rare"},
+        {"label": "Ultra Rare", "value": "ultra_rare"},
+        {"label": "Special Illustration Rare", "value": "special_rare"},
+    ]
+    
+    filters = dbc.Row([
+        # Search bar
+        dbc.Col([
+            dbc.InputGroup([
+                dbc.InputGroupText("🔍"),
+                dbc.Input(
+                    id="search-input",
+                    placeholder="Search cards...",
+                    type="text"
+                ),
+            ])
+        ], width=12, md=4, className="mb-3"),
+        
+        # Set filter
+        dbc.Col([
+            dcc.Dropdown(
+                id="set-filter",
+                options=set_options,
+                value="all",
+                placeholder="Filter by Set",
+                clearable=False,
+                style={"borderRadius": "5px"}
+            )
+        ], width=12, md=3, className="mb-3"),
+        
+        # Rarity filter
+        dbc.Col([
+            dcc.Dropdown(
+                id="rarity-filter",
+                options=rarity_options,
+                value="all",
+                placeholder="Filter by Rarity",
+                clearable=False,
+                style={"borderRadius": "5px"}
+            )
+        ], width=12, md=3, className="mb-3"),
+        
+        # Clear button
+        dbc.Col([
+            dbc.Button(
+                "Clear Filters",
+                id="clear-filters-btn",
+                color="secondary",
+                outline=True,
+                className="w-100"
+            )
+        ], width=12, md=2, className="mb-3"),
+    ], className="mb-4")
+    
+    return filters
