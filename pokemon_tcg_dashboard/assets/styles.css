@@ -80,4 +80,23 @@ body {
     height: 100%;
     width: 100%;
     object-fit: cover;
+    border: 1px solid #ccc !important;
+}
+
+/* Metric Cards */
+.metric-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.metric-card .card-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.metric-card .card-title {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }

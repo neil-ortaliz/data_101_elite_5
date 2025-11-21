@@ -4,6 +4,7 @@ from dash import html, dcc
 import dash_bootstrap_components as dbc
 
 from components import ban_card_container, graph_container
+from components.market_ui import create_market_overview_metrics
 
 dash.register_page(__name__, path="/",
                     title="Market", 
@@ -21,23 +22,7 @@ select = dbc.Select(
     ],
 )
 
-ban_row = dbc.Row([
-            dbc.Col([
-                ban_card_container(fig="total market view goes here",title="Total Market Value")
-            ]),
-            dbc.Col([
-                ban_card_container(fig="change goes here",title="24h Change")
-            ]),
-            dbc.Col([
-                ban_card_container(fig="best set goes here ",title="Best Set")
-            ]),
-            dbc.Col([
-                ban_card_container(fig="active listings go here", title="Active Listings")
-            ]),
-            html.Div([
-                graph_container(fig="market graph goes here", title="Market Performances")
-            ])
-        ], class_name="g-3 mb-3")
+ban_row = create_market_overview_metrics()
 
 layout = html.Div([
     select,
