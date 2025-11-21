@@ -2,12 +2,16 @@ import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 from functools import lru_cache
+from typing import Optional, Dict, Any, List
 
 
 class MarketCalculator:
     """Handles all market-level calculations"""
 
-    def __init__(self, price_history_df, card_metadata_df):
+    price_history: pd.DataFrame
+    card_metadata: pd.DataFrame
+
+    def __init__(self, price_history_df: pd.DataFrame, card_metadata_df: pd.DataFrame) -> None:
         self.price_history = price_history_df.copy()
         self.card_metadata = card_metadata_df.copy()
 
@@ -21,7 +25,7 @@ class MarketCalculator:
     # TOTAL MARKET VALUE
     # ---------------------------------------------------------
     @lru_cache(maxsize=32)
-    def calculate_total_market_value(self):
+    def calculate_total_market_value(self) -> Dict[str, Any]:
         """Latest total market value"""
         try:
             latest_prices = self.price_history.sort_values('date').groupby('id').last()
@@ -42,7 +46,7 @@ class MarketCalculator:
     # ---------------------------------------------------------
     # N-DAY OR ALL-TIME MARKET CHANGE
     # ---------------------------------------------------------
-    def calculate_change(self, days=None):
+    def calculate_change(self, days: Optional[int] = None) -> Dict[str, Any]:
         """
         Calculate market change.
         days=None means all-time.
@@ -106,7 +110,7 @@ class MarketCalculator:
     # ---------------------------------------------------------
     # BEST PERFORMING SET (N-DAY OR ALL-TIME)
     # ---------------------------------------------------------
-    def calculate_best_performing_set(self, days=None):
+    def calculate_best_performing_set(self, days: Optional[int] = None) -> Dict[str, Any]:
         """
         Best performing set over N days or all-time.
         days=None means all-time.
@@ -129,7 +133,7 @@ class MarketCalculator:
 
             prices_with_sets.dropna(subset=['setName'], inplace=True)
 
-            performances = []
+            performances: List[Dict[str, Any]] = []
 
             for set_name in prices_with_sets['setName'].unique():
                 set_data = prices_with_sets[prices_with_sets['setName'] == set_name]
@@ -160,7 +164,7 @@ class MarketCalculator:
     # ---------------------------------------------------------
     # ACTIVE LISTINGS (N-DAY OR ALL-TIME)
     # ---------------------------------------------------------
-    def count_active_listings(self, days=None):
+    def count_active_listings(self, days: Optional[int] = None) -> Dict[str, Any]:
         """
         Count active listings.
         days=None means all-time.
@@ -192,14 +196,12 @@ class MarketCalculator:
     # ---------------------------------------------------------
     # TOP MOVERS (N-DAY OR ALL-TIME)
     # ---------------------------------------------------------
-    def calculate_top_movers(self, period='1d', n=20, min_volume=None):
+    def calculate_top_movers(self, period: str = '1d', n: int = 20, min_volume: Optional[int] = None) -> Dict[str, List[Dict[str, Any]]]:
         """
         period supports: '1d', '7d', '15d', '30d', 'all'
         """
-
-        # Convert period → days / None
         if period == 'all':
-            days = None
+            days: Optional[int] = None
         else:
             days = int(period.replace("d", ""))
 
@@ -208,7 +210,6 @@ class MarketCalculator:
 
         df = self.price_history.sort_values('date')
 
-        # Filter for period
         if days is None:
             period_data = df.copy()
         else:
@@ -218,7 +219,7 @@ class MarketCalculator:
         if period_data.empty:
             return {'gainers': [], 'losers': []}
 
-        changes = []
+        changes: List[Dict[str, Any]] = []
 
         for card_id in period_data['id'].unique():
             card_data = period_data[period_data['id'] == card_id].sort_values('date')
@@ -263,7 +264,6 @@ class MarketCalculator:
 
         df_changes = pd.DataFrame(changes)
 
-        # Handle ties cleanly
         cutoff_gain = df_changes['change_pct'].nlargest(n).min()
         cutoff_loss = df_changes['change_pct'].nsmallest(n).max()
 
@@ -272,9 +272,8 @@ class MarketCalculator:
 
         return {'gainers': gainers, 'losers': losers}
 
-    def get_all_market_metrics(self):
+    def get_all_market_metrics(self) -> Dict[str, Any]:
         """Return all major market metrics across all time windows."""
-
         return {
             'total_market_value': self.calculate_total_market_value(),
 
@@ -305,37 +304,27 @@ class MarketCalculator:
                 'all': self.count_active_listings(days=None),
             }
         }
-#Testing Zone
+
+
+# ---------------------------------------------------------
+# Testing Zone
+# ---------------------------------------------------------
 if __name__ == "__main__":
-    #Get all CSV files (I added the flattened CSV files)
-    price_history_df = pd.read_csv('pokemon_tcg_dashboard/data/price_history.csv', parse_dates=['date'])
-    card_metadata_df = pd.read_csv('pokemon_tcg_dashboard/data/cards_metadata_table.csv')
+    price_history_df: pd.DataFrame = pd.read_csv('pokemon_tcg_dashboard/data/price_history.csv', parse_dates=['date'])
+    card_metadata_df: pd.DataFrame = pd.read_csv('pokemon_tcg_dashboard/data/cards_metadata_table.csv')
 
-    #Call class function
-    market_calc = MarketCalculator(price_history_df, card_metadata_df)
+    market_calc: MarketCalculator = MarketCalculator(price_history_df, card_metadata_df)
 
-    #Test Total Market Value 
-    tot_market_val = market_calc.calculate_total_market_value()
-
-    #Test 24h change
-    market_change = market_calc.calculate_change(days = 1)
-
-    #Test best performing set
-    best_perf_set = market_calc.calculate_best_performing_set(days=30)
-    
-    #Test active listings
-    active_listings = market_calc.count_active_listings(days = 7)
-
-    #Test all
-    all_func = market_calc.get_all_market_metrics()
-
-    #Test top movers
-    top_movers = market_calc.calculate_top_movers(period='7d', n=10)
+    tot_market_val: Dict[str, Any] = market_calc.calculate_total_market_value()
+    market_change: Dict[str, Any] = market_calc.calculate_change(days=1)
+    best_perf_set: Dict[str, Any] = market_calc.calculate_best_performing_set(days=30)
+    active_listings: Dict[str, Any] = market_calc.count_active_listings(days=7)
+    all_func: Dict[str, Any] = market_calc.get_all_market_metrics()
+    top_movers: Dict[str, List[Dict[str, Any]]] = market_calc.calculate_top_movers(period='7d', n=10)
 
     print(tot_market_val)
     print(market_change)
     print(best_perf_set)
     print(active_listings)
-
     print(all_func)
     print(top_movers)
