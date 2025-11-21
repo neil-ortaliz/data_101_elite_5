@@ -5,7 +5,10 @@ import dash_bootstrap_components as dbc
 from pages.template import base_layout
 
 app = Dash(__name__, use_pages=True, 
-           external_stylesheets=[dbc.themes.BOOTSTRAP], 
+           external_stylesheets=[
+               dbc.themes.BOOTSTRAP,
+                "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+                ],     
            title="Pokémon TCG Dashboard")
 
 nav = dbc.Nav(
