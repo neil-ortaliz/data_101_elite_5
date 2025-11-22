@@ -4,7 +4,8 @@ from dash import html, dcc
 import dash_bootstrap_components as dbc
 
 from components import ban_card_container, graph_container
-from components import create_market_overview_metrics, market_view_set_performance_bar_chart
+from components.market_ui import create_market_overview_metrics, create_market_filters
+from components.charts import market_view_set_performance_bar_chart
 
 dash.register_page(__name__, path="/",
                     title="Market", 
@@ -25,6 +26,7 @@ select = dbc.Select(
 ban_row = create_market_overview_metrics()
 
 layout = html.Div([
+    create_market_filters(),
     select,
     html.Br(),
     dbc.Stack([
