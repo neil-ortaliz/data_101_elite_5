@@ -1,5 +1,5 @@
 import dash_bootstrap_components as dbc
-from dash import html
+from dash import html, dash_table
 import pandas as pd
 
 from utils.market_calcs import MarketCalculator
@@ -191,3 +191,136 @@ def create_market_filters():
     ], className="mb-4")
     
     return filters
+
+def create_top_movers_table(data=None):
+    """
+    Create top movers table
+    
+    Args:
+        data: List of dicts with keys: name, set, current_price, change_24h, change_7d
+    
+    Returns:
+        html.Div with toggle buttons and table
+    """
+    # TODO: Data will come from Member 2
+    # Placeholder data for testing
+    if data is None:
+        data = [
+            {
+                "name": "Charizard ex",
+                "set": "Obsidian Flames",
+                "current_price": "$45.99",
+                "change_24h": "+5.2%",
+                "change_7d": "+12.8%"
+            },
+            {
+                "name": "Pikachu VMAX",
+                "set": "Vivid Voltage",
+                "current_price": "$32.50",
+                "change_24h": "+3.1%",
+                "change_7d": "+8.4%"
+            },
+            {
+                "name": "Mewtwo V",
+                "set": "Pokemon GO",
+                "current_price": "$18.75",
+                "change_24h": "-2.3%",
+                "change_7d": "-5.1%"
+            },
+            {
+                "name": "Umbreon VMAX",
+                "set": "Evolving Skies",
+                "current_price": "$89.99",
+                "change_24h": "+8.5%",
+                "change_7d": "+15.2%"
+            },
+            {
+                "name": "Rayquaza VMAX",
+                "set": "Evolving Skies",
+                "current_price": "$125.00",
+                "change_24h": "-1.5%",
+                "change_7d": "-3.8%"
+            },
+        ]
+    
+    table = dash_table.DataTable(
+        id='top-movers-table',
+        columns=[
+            {"name": "Card Name", "id": "name"},
+            {"name": "Set", "id": "set"},
+            {"name": "Current Price", "id": "current_price"},
+            {"name": "24h Change", "id": "change_24h"},
+            {"name": "7d Change", "id": "change_7d"},
+        ],
+        data=data,
+        sort_action="native",
+        page_size=20,
+        style_table={
+            'overflowX': 'auto'
+        },
+        style_header={
+            'backgroundColor': '#0075BE',
+            'color': 'white',
+            'fontWeight': 'bold',
+            'textAlign': 'center',
+            'padding': '10px'
+        },
+        style_cell={
+            'textAlign': 'left',
+            'padding': '10px',
+            'fontSize': '14px'
+        },
+        style_data_conditional=[
+            # Color positive changes blue
+            {
+                'if': {
+                    'filter_query': '{change_24h} contains "+"',
+                    'column_id': 'change_24h'
+                },
+                'color': '#1E90FF',
+                'fontWeight': 'bold'
+            },
+            {
+                'if': {
+                    'filter_query': '{change_7d} contains "+"',
+                    'column_id': 'change_7d'
+                },
+                'color': '#1E90FF',
+                'fontWeight': 'bold'
+            },
+            # Color negative changes orange
+            {
+                'if': {
+                    'filter_query': '{change_24h} contains "-"',
+                    'column_id': 'change_24h'
+                },
+                'color': '#FF8C00',
+                'fontWeight': 'bold'
+            },
+            {
+                'if': {
+                    'filter_query': '{change_7d} contains "-"',
+                    'column_id': 'change_7d'
+                },
+                'color': '#FF8C00',
+                'fontWeight': 'bold'
+            },
+            # Row hover effect
+            {
+                'if': {'state': 'active'},
+                'backgroundColor': 'rgba(0, 117, 190, 0.1)',
+                'border': '1px solid #0075BE'
+            }
+        ]
+    )
+    
+    # Add toggle buttons for Gainers/Losers
+    toggle_buttons = dbc.ButtonGroup([
+        dbc.Button("Gainers", id="btn-gainers", color="primary", outline=True),
+        dbc.Button("Losers", id="btn-losers", color="danger", outline=True),
+    ], className="mb-3")
+    
+    return html.Div([
+        toggle_buttons,
+        table
+    ])

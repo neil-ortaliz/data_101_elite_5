@@ -1,5 +1,5 @@
 import dash_bootstrap_components as dbc
-from dash import html
+from dash import html, dash_table
 from components.market_ui import create_metric_card  # Reuse!
 
 def create_portfolio_summary_metrics():
@@ -149,3 +149,124 @@ def create_risk_indicators():
     ], className="mb-4")
     
     return risk_row
+
+def create_holdings_table(data=None):
+    """
+    Create portfolio holdings table
+    
+    Args:
+        data: List of dicts with portfolio card data
+    
+    Returns:
+        html.Div with add button and table
+    """
+    # TODO: Data from Member 2
+    if data is None:
+        data = [
+            {
+                "name": "Charizard ex",
+                "set": "Obsidian Flames",
+                "quantity": 2,
+                "buy_price": "$38.00",
+                "current_price": "$45.99",
+                "gain_loss": "+$15.98",
+                "gain_loss_pct": "+21.0%"
+            },
+            {
+                "name": "Pikachu VMAX",
+                "set": "Vivid Voltage",
+                "quantity": 1,
+                "buy_price": "$28.00",
+                "current_price": "$32.50",
+                "gain_loss": "+$4.50",
+                "gain_loss_pct": "+16.1%"
+            },
+            {
+                "name": "Mewtwo V",
+                "set": "Pokemon GO",
+                "quantity": 3,
+                "buy_price": "$22.00",
+                "current_price": "$18.75",
+                "gain_loss": "-$9.75",
+                "gain_loss_pct": "-14.8%"
+            },
+            {
+                "name": "Umbreon VMAX",
+                "set": "Evolving Skies",
+                "quantity": 1,
+                "buy_price": "$75.00",
+                "current_price": "$89.99",
+                "gain_loss": "+$14.99",
+                "gain_loss_pct": "+20.0%"
+            },
+        ]
+    
+    table = dash_table.DataTable(
+        id='holdings-table',
+        columns=[
+            {"name": "Card Name", "id": "name"},
+            {"name": "Set", "id": "set"},
+            {"name": "Qty", "id": "quantity"},
+            {"name": "Buy Price", "id": "buy_price"},
+            {"name": "Current Price", "id": "current_price"},
+            {"name": "Gain/Loss", "id": "gain_loss"},
+            {"name": "%", "id": "gain_loss_pct"},
+        ],
+        data=data,
+        sort_action="native",
+        page_size=25,
+        style_table={
+            'overflowX': 'auto'
+        },
+        style_header={
+            'backgroundColor': '#0075BE',
+            'color': 'white',
+            'fontWeight': 'bold',
+            'textAlign': 'center',
+            'padding': '10px'
+        },
+        style_cell={
+            'textAlign': 'left',
+            'padding': '10px',
+            'fontSize': '14px'
+        },
+        style_data_conditional=[
+            # Gains in blue
+            {
+                'if': {
+                    'filter_query': '{gain_loss} contains "+"',
+                    'column_id': ['gain_loss', 'gain_loss_pct']
+                },
+                'color': '#1E90FF',
+                'fontWeight': 'bold'
+            },
+            # Losses in orange
+            {
+                'if': {
+                    'filter_query': '{gain_loss} contains "-"',
+                    'column_id': ['gain_loss', 'gain_loss_pct']
+                },
+                'color': '#FF8C00',
+                'fontWeight': 'bold'
+            },
+            # Row hover
+            {
+                'if': {'state': 'active'},
+                'backgroundColor': 'rgba(0, 117, 190, 0.1)',
+                'border': '1px solid #0075BE'
+            }
+        ]
+    )
+    
+    # Add "Add Card" button
+    add_button = dbc.Button(
+        [html.Span("➕ ", style={"marginRight": "8px"}), "Add Card to Portfolio"],
+        id="add-card-btn",
+        color="success",
+        className="mb-3"
+    )
+    
+    return html.Div([
+        add_button,
+        table
+    ])
