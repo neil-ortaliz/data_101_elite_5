@@ -4,7 +4,7 @@ from dash import html, dcc
 import dash_bootstrap_components as dbc
 
 from components import ban_card_container, graph_container
-from components.market_ui import create_market_overview_metrics, create_market_filters
+from components.market_ui import create_market_overview_metrics, create_market_filters, create_top_movers_table
 from components.charts import market_view_set_performance_bar_chart
 
 dash.register_page(__name__, path="/",
@@ -38,6 +38,10 @@ layout = html.Div([
                 )
                 #graph_container(, title="Top Price Movers")
                 #market_view_set_performance_bar_chart()
+            ]),
+            html.Div([
+                html.H4("Top Price Movers", className="mb-3"),
+                create_top_movers_table()
             ])
         ],
         gap=2),
