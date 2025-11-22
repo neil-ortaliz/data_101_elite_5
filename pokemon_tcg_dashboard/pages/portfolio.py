@@ -101,7 +101,7 @@ def show_portfolio(selected_ids):
     
     portfolio_df = get_image_urls(ids=selected_ids)
     #print(portfolio_df)
-    print(f"portfolio df type: {type(portfolio_df)}")
+    #print(f"portfolio df type: {type(portfolio_df)}")
 
     cards = []
     for _, row in portfolio_df.iterrows():
@@ -144,5 +144,5 @@ def show_portfolio(selected_ids):
     Input("select-portfolio", "value")
 )
 def update_gain_loss_title(timeframe):
-    print(f"Selected timeframe: {timeframe}")
+    #print(f"Selected timeframe: {timeframe}")
     return f"{timeframe}-Day Change"

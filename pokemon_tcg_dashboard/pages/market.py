@@ -41,7 +41,7 @@ layout = html.Div([
             ]),
             html.Div([
                 html.H4("Top Price Movers", className="mb-3"),
-                create_top_movers_table()
+                ban_card_container(create_top_movers_table())
             ])
         ],
         gap=2),

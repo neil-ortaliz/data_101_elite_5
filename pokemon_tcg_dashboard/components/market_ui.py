@@ -190,7 +190,7 @@ def create_market_filters():
     
     return filters
 
-def create_top_movers_table(data=None):
+def create_top_movers_table(data=None, days=1):
     """
     Create top movers table
     

@@ -50,9 +50,9 @@ layout = html.Div([
     dcc.Store(id="page-number", data=0),
 
     # Debug 
-    #html.Pre(id="debug-output",
-    #         style={"whiteSpace": "pre-wrap", "background": "#222",
-    #                "color": "lime", "padding": "10px"}),
+    html.Pre(id="debug-output",
+             style={"whiteSpace": "pre-wrap", "background": "#222",
+                    "color": "lime", "padding": "10px"}),
 
     dbc.Stack([
         html.Div([
@@ -177,7 +177,15 @@ def update_images(selected_sets, selected_types, searched_text,page):
                     [
                         dbc.CardImg(src=row["imageUrl"], top=True),
                         dbc.CardFooter([
-                            html.P(row["name"], className="card-text")])
+                            html.P(row["name"], className="card-text"),
+                            dbc.Button(
+                                "Add to My Portfolio",
+                                id={"type": "add-portfolio-button", "index": row["tcgPlayerId"]},
+                                n_clicks=0,
+                                class_name = 'add-portfolio-button'
+                            )
+
+                            ])
                     ],
                     class_name="card-normal",
                     style={
@@ -201,9 +209,9 @@ def update_images(selected_sets, selected_types, searched_text,page):
 
 @callback(
     Output("selected-cards", "data", allow_duplicate=True),
-    Input({"type": "card-button", "index": ALL}, "n_clicks"),
+    Input({"type": "add-portfolio-button", "index": ALL}, "n_clicks"),
     Input("clear-portfolio", "n_clicks"),
-    State({"type": "card-button", "index": ALL}, "id"),
+    State({"type": "add-portfolio-button", "index": ALL}, "id"),
     State("selected-cards", "data"),
     prevent_initial_call=True
 )
@@ -252,10 +260,9 @@ def update_classes(selected_ids, ids):
     return classes
 
 
-'''@callback(
+@callback(
     Output("debug-output", "children"),
     Input("selected-cards", "data")
 )
 def show_debug(selected):
     return f"Selected IDs = {selected}"
-'''

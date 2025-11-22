@@ -72,7 +72,7 @@ market_df = ebay_metadata.merge(
     how='left',
 )
 
-print(f"market_df columns: {market_df.columns}")
+#print(f"market_df columns: {market_df.columns}")
 
 market_df = market_df.dropna(subset='setName_x')
 
