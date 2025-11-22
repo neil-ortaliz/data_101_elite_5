@@ -133,7 +133,7 @@ def show_portfolio(selected_ids):
                     "maxHeight": "200px",
                     #"width": "100%",
                     "height": "auto",},
-                href=f"/card/{row['tcgPlayerId']}",
+                href=f"/card/642623",
             )
         )
 

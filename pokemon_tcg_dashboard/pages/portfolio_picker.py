@@ -199,7 +199,8 @@ def update_images(selected_sets, selected_types, searched_text,page):
                     "maxWidth": "200px",
                     "maxHeight": "250px",
                     "width": "100%",
-                    "height": "auto",},
+                    "height": "auto",
+                    "padding-bottom": "300px"},
                 
             )
         )
