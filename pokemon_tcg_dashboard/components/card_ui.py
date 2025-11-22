@@ -102,3 +102,55 @@ def create_card_header(card_data=None):
     ], className="card-header-section mb-5")
     
     return header
+
+def create_action_buttons():
+    """
+    Create action buttons for Card View
+    
+    Returns:
+        dbc.Row with 3 action buttons
+    """
+    buttons = dbc.Row([
+        dbc.Col([
+            dbc.Button(
+                [
+                    html.Span("➕ ", style={"marginRight": "8px"}),
+                    "Add to Portfolio"
+                ],
+                id="add-to-portfolio-btn",
+                color="success",
+                size="lg",
+                className="w-100 action-button"
+            )
+        ], width=12, md=4, className="mb-3"),
+        
+        dbc.Col([
+            dbc.Button(
+                [
+                    html.Span("🔔 ", style={"marginRight": "8px"}),
+                    "Set Price Alert"
+                ],
+                id="set-alert-btn",
+                color="warning",
+                size="lg",
+                outline=True,
+                className="w-100 action-button"
+            )
+        ], width=12, md=4, className="mb-3"),
+        
+        dbc.Col([
+            dbc.Button(
+                [
+                    html.Span("📤 ", style={"marginRight": "8px"}),
+                    "Share Card"
+                ],
+                id="share-card-btn",
+                color="primary",
+                size="lg",
+                outline=True,
+                className="w-100 action-button"
+            )
+        ], width=12, md=4, className="mb-3"),
+    ], className="mb-4")
+    
+    return buttons

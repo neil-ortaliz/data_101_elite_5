@@ -3,7 +3,7 @@ from dash import html, dcc, Input, Output, callback, State, ALL, ctx
 import dash_bootstrap_components as dbc
 from utils import get_card_metadata
 from components import ban_card_container, graph_container, tab_card_container
-from components.card_ui import create_card_header
+from components.card_ui import create_card_header, create_action_buttons
 
 dash.register_page(__name__, path="/card/<card_id>",
                     title="Card View", 
@@ -52,6 +52,13 @@ def update_card_page(pathname):
             "ungraded_price": "$38.50", # TODO: Get from Member 2
             "total_listings": 234       # TODO: Get from Member 2
         }
+
+        # Return both header and action buttons
+        card_content = html.Div([
+            create_card_header(card_data),
+            create_action_buttons()
+        ])
+
         
-        return create_card_header(card_data), card_data
+        return card_content, card_data
     
