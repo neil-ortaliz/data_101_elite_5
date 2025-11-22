@@ -67,14 +67,16 @@ def create_market_overview_metrics(days:int=1):
     card_metadata_df = load_data("cards_metadata_table.csv")
     market_calculator = MarketCalculator(price_history_df, card_metadata_df)
 
+    total_market_value = market_calculator.calculate_total_market_value()
+    
 
     metrics_row = dbc.Row([
         dbc.Col(
             create_metric_card(
                 title="Total Market Value",
-                value=market_calculator.calculate_total_market_value()['formatted'],
+                value=total_market_value['formatted'],
                 change=market_calculator.calculate_change(days)['formatted_value'],
-                change_type="positive"
+                change_type= "positive" if total_market_value['value'] > 0 else "negative"
             ),
             width=12, md=6, lg=3, className="mb-3"
         ),
