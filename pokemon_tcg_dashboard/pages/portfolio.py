@@ -3,7 +3,7 @@ from dash import html, dcc, Input, Output, callback, State, ALL, ctx
 import dash_bootstrap_components as dbc
 from utils import get_image_urls
 from components import ban_card_container, graph_container, tab_card_container
-from components.portfolio_ui import create_portfolio_summary_metrics, create_risk_indicators
+from components.portfolio_ui import create_portfolio_summary_metrics, create_risk_indicators, create_holdings_table
 
 dash.register_page(__name__, path="/portfolio",
                     title="Portfolio", 
@@ -75,8 +75,8 @@ portfolio = html.Div([
     holding_row,
     create_portfolio_summary_metrics(),
     create_risk_indicators(),
-    html.H3('Portfolio Details'),
-    html.Div('More portfolio content will go here.'),
+    html.H3('Holdings Details', className="mt-4 mb-3"),
+    create_holdings_table(),
 ])
 
 tabs = dbc.Tabs(

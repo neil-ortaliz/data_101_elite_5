@@ -3,77 +3,32 @@ from dash import html, dcc, Input, Output, callback, State, ALL, ctx
 import dash_bootstrap_components as dbc
 from utils import get_card_metadata
 from components import ban_card_container, graph_container, tab_card_container
+from components.card_ui import create_card_header, create_action_buttons
 
-dash.register_page(__name__, path_template="/card/<card_id>")
+dash.register_page(__name__, path="/card/<card_id>",
+                    title="Card View", 
+                    name="Card View",
+                    order=3)
 
-def layout(card_id="", **kwargs):
+def layout(card_id=None, **kwargs):
     card_gen_content = html.Div([
+        html.Div(id="card-header-container"),  # This will be populated by callback
+        html.Hr(),
         dbc.Row([
-            dbc.Col(
-                dbc.Card(
-                    dbc.CardImg(src="", top=True, id="card-image", class_name="h-100", style={"height": "100%", "object-fit": "cover"})
-                ),
-                width=3,
-                class_name="card-normal h-100",
-                style={"padding": 0, 
-                    "border": "none",
-                    "background": "none",
-                    "maxWidth": "300px",
-                    #"maxHeight": "200px",
-                    #"width": "100%",
-                    "height": "auto",
-                    },
-            ),
-            dbc.Col([
-                dbc.Row([
-                    html.H1("Card Name Here", id="card-name-header")
-                ]),
-                dbc.Row([
-                    dbc.Col([
-                        ban_card_container(fig="card set here", title="Set", card_body_id="card-set")
-                    ]),
-                    dbc.Col([
-                        ban_card_container(fig="card number here", title="Card Number", card_body_id="card-number")
-                    ]),
-                    dbc.Col([
-                        ban_card_container(fig="card rarity here", title="Rarity", card_body_id="card-rarity")
-                    ],),
-                ], class_name="g-3 mb-3"),
-                dbc.Row([
-                    dbc.Col([
-                        ban_card_container(fig="card type here", title="Type", card_body_id="card-type")
-                    ]),
-                    dbc.Col([
-                        ban_card_container(fig="card set here", title="HP", card_body_id="card-hp")
-                    ]),
-                    dbc.Col([
-                        ban_card_container(fig="card illustrator here", title="Illustrator", card_body_id="card-illustrator")
-                    ]),
-                ], class_name="g-3 mb-3"),
-                dbc.Row([
-                    html.Div([graph_container(fig=" current market price fig here", title="Current Market Price")])
-                ])
-            ])
-        ], class_name="g-3 mb-3 card-row")
+            html.Div([graph_container(fig="price charts here", title="Price History")])
+        ])
     ])
+
     return html.Div([
         dcc.Location(id="url"),
-        html.H2(f"🎴 Card View for: {card_id}", id="card-title"),
+        dcc.Store(id="card-data-store"),  # Store for card data
         card_gen_content,
-        # Additional card details and components would go here
     ])
 
 
 @callback(
-    Output("card-title", "children"),
-    Output("card-image", "src"),
-    Output("card-name-header", "children"),
-    Output("card-set", "children"),
-    Output("card-number", "children"),
-    Output("card-rarity", "children"),
-    Output("card-type", "children"),
-    Output("card-hp", "children"),
-    Output("card-illustrator", "children"),
+    Output("card-header-container", "children"),
+    Output("card-data-store", "data"),
     Input("url", "pathname"),
 )
 def update_card_page(pathname):
@@ -82,28 +37,28 @@ def update_card_page(pathname):
     card_metadata = get_card_metadata(card_number)
 
     if card_metadata.empty:
-        return (
-            "🎴 Card View: Card Not Found",
-            "",
-            "Card Not Found",
-            "N/A",
-            "N/A",
-            "N/A",
-            "N/A",
-            "N/A",
-            "N/A"
-        )
+        return html.H3("Card Not Found"), None
     
     else:
-        return (
-            f"🎴 Card Details: {card_metadata['name']}",
-            card_metadata['imageUrl'],
-            card_metadata['name'],
-            card_metadata['setName'],
-            card_metadata['cardNumber'],
-            card_metadata['rarity'],
-            card_metadata["cardType"],
-            card_metadata['hp'],
-            card_metadata['artist']
-        )
+        # Prepare data for create_card_header
+        card_data = {
+            "name": card_metadata['name'],
+            "set": card_metadata['setName'],
+            "rarity": card_metadata['rarity'],
+            "card_number": card_metadata['cardNumber'],
+            "image_url": card_metadata['imageUrl'],
+            "current_price": "$45.99",  # TODO: Get from Member 2
+            "psa10_price": "$120.00",   # TODO: Get from Member 2
+            "ungraded_price": "$38.50", # TODO: Get from Member 2
+            "total_listings": 234       # TODO: Get from Member 2
+        }
+
+        # Return both header and action buttons
+        card_content = html.Div([
+            create_card_header(card_data),
+            create_action_buttons()
+        ])
+
+        
+        return card_content, card_data
     
