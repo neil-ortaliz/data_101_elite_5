@@ -6,13 +6,15 @@ Should show % gain/loss with color coding (green=profit, red=loss).
 - Added date range filter (All Time, Last 90 Days, Last 30 Days, Last 15 Days, Last 7 Days).
 - Added table form with dropdown to switch between date ranges.
 
-🟨 Task 2: Portfolio Performance Line Chart (portfolio_view_performance_line_chart) - Multi-line chart showing portfolio value over time.
+✅ Task 2: Portfolio Performance Line Chart (portfolio_view_performance_line_chart) - Multi-line chart showing portfolio value over time.
 Should show total value + individual set contributions.
+- Issues: Unsure if it works smoothly
 
 ✅ Task 3: Collection Breakdown Pie Chart (portfolio_view_collection_pie_chart) - Pie chart showing portfolio composition by Pokemon set.
 Should show percentage and value for each set.
+- Issues: Unsure if it works smoothly
 
-✅ Task 4: Price History Line Chart 
+✅ Task 4: Price History Line Chart - Price history of a card from Ebay and TCG
 - Issues: The chart works but since data is sparse, lines are disconnected. Need help to smooth or interpolate data for better visualization.
 
 ✅ Task 5: Grade Price Comparison Chart
@@ -112,7 +114,7 @@ def market_view_set_performance_bar_chart(time_range="All Time"):
     Returns:
     - Plotly Figure
     """
-    # Ensure 'date' is datetime
+    # 'date' is datetime
     latest_set_prices['date'] = pd.to_datetime(latest_set_prices['date'])
     max_date = latest_set_prices['date'].max()
 
@@ -288,9 +290,12 @@ def create_top_sets_table(ebay_metadata, price_col="average"):
 # ------------------- FUNCTION 2: Portfolio Performance Line Chart --------------
 def portfolio_view_performance_line_chart(ids:list, days:int=1):
     portfolio_ids = ids
-    portfolio_history = price_history_metadata[price_history_metadata['id'].isin(portfolio_ids)].copy()
-
+    portfolio_history = price_history_metadata[price_history_metadata['id'].isin(ids)].copy()
     portfolio_history['date'] = pd.to_datetime(portfolio_history['date'])
+
+    if days > 1:
+        max_date = portfolio_history['date'].max()
+        portfolio_history = portfolio_history[portfolio_history['date'] >= max_date - pd.Timedelta(days=days)]
 
     portfolio_daily_value = (
         portfolio_history.groupby('date')['average']
@@ -298,7 +303,6 @@ def portfolio_view_performance_line_chart(ids:list, days:int=1):
         .reset_index()
         .sort_values('date')
     )
-
     portfolio_daily_value.rename(columns={'average': 'total_value'}, inplace=True)
 
     fig = go.Figure()
@@ -318,14 +322,12 @@ def portfolio_view_performance_line_chart(ids:list, days:int=1):
         height=450,
         margin=dict(l=50, r=50, t=50, b=50)
     )
-
     return fig
 
 # ------------------------ FUNCTION 3: Collection Breakdown Pie Chart -----------
-def portfolio_view_collection_pie_chart(ids:list, days:int=1):
-    portfolio_ids = ids
-
-    portfolio_breakdown_df = portfolio_sample_df.groupby('setName')['id'].nunique().reset_index()
+def portfolio_view_collection_pie_chart(ids:list):
+    portfolio_breakdown_df = portfolio_sample_df[portfolio_sample_df['id'].isin(ids)]
+    portfolio_breakdown_df = portfolio_breakdown_df.groupby('setName')['id'].nunique().reset_index()
     portfolio_breakdown_df.columns = ['setName', 'UniqueItemCount']
     portfolio_breakdown_df = portfolio_breakdown_df.sort_values(by='UniqueItemCount', ascending=False)
 
@@ -345,7 +347,6 @@ def portfolio_view_collection_pie_chart(ids:list, days:int=1):
         margin=dict(l=20, r=20, t=60, b=20),
         legend=dict(orientation="h", yanchor="bottom", y=-0.05, xanchor="center", x=0.5)
     )
-
     return fig
 
 
