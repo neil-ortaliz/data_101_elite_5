@@ -1,19 +1,18 @@
 import pandas as pd
 import numpy as np
 from typing import Dict, Any, Optional, Union
+from utils import load_data
 
+import logging
+logger = logging.getLogger(__name__)
 
 class PortfolioCalculator:
     """Handles all portfolio-level calculations for card portfolios."""
 
-    portfolio: pd.DataFrame
-    price_history: pd.DataFrame
-    card_metadata: pd.DataFrame
-
     def __init__(self, 
                  portfolio_df: pd.DataFrame, 
-                 price_history_df: pd.DataFrame, 
-                 card_metadata_df: pd.DataFrame) -> None:
+                 price_history_df: pd.DataFrame=None, 
+                 card_metadata_df: pd.DataFrame=None) -> None:
         """
         Initialize the calculator.
 
@@ -22,15 +21,34 @@ class PortfolioCalculator:
             price_history_df (pd.DataFrame): Price history with columns ['id', 'date', 'market'].
             card_metadata_df (pd.DataFrame): Metadata with ['id', 'set', 'rarity'].
         """
-        self.portfolio = portfolio_df.copy()
-        self.price_history = price_history_df.copy()
+        if portfolio_df is None:
+            self.portfolio = pd.DataFrame(columns=['id'])
+        else:    
+            self.portfolio = portfolio_df.copy()
+        
+
+        if price_history_df is None:
+            price_history_df = load_data("price_history.csv")
+        if card_metadata_df is None:
+            card_metadata_df = load_data("cards_metadata_table.csv")
+
+        self.price_history = price_history_df.copy()   
         self.card_metadata = card_metadata_df.copy()
 
+        self.price_history = self.price_history.merge(
+            self.card_metadata[['id', 'tcgPlayerId']],
+            on='id',
+            how='left'
+        )
+
+        logger.debug(self.price_history.head())
         # Ensure date is clean datetime
         self.price_history['date'] = (
             pd.to_datetime(self.price_history['date'], errors='coerce')
               .dt.tz_localize(None)
         )
+
+        logger.debug(f"self.portfolio \n {self.portfolio}")
 
     # -------------------------------------------------------------
     # PRICE LOOKUPS
@@ -40,10 +58,10 @@ class PortfolioCalculator:
         latest_prices = (
             self.price_history
             .sort_values("date")
-            .groupby("id", as_index=False)
+            .groupby("tcgPlayerId", as_index=False)
             .last()
         )
-        current_prices = latest_prices.set_index("id")["market"].to_dict()
+        current_prices = latest_prices.set_index("tcgPlayerId")["market"].to_dict()
         return current_prices
 
     # -------------------------------------------------------------
@@ -52,10 +70,12 @@ class PortfolioCalculator:
     def calculate_total_portfolio_value(self) -> Dict[str, Union[float, str]]:
         """Calculate total current value of portfolio (1 unit per card)."""
         current_prices = self.get_current_prices()
+        #logger.debug(f"===========current_prices=========== \n {current_prices.keys()}")
         total_value = sum(
             current_prices.get(row["id"], 0)
             for _, row in self.portfolio.iterrows()
         )
+        logger.debug(f"total_value {total_value}")
         return {"value": total_value, "formatted": f"${total_value:,.2f}"}
 
     def calculate_card_count(self) -> Dict[str, Union[int, str]]:
