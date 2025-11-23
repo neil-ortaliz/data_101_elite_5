@@ -24,7 +24,7 @@ def ban_card_container(fig=None, title="", header_id="", card_id="card", card_bo
         id=card_id
     )
 
-def graph_container(fig=None, title="Visualization Here", class_name=None, fig_id="graph-container-fig"):
+def graph_container(fig=None, title="Visualization Here", class_name=None, fig_id="graph-container-fig", container_id="graph-container"):
     print(fig)
 
     return dbc.Card(
@@ -32,9 +32,12 @@ def graph_container(fig=None, title="Visualization Here", class_name=None, fig_i
             dbc.CardBody(
                 [
                     html.H4(title, className="card-title"),
-                    dcc.Graph(id=fig_id, figure=fig)
-                ]
+                    html.Div(dcc.Graph(id=fig_id, figure=fig))
+                    
+                ],
+                id=container_id,
             )
         ],
+        
         class_name=class_name
     )

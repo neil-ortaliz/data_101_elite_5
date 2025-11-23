@@ -71,6 +71,7 @@ price_history_metadata = price_history_df.merge(
     on="id",
     how="left"
 )
+
 price_history_metadata = price_history_metadata.dropna(subset="setName")
 
 # All three combined
@@ -194,21 +195,26 @@ def create_top_sets_table(price_col="price",days=7):
     # Ensure numeric price
     #ebay_metadata[price_col] = pd.to_numeric(ebay_metadata[price_col], errors="coerce")
     #ebay_metadata["date"] = pd.to_datetime(ebay_metadata["date"], errors="coerce")
+    days = int(days) # Ensure Numeric value
     set_price_history_df = get_set_price_history()
     set_price_history_df[price_col] = pd.to_numeric(set_price_history_df[price_col], errors="coerce")
-    logger.debug(f"Loaded set price history (rows={set_price_history_df.shape[0]}, cols={set_price_history_df.shape[1]})")
+    #logger.debug(f"Loaded set price history (rows={set_price_history_df.shape[0]}, cols={set_price_history_df.shape[1]})")
 
     # --- DATE RANGES ---
     max_date = set_price_history_df.index.max()
-    date_range_df = set_price_history_df[set_price_history_df.index >= max_date - pd.Timedelta(days=days)]
-    logger.debug(f"======date_range_df head======= \n {date_range_df.head()}")
+    if days == -1:
+        date_range_df = set_price_history_df
+    else:
+        date_range_df = set_price_history_df[set_price_history_df.index >= max_date - pd.Timedelta(days=days)]
+    #logger.debug(f"======date_range_df head======= \n {date_range_df.head()}")
     current_df = (
         date_range_df.sort_index()
         .groupby("set_name")
         .tail(1)
         .reset_index()
     )
-    logger.debug(f"======current_df head======= \n {current_df}")
+    #logger.debug(f"======current_df head======= \n {current_df}")
+    logger.debug(f"current_df.shape(): {current_df.shape}")
 
     # Get the row index of the earliest date per set
 
@@ -230,6 +236,8 @@ def create_top_sets_table(price_col="price",days=7):
     current_df["Change"] = current_df["price"] - current_df["earliest_price"]
     current_df["% Change"] = (current_df["Change"] / current_df["earliest_price"]) * 100
     current_df["Rank"] = current_df["price"].rank(ascending=False, method="first").astype(int)
+    current_df = current_df.sort_values(by="Rank", ascending=True)
+
     logger.debug(f"======current_df with Change head======= \n {current_df}")
 
     '''if numeric_tables:
@@ -256,7 +264,7 @@ def create_top_sets_table(price_col="price",days=7):
     fig.add_trace(
         go.Table(
             header=dict(
-                values=["Rank", "Set Name", "Avg. Market Price ($)", "Change", "% Change"],
+                values=["Rank", "Set Name", "Current Market Price ($)", "Change ($)", "% Change"],
                 fill_color="#636EFA",
                 align="center",
                 font=dict(color="white", size=13)
@@ -265,7 +273,7 @@ def create_top_sets_table(price_col="price",days=7):
                 values=[
                     current_df["Rank"],
                     current_df["set_name"],
-                    current_df["price"],
+                    [f"${x:+.2f}" for x in current_df["price"]],
                     [f"{x:+.2f}" for x in current_df["Change"]],
                     [f"{x:+.2f}%" for x in current_df["% Change"]],
                 ],
@@ -288,7 +296,7 @@ def create_top_sets_table(price_col="price",days=7):
             y=1.05,
             showactive=True
         )],
-        title={"text": "Top Pokémon Card Sets — All Time", "x": 0.5},
+        #title={"text": "Top Pokémon Card Sets — All Time", "x": 0.5},
     )
 
     return fig
