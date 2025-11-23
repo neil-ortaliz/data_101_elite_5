@@ -25,8 +25,6 @@ def ban_card_container(fig=None, title="", header_id="", card_id="card", card_bo
     )
 
 def graph_container(fig=None, title="Visualization Here", class_name=None, fig_id="graph-container-fig", container_id="graph-container"):
-    print(fig)
-
     return dbc.Card(
         [
             dbc.CardBody(

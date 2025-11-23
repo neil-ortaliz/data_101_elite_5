@@ -224,8 +224,8 @@ def create_top_sets_table(price_col="price",days=7):
     logger.debug(f"Ealriest date in range: {filtered_min_date}")
     earliest_prices_df = date_range_df[date_range_df.index == filtered_min_date][["set_name", "price"]].reset_index()
     earliest_prices_df = earliest_prices_df.rename(columns={"price": "earliest_price"})
-    logger.debug(f"======earliest_prices======= \n {earliest_prices_df}")
-    logger.debug(f"======earliest_prices['set_name'] value counts======= \n {earliest_prices_df['set_name'].value_counts()}")
+    #logger.debug(f"======earliest_prices======= \n {earliest_prices_df}")
+    #logger.debug(f"======earliest_prices['set_name'] value counts======= \n {earliest_prices_df['set_name'].value_counts()}")
 
     current_df = current_df.merge(
         earliest_prices_df[['set_name', 'earliest_price']],
@@ -238,7 +238,7 @@ def create_top_sets_table(price_col="price",days=7):
     current_df["Rank"] = current_df["price"].rank(ascending=False, method="first").astype(int)
     current_df = current_df.sort_values(by="Rank", ascending=True)
 
-    logger.debug(f"======current_df with Change head======= \n {current_df}")
+    #logger.debug(f"======current_df with Change head======= \n {current_df}")
 
     '''if numeric_tables:
         prev = numeric_tables[-1][["set_name", "price"]].rename(

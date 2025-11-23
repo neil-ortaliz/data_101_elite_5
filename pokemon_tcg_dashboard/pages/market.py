@@ -31,7 +31,9 @@ select = dbc.Select(
 )
 
 
-ban_row = create_market_overview_metrics()
+ban_row = html.Div(
+    create_market_overview_metrics(days=-1),
+    id="market-overview-metrics-row")
 
 layout = html.Div([
     create_market_filters(),
@@ -39,9 +41,9 @@ layout = html.Div([
     html.Br(),
     dbc.Stack([
             ban_row,
-            #dbc.Row([
-            #    graph_container(fig=go.Figure(), title="Set Performance Overview"),
-            #]),
+            dbc.Row([
+                graph_container(fig=go.Figure(), title="Set Performance Overview"),
+            ]),
             dbc.Row([
                 #html.H4("Top Price Movers", className="mb-3"),
                 #create_top_movers_table(),
@@ -57,9 +59,12 @@ layout = html.Div([
 
 @callback(
     Output("top-movers-table-fig", "figure"),
+    Output("market-overview-metrics-row", "children"),
     Input("select-market", "value")
 )
 def update_graphs(days):
+    days= int(days)
     fig=create_top_sets_table(days=days)
-
-    return fig
+    ban_row = create_market_overview_metrics(days=days)
+    print(type(ban_row))
+    return fig, ban_row
