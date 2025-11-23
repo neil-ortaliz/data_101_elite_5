@@ -39,13 +39,18 @@ from plotly.subplots import make_subplots
 
 import pandas as pd
 from datetime import timedelta
-from utils.loader import load_data
+from utils.loader import load_data, get_set_price_history
+import logging
+
+# initialize module logger
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
 
 # ----------------------------- Call data -------------------------------------
 ebay_df = load_data('ebay_price_history.csv')
 metadata_df = load_data('cards_metadata_table.csv')
 price_history_df = load_data('price_history.csv')
-portfolio_sample_df = load_data('portfolio_cards_metadata_table.csv')
+#portfolio_sample_df = load_data('portfolio_cards_metadata_table.csv')
 
 # ------------------------------ Merge Data --------------------------------------
 '''
@@ -66,6 +71,7 @@ price_history_metadata = price_history_df.merge(
     on="id",
     how="left"
 )
+
 price_history_metadata = price_history_metadata.dropna(subset="setName")
 
 # All three combined
@@ -75,7 +81,7 @@ market_df = ebay_metadata.merge(
     how='left',
 )
 
-print(f"market_df columns: {market_df.columns}")
+#print(f"market_df columns: {market_df.columns}")
 
 market_df = market_df.dropna(subset='setName_x')
 
@@ -116,6 +122,7 @@ latest_set_prices = latest_set_prices.rename(columns={'pct_change': 'value_chang
 
 # ------------------------ FUNCTION: Set Performance Bar Chart with Date Range ----------------
 def market_view_set_performance_bar_chart(time_range="All Time"):
+    logger.debug(f"Calling market_view_set_performance_bar_chart")
     """
     Bar chart of Pokemon set performance (price change %) filtered by date range.
     
@@ -128,6 +135,7 @@ def market_view_set_performance_bar_chart(time_range="All Time"):
     # 'date' is datetime
     latest_set_prices['date'] = pd.to_datetime(latest_set_prices['date'])
     max_date = latest_set_prices['date'].max()
+    logger.debug(f"Latest set price max_date: {max_date} (rows={len(latest_set_prices)})")
 
     # Define date ranges
     date_ranges = {
@@ -140,6 +148,7 @@ def market_view_set_performance_bar_chart(time_range="All Time"):
 
     # Filter by selected time range
     filtered_data = date_ranges.get(time_range, latest_set_prices)
+    logger.debug(f"Filtered data for '{time_range}' has {len(filtered_data)} rows")
 
     # Sort by value change for bar chart
     sorted_data = filtered_data.sort_values('value_change_pct')
@@ -169,129 +178,125 @@ def market_view_set_performance_bar_chart(time_range="All Time"):
         margin=dict(l=150, r=50, t=50, b=50)
     )
 
+    logger.debug(f"Created set performance bar chart (time_range={time_range}) with {len(sorted_data)} bars")
     return fig
 
 # ------------------------------------ TABLE FORM ------------------------------------------
-def create_top_sets_table(ebay_metadata, price_col="average"):
+def create_top_sets_table(price_col="price",days=7):
+    logger.debug(f"Calling create_top_sets_table")
     """
     Parameters
-    ebay_metadata : pd.DataFrame
-        DataFrame containing at least ['setName', 'totalSetNumber', 'date', price_col]
-    price_col : str, default "average"
+    price_col : str, default ""price"
         Column name in ebay_metadata representing the market price
+    days: int, default 7
+        Number of days to filter the price history
     """
 
     # Ensure numeric price
-    ebay_metadata[price_col] = pd.to_numeric(ebay_metadata[price_col], errors="coerce")
-    ebay_metadata["date"] = pd.to_datetime(ebay_metadata["date"], errors="coerce")
+    #ebay_metadata[price_col] = pd.to_numeric(ebay_metadata[price_col], errors="coerce")
+    #ebay_metadata["date"] = pd.to_datetime(ebay_metadata["date"], errors="coerce")
+    days = int(days) # Ensure Numeric value
+    set_price_history_df = get_set_price_history()
+    set_price_history_df[price_col] = pd.to_numeric(set_price_history_df[price_col], errors="coerce")
+    #logger.debug(f"Loaded set price history (rows={set_price_history_df.shape[0]}, cols={set_price_history_df.shape[1]})")
 
     # --- DATE RANGES ---
-    max_date = ebay_metadata["date"].max()
-    date_ranges = {
-        "All Time": ebay_metadata,
-        "Last 90 Days": ebay_metadata[ebay_metadata["date"] >= max_date - pd.Timedelta(days=90)],
-        "Last 30 Days": ebay_metadata[ebay_metadata["date"] >= max_date - pd.Timedelta(days=30)],
-        "Last 15 Days": ebay_metadata[ebay_metadata["date"] >= max_date - pd.Timedelta(days=15)],
-        "Last 7 Days": ebay_metadata[ebay_metadata["date"] >= max_date - pd.Timedelta(days=7)],
-    }
+    max_date = set_price_history_df.index.max()
+    if days == -1:
+        date_range_df = set_price_history_df
+    else:
+        date_range_df = set_price_history_df[set_price_history_df.index >= max_date - pd.Timedelta(days=days)]
+    #logger.debug(f"======date_range_df head======= \n {date_range_df.head()}")
+    current_df = (
+        date_range_df.sort_index()
+        .groupby("set_name")
+        .tail(1)
+        .reset_index()
+    )
+    #logger.debug(f"======current_df head======= \n {current_df}")
+    logger.debug(f"current_df.shape(): {current_df.shape}")
 
-    tables = []
-    numeric_tables = []
+    # Get the row index of the earliest date per set
 
-    for label, df_range in date_ranges.items():
-        # Group by setName
-        grouped = (
-            df_range.groupby("setName")
-            .agg(
-                avg_market_price=(price_col, "mean"),
-                totalSetNumber=("totalSetNumber", "mean")
-            )
-            .reset_index()
-            .sort_values(by="avg_market_price", ascending=False)
+    
+    # Select the prices at those earliest dates
+    filtered_min_date = date_range_df.index.min()
+    logger.debug(f"Ealriest date in range: {filtered_min_date}")
+    earliest_prices_df = date_range_df[date_range_df.index == filtered_min_date][["set_name", "price"]].reset_index()
+    earliest_prices_df = earliest_prices_df.rename(columns={"price": "earliest_price"})
+    #logger.debug(f"======earliest_prices======= \n {earliest_prices_df}")
+    #logger.debug(f"======earliest_prices['set_name'] value counts======= \n {earliest_prices_df['set_name'].value_counts()}")
+
+    current_df = current_df.merge(
+        earliest_prices_df[['set_name', 'earliest_price']],
+        on= 'set_name',
+        how='left'
+    )
+    
+    current_df["Change"] = current_df["price"] - current_df["earliest_price"]
+    current_df["% Change"] = (current_df["Change"] / current_df["earliest_price"]) * 100
+    current_df["Rank"] = current_df["price"].rank(ascending=False, method="first").astype(int)
+    current_df = current_df.sort_values(by="Rank", ascending=True)
+
+    #logger.debug(f"======current_df with Change head======= \n {current_df}")
+
+    '''if numeric_tables:
+        prev = numeric_tables[-1][["set_name", "price"]].rename(
+            columns={"price": "prev_price"}
         )
-        grouped.insert(0, "Rank", range(1, len(grouped) + 1))
+        merged = current_df.merge(prev, on="set_name", how="left")
+        merged["Change"] = merged["price"] - merged["prev_price"]
+        merged["% Change"] = merged["Change"] / merged["prev_price"] * 100
+    else:
+        merged = current_df.copy()
+        merged["Change"] = 0
+        merged["% Change"] = 0
 
-        # Compute change vs previous table
-        if numeric_tables:
-            prev = numeric_tables[-1][["setName", "avg_market_price"]].rename(
-                columns={"avg_market_price": "prev_price"}
-            )
-            merged = grouped.merge(prev, on="setName", how="left")
-            merged["Change"] = merged["avg_market_price"] - merged["prev_price"]
-            merged["% Change"] = (merged["Change"] / merged["prev_price"]) * 100
-        else:
-            merged = grouped.copy()
-            merged["Change"] = 0
-            merged["% Change"] = 0
-
-        # Save numeric version
-        numeric_tables.append(merged.copy())
-
-        # Format for display
-        merged["Change"] = merged["Change"].fillna(0).round(2)
-        merged["% Change"] = merged["% Change"].fillna(0).round(2)
-        merged["avg_market_price"] = merged["avg_market_price"].apply(lambda x: f"${x:,.2f}")
-        merged["totalSetNumber"] = merged["totalSetNumber"].round(0).astype(int)
-
-        tables.append(merged)
+    numeric_tables.append(merged.copy())
+    logger.debug(f"numeric_tables count after append: {len(numeric_tables)}")'''
 
     # --- Create Plotly Figure ---
     fig = go.Figure()
 
-    for i, (label, table) in enumerate(tables):
-        # Color coding for Change and % Change
-        change_colors = ["#00CC96" if x > 0 else "#EF553B" if x < 0 else "black" for x in table["Change"]]
+    # Color coding for Change and % Change
+    change_colors = ["#00CC96" if x > 0 else "#EF553B" if x < 0 else "black" for x in current_df["Change"]]
 
-        fig.add_trace(
-            go.Table(
-                header=dict(
-                    values=["Rank", "Set Name", "Avg. Market Price ($)", "Total Cards in Set", "Change", "% Change"],
-                    fill_color="#636EFA",
-                    align="center",
-                    font=dict(color="white", size=13)
-                ),
-                cells=dict(
-                    values=[
-                        table["Rank"],
-                        table["setName"],
-                        table["avg_market_price"],
-                        table["totalSetNumber"],
-                        [f"{x:+.2f}" for x in table["Change"]],
-                        [f"{x:+.2f}%" for x in table["% Change"]],
-                    ],
-                    fill_color="white",
-                    align="center",
-                    font=dict(size=12),
-                    font_color=[
-                        "black", "black", "black", "black", change_colors, change_colors
-                    ],
-                ),
-                visible=(label == "All Time")
+    fig.add_trace(
+        go.Table(
+            header=dict(
+                values=["Rank", "Set Name", "Current Market Price ($)", "Change ($)", "% Change"],
+                fill_color="#636EFA",
+                align="center",
+                font=dict(color="white", size=13)
+            ),
+            cells=dict(
+                values=[
+                    current_df["Rank"],
+                    current_df["set_name"],
+                    [f"${x:+.2f}" for x in current_df["price"]],
+                    [f"{x:+.2f}" for x in current_df["Change"]],
+                    [f"{x:+.2f}%" for x in current_df["% Change"]],
+                ],
+                fill_color="white",
+                align="center",
+                font=dict(size=12),
+                font_color=[
+                    "black", "black", "black", "black", change_colors, change_colors
+                ],
             )
         )
+    )
 
-    # --- Dropdown Menu ---
-    buttons = [
-        dict(
-            label=label,
-            method="update",
-            args=[
-                {"visible": [j == i for j in range(len(tables))]},
-                {"title": f"Top Pokémon Card Sets — {label}"}
-            ],
-        )
-        for i, label in enumerate(date_ranges.keys())
-    ]
 
     fig.update_layout(
         updatemenus=[dict(
-            buttons=buttons,
+            #buttons=buttons,
             direction="down",
             x=1.15,
             y=1.05,
             showactive=True
         )],
-        title={"text": "Top Pokémon Card Sets — All Time", "x": 0.5},
+        #title={"text": "Top Pokémon Card Sets — All Time", "x": 0.5},
     )
 
     return fig
@@ -300,13 +305,16 @@ def create_top_sets_table(ebay_metadata, price_col="average"):
 #========================================== PORTFOLIO VIEW ===================================================
 # ------------------- FUNCTION 2: Portfolio Performance Line Chart --------------
 def portfolio_view_performance_line_chart(ids:list, days:int=1):
+    logger.debug(f"Calling portfolio_view_performance_line_chart")
     portfolio_ids = ids
     portfolio_history = price_history_metadata[price_history_metadata['id'].isin(ids)].copy()
+    logger.debug(f"Loaded portfolio history for {len(ids)} ids -> rows={len(portfolio_history)}")
     portfolio_history['date'] = pd.to_datetime(portfolio_history['date'])
 
     if days > 1:
         max_date = portfolio_history['date'].max()
         portfolio_history = portfolio_history[portfolio_history['date'] >= max_date - pd.Timedelta(days=days)]
+        logger.debug(f"Filtered portfolio history to last {days} days -> rows={len(portfolio_history)}")
 
     portfolio_daily_value = (
         portfolio_history.groupby('date')['average']
@@ -314,7 +322,7 @@ def portfolio_view_performance_line_chart(ids:list, days:int=1):
         .reset_index()
         .sort_values('date')
     )
-    portfolio_daily_value.rename(columns={'average': 'total_value'}, inplace=True)
+    logger.debug(f"Aggregated portfolio_daily_value rows={len(portfolio_daily_value)}")
 
     fig = go.Figure()
     fig.add_trace(go.Scatter(
@@ -337,7 +345,9 @@ def portfolio_view_performance_line_chart(ids:list, days:int=1):
 
 # ------------------------ FUNCTION 3: Collection Breakdown Pie Chart -----------
 def portfolio_view_collection_pie_chart(ids:list):
-    portfolio_breakdown_df = portfolio_sample_df[portfolio_sample_df['id'].isin(ids)]
+    logger.debug(f"Calling portfolio_view_collection_pie_chart")
+    portfolio_breakdown_df = metadata_df[metadata_df['tcgPlayerId'].isin(ids)]
+    logger.debug(f"Filtered metadata for ids -> rows={len(portfolio_breakdown_df)}")
     portfolio_breakdown_df = portfolio_breakdown_df.groupby('setName')['id'].nunique().reset_index()
     portfolio_breakdown_df.columns = ['setName', 'UniqueItemCount']
     portfolio_breakdown_df = portfolio_breakdown_df.sort_values(by='UniqueItemCount', ascending=False)
@@ -358,13 +368,14 @@ def portfolio_view_collection_pie_chart(ids:list):
         margin=dict(l=20, r=20, t=60, b=20),
         legend=dict(orientation="h", yanchor="bottom", y=-0.05, xanchor="center", x=0.5)
     )
+    logger.debug(f"Prepared pie chart data with {len(portfolio_breakdown_df['setName'].unique())} sets")
     return fig
 
 
 #========================================== CARD VIEW ===================================================
 # ------------------------ FUNCTION 4: Price History Line Chart  -----------
 # Convert date columns to datetime
-ebay_metadata["date"] = pd.to_datetime(ebay_metadata["date"], errors="coerce")
+'''ebay_metadata["date"] = pd.to_datetime(ebay_metadata["date"], errors="coerce")
 price_history_metadata["date"] = pd.to_datetime(price_history_metadata["date"], errors="coerce")
 
 # Filter TCGplayer price history to Near Mint only
@@ -399,18 +410,21 @@ date_ranges = {
     "Last 30 Days": all_prices[all_prices["date"] >= max_date - pd.Timedelta(days=30)],
     "Last 15 Days": all_prices[all_prices["date"] >= max_date - pd.Timedelta(days=15)],
     "Last 7 Days": all_prices[all_prices["date"] >= max_date - pd.Timedelta(days=7)],
-}
+}'''
 
 # ---------------------------- Function ----------------------------
 def card_view_price_history_line_chart(card_id, card_name):
+    logger.debug(f"Calling card_view_price_history_line_chart")
     """
     Shows TCGplayer vs eBay price history for a single card as a line chart
     with a date dropdown filter and range slider.
     """
 
     card_df = all_prices[all_prices["id"] == card_id].copy()
+    logger.debug(f"Card id {card_id} ({card_name}) price points found: {len(card_df)}")
 
     if card_df.empty:
+        logger.debug(f"No price history available for card_id={card_id}")
         fig = go.Figure()
         fig.update_layout(
             title=f"No price history available for {card_name}",
@@ -491,13 +505,16 @@ def card_view_price_history_line_chart(card_id, card_name):
         )
     )
 
+    logger.debug(f"Prepared {len(traces)} traces for card price history")
     return fig
 
 # ----------------- FUNCTION 5: Grade Price Comparison  -----------
 def card_view_card_grade_price_comparison(card_name, grading_cost=20):
+    logger.debug(f"Calling card_view_card_grade_price_comparison")
     # -------------------- Filter Data --------------------
     graded_data = ebay_metadata[ebay_metadata['name'].str.contains(card_name, case=False, na=False)].copy()
     ungraded_data = price_history_metadata[price_history_metadata['name'].str.contains(card_name, case=False, na=False)].copy()
+    logger.debug(f"Found graded rows={len(graded_data)}, ungraded rows={len(ungraded_data)} for '{card_name}'")
 
     if len(graded_data) == 0:
         print(f"No graded data found for: {card_name}")
@@ -553,6 +570,7 @@ def card_view_card_grade_price_comparison(card_name, grading_cost=20):
         psa10_price = price_by_grade[10.0]
         roi = psa10_price - ungraded_avg_price - grading_cost
         roi_pct = (roi / (ungraded_avg_price + grading_cost)) * 100
+        logger.debug(f"Computed ROI for PSA10: roi={roi:.2f}, roi_pct={roi_pct:.2f}")
         verdict = "✓ WORTH GRADING" if roi > 0 else "✗ NOT WORTH GRADING"
         color = 'green' if roi > 0 else 'red'
 

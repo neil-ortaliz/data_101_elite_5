@@ -1,6 +1,8 @@
 import dash
 from dash import html, dcc, Input, Output, callback, State, ALL, ctx
 import dash_bootstrap_components as dbc
+
+import plotly.graph_objects as go
 from utils import get_image_urls
 from components import ban_card_container, graph_container, tab_card_container
 from components.portfolio_ui import create_portfolio_summary_metrics, create_risk_indicators, create_holdings_table
@@ -19,6 +21,7 @@ select = dbc.Row([
             {"label": "30 Days", "value": "30"},
             {"label": "3 Months", "value": "90"},
             {"label": "1 Year", "value": "365"},
+            {"label": "All Time", "value": "-1"},
         ],
         value="30"
     )
@@ -26,34 +29,34 @@ select = dbc.Row([
 
 ban_row = dbc.Row([
     dbc.Col([
-        ban_card_container(fig="total portfolio value goes here",title="Total Portfolio Value")
+        ban_card_container(fig=go.Figure(),title="Total Portfolio Value")
     ]),
     dbc.Col([
-        ban_card_container(fig="change goes here",title="Original Cost Basis")
+        ban_card_container(fig=go.Figure(),title="Original Cost Basis")
     ]),
     dbc.Col([
-        ban_card_container(fig="unrealized gain/loss here ",title="Unrealized Gain/Loss")
+        ban_card_container(fig=go.Figure(),title="Unrealized Gain/Loss")
     ]),
     dbc.Col([
-        ban_card_container(fig="change fig goes here", title="Value Change", header_id="ban-value-change")
+        ban_card_container(fig=go.Figure(), title="Value Change", header_id="ban-value-change")
     ]),
 ], class_name="g-3 mb-3")
 
 graph_row = dbc.Row([
-        dbc.Col([graph_container(fig="portfolio performance graph goes here", title="Portfolio Performance Vs Market")]),
-        dbc.Col([graph_container(fig="pie chart collection breakdown goes here", title="Collection Breakdown by Set")]),
+        dbc.Col([graph_container(fig=go.Figure(), title="Portfolio Performance Vs Market")]),
+        dbc.Col([graph_container(fig=go.Figure(), title="Collection Breakdown by Set")]),
 ], class_name="g-3 mb-3")
 
 grade_distribution_row = dbc.Row([
-    dbc.Col([graph_container(fig="grade distribution graph goes here", title="⭐ Grade Distribution (Your Portfolio vs Market Average)")]),
+    dbc.Col([graph_container(fig=go.Figure(), title="⭐ Grade Distribution (Your Portfolio vs Market Average)")]),
 ], class_name="g-3 mb-3")
 
 risk_row = dbc.Row([
-    dbc.Col([graph_container(fig="risk and intelligence metrics", title="⚠️ Risk & Intelligence Metrics")]),
+    dbc.Col([graph_container(fig=go.Figure(), title="⚠️ Risk & Intelligence Metrics")]),
 ], class_name="g-3 mb-3")
 
 holding_row = dbc.Row([
-    dbc.Col([graph_container(fig="holding portfolio table here", title="📋 Holdings Details")]),
+    dbc.Col([graph_container(fig=go.Figure(), title="📋 Holdings Details")]),
 ], class_name="g-3 mb-3")
 
 owned_cards = html.Div(
