@@ -68,6 +68,17 @@ price_history_metadata = price_history_df.merge(
 )
 price_history_metadata = price_history_metadata.dropna(subset="setName")
 
+# All three combined
+market_df = ebay_metadata.merge(
+    price_history_metadata[["id", "setId", "setName", "totalSetNumber", "updatedAt"]],
+    on=['id'],
+    how='left',
+)
+
+print(f"market_df columns: {market_df.columns}")
+
+market_df = market_df.dropna(subset='setName_x')
+
 # Date Format
 ebay_metadata['date'] = pd.to_datetime(ebay_metadata['date'])
 price_history_metadata['date'] = pd.to_datetime(price_history_metadata['date'])

@@ -4,6 +4,8 @@ from dash import html, dcc
 import dash_bootstrap_components as dbc
 
 from components import ban_card_container, graph_container
+from components.market_ui import create_market_overview_metrics, create_market_filters, create_top_movers_table
+from components.charts import market_view_set_performance_bar_chart
 
 dash.register_page(__name__, path="/",
                     title="Market", 
@@ -14,38 +16,32 @@ select = dbc.Select(
     id="select",
     options=[
         {"label": "24 Hours", "value": "1"},
-        {"label": "7 Days", "value": "2"},
-        {"label": "1 Month", "value": "3"},
-        {"label": "3 Months", "value": "4"},
-        {"label": "1 Year", "value": "5"},
+        {"label": "7 Days", "value": "7"},
+        {"label": "1 Month", "value": "30"},
+        {"label": "3 Months", "value": "90"},
+        {"label": "1 Year", "value": "365"},
     ],
 )
 
-ban_row = dbc.Row([
-            dbc.Col([
-                ban_card_container(fig="total market view goes here",title="Total Market Value")
-            ]),
-            dbc.Col([
-                ban_card_container(fig="change goes here",title="24h Change")
-            ]),
-            dbc.Col([
-                ban_card_container(fig="best set goes here ",title="Best Set")
-            ]),
-            dbc.Col([
-                ban_card_container(fig="active listings go here", title="Active Listings")
-            ]),
-            html.Div([
-                graph_container(fig="market graph goes here", title="Market Performances")
-            ])
-        ], class_name="g-3 mb-3")
+ban_row = create_market_overview_metrics()
 
 layout = html.Div([
+    create_market_filters(),
     select,
     html.Br(),
     dbc.Stack([
             ban_row,
             html.Div([
-                graph_container(fig="market graph goes here", title="Top Price Movers")
+                dcc.Graph(
+                    id="set-performance-chart",
+                    figure=market_view_set_performance_bar_chart()
+                )
+                #graph_container(, title="Top Price Movers")
+                #market_view_set_performance_bar_chart()
+            ]),
+            html.Div([
+                html.H4("Top Price Movers", className="mb-3"),
+                create_top_movers_table()
             ])
         ],
         gap=2),
