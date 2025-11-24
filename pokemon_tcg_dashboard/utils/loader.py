@@ -12,14 +12,16 @@ DATA_DIR = BASE_DIR / "data"
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-def load_data(filename: str) -> pd.DataFrame:
+def load_data(filename: str, parse_dates=[]) -> pd.DataFrame:
     """Load data from a CSV file into a pandas DataFrame."""
     logger.debug("Loading data file: %s", filename)
+    if len(parse_dates) >0:
+        return pd.read_csv(DATA_DIR / filename, index_col=0, parse_dates=parse_dates)
     return pd.read_csv(DATA_DIR / filename, index_col=0)
 
 def get_image_urls(filename: str="cards_metadata_table.csv", ids: list = []) -> pd.DataFrame:
     metadata_df = load_data(filename)
-    metadata_df = metadata_df[['tcgPlayerId','setName','name', 'rarity','imageUrl']]
+    #metadata_df = metadata_df[['tcgPlayerId','setName','name', 'rarity','imageUrl']]
     if ids:
         mask = metadata_df['tcgPlayerId'].isin(ids)
         logger.debug("Filtered metadata dataframe type: %s", type(metadata_df[mask]))
@@ -51,3 +53,9 @@ def get_set_price_history() -> pd.DataFrame:
     all_set_df = all_set_df.set_index("date")
     logger.debug("Unique values in all_set_df")
     return all_set_df
+
+def get_price_history():
+    df = load_data("price_history.csv",parse_dates=['date'])
+    df = df.set_index('date')
+
+    return df

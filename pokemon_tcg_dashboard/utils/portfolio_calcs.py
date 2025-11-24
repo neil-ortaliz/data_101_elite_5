@@ -35,12 +35,6 @@ class PortfolioCalculator:
         self.price_history = price_history_df.copy()   
         self.card_metadata = card_metadata_df.copy()
 
-        self.price_history = self.price_history.merge(
-            self.card_metadata[['id', 'tcgPlayerId']],
-            on='id',
-            how='left'
-        )
-
         logger.debug(self.price_history.head())
         # Ensure date is clean datetime
         self.price_history['date'] = (
@@ -55,6 +49,7 @@ class PortfolioCalculator:
     # -------------------------------------------------------------
     def get_current_prices(self) -> Dict[Any, float]:
         """Return the most recent market price for each card in the portfolio."""
+        print(self.price_history.head())
         latest_prices = (
             self.price_history
             .sort_values("date")

@@ -66,6 +66,7 @@ def create_market_overview_metrics(days:int=1):
     """
     # TODO: These values will come from Member 2's calculations
     # For now, use placeholder values
+    logger.debug("create_market_overview_metrics called!")
     
     price_history_df = load_data("price_history.csv")
     card_metadata_df = load_data("cards_metadata_table.csv")
