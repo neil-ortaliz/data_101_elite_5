@@ -34,47 +34,118 @@ class PortfolioCalculator:
             ).dt.tz_localize(None)
 
     # -------------------- VALUE METRICS --------------------
-    def get_current_prices(self) -> Dict[str, float]:
+    def get_current_prices(self, days: Optional[int] = None) -> Dict[str, float]:
         if self.portfolio.empty or self.price_history.empty:
             return {}
-        
-        latest_prices = (self.price_history.sort_values(["id", "date"], ascending=[True, False]).groupby("id").first())
-        portfolio_ids = set(self.portfolio["id"].unique())
 
+        # If days is None, get the latest prices
+        if days is None:
+            latest_prices = (
+                self.price_history
+                .sort_values(["id", "date"], ascending=[True, False])
+                .groupby("id")
+                .first()
+            )
+        else:
+            # Calculate the target date
+            target_date = pd.Timestamp.today().normalize() - pd.Timedelta(days=days)
+
+            # Filter price history to the target date
+            prices_on_date = self.price_history[self.price_history["date"] == target_date]
+            latest_prices = prices_on_date.set_index("id")
+
+        portfolio_ids = set(self.portfolio["id"].unique())
         return latest_prices.loc[latest_prices.index.isin(portfolio_ids), "market"].fillna(0).to_dict()
 
-    def calculate_total_portfolio_value(self) -> Dict[str, Union[float, str]]:
+    def calculate_total_portfolio_value(self, days: Optional[int] = None) -> Dict[str, Union[float, str]]:
         if self.portfolio.empty:
-            return {"value": 0.0, "formatted": "$0.00"}
+            return {
+                "value": 0.0,
+                "formatted": "$0.00",
+                "past_value": 0.0,
+                "past_formatted": "$0.00",
+                "percent_change": 0.0,
+                "percent_change_formatted": "0.0%"
+            }
         
-        current_prices = self.get_current_prices()
-
+        current_prices = self.get_current_prices(days=None)  # Always get latest prices
         total_value = sum(
             current_prices.get(row["id"], 0) * row["quantity"]
             for _, row in self.portfolio.iterrows()
         )
+        
+        if days is None:
+            return {
+                "value": total_value,
+                "formatted": f"${total_value:,.2f}",
+                "past_value": 0.0,
+                "past_formatted": "$0.00",
+                "percent_change": 0.0,
+                "percent_change_formatted": "0.0%"
+            }
+        
+        past_prices = self.get_current_prices(days=days)
+        if not past_prices:
+            past_value = 0.0
+        else:
+            past_value = sum(
+                past_prices.get(row["id"], 0) * row["quantity"]
+                for _, row in self.portfolio.iterrows()
+            )
+        
+        if past_value == 0:
+            percent_change = 0.0
+            percent_change_formatted = "0.0%"
+        else:
+            percent_change = (total_value - past_value) / past_value * 100
+            sign = "+" if percent_change >= 0 else "-"
+            percent_change_formatted = f"{sign}{abs(percent_change):.1f}%"
+        
+        return {
+            "value": total_value,
+            "formatted": f"${total_value:,.2f}",
+            "past_value": past_value,
+            "past_formatted": f"${past_value:,.2f}",
+            "percent_change": percent_change,
+            "percent_change_formatted": percent_change_formatted,
+        }
 
-        return {"value": total_value, "formatted": f"${total_value:,.2f}"}
-
-    def calculate_total_gain_loss(self) -> Dict[str, Any]:
+    def calculate_total_gain_loss(self, days: Optional[int] = None) -> Dict[str, Any]:
         if self.portfolio.empty:
             return {
                 "gain_loss_value": 0.0,
-                "gain_loss_pct": None,
+                "gain_loss_pct": 0.0,
                 "formatted_value": "$0.00",
-                "formatted_pct": "N/A",
+                "formatted_pct": "0.0%",
                 "type": "neutral",
             }
-        current_prices = self.get_current_prices()
 
-        total_cost = sum(row["buy_price"] * row["quantity"] for _, row in self.portfolio.iterrows())
-        total_current = sum(current_prices.get(row["id"], 0) * row["quantity"] for _, row in self.portfolio.iterrows())
+        # Get current prices (always latest for current total)
+        current_prices = self.get_current_prices(days=None)
+        total_current = sum(
+            current_prices.get(row["id"], 0) * row["quantity"]
+            for _, row in self.portfolio.iterrows()
+        )
+
+        # Get past prices if days specified, else use buy_price as cost basis
+        if days is None:
+            total_cost = sum(row["buy_price"] * row["quantity"] for _, row in self.portfolio.iterrows())
+        else:
+            past_prices = self.get_current_prices(days=days)
+            if not past_prices:
+                # If no past prices, fallback to buy_price as cost basis
+                total_cost = sum(row["buy_price"] * row["quantity"] for _, row in self.portfolio.iterrows())
+            else:
+                total_cost = sum(
+                    past_prices.get(row["id"], row["buy_price"]) * row["quantity"]
+                    for _, row in self.portfolio.iterrows()
+                )
 
         gain_loss_value = total_current - total_cost
-        gain_loss_pct = None if total_cost == 0 else (gain_loss_value / total_cost) * 100
+        gain_loss_pct = 0.0 if total_cost == 0 else (gain_loss_value / total_cost) * 100
 
         formatted_value = f"{gain_loss_value:+,.2f}"
-        formatted_pct = "N/A" if gain_loss_pct is None else f"{gain_loss_pct:+.1f}%"
+        formatted_pct = f"{gain_loss_pct:+.1f}%"
 
         type_ = "gain" if gain_loss_value > 0 else ("loss" if gain_loss_value < 0 else "neutral")
 
@@ -86,25 +157,98 @@ class PortfolioCalculator:
             "type": type_,
         }
 
-    def calculate_card_count(self) -> Dict[str, Union[int, str]]:
+    def calculate_card_count(self, days: Optional[int] = None) -> Dict[str, Union[int, str]]:
         if self.portfolio.empty:
-            return {"count": 0, "unique_cards": 0, "formatted": "0 cards"}
-        
+            return {
+                "count": 0,
+                "unique_cards": 0,
+                "formatted": "0 cards",
+                "change": 0,
+                "change_formatted": "+0 cards",
+            }
+
         total_quantity = int(self.portfolio["quantity"].sum())
         unique_cards = len(self.portfolio)
 
-        return {"count": total_quantity, "unique_cards": unique_cards, "formatted": f"{total_quantity:,} cards"}
+        if days is None:
+            return {
+                "count": total_quantity,
+                "unique_cards": unique_cards,
+                "formatted": f"{total_quantity:,} cards",
+                "change": 0,
+                "change_formatted": "+0 cards",
+            }
 
-    def calculate_average_card_value(self) -> Dict[str, Union[float, str]]:
-        counts = self.calculate_card_count()
+        # Calculate past total based on buy_date
+        cutoff_date = pd.Timestamp.today().normalize() - pd.Timedelta(days=days)
+        past_portfolio = self.portfolio[self.portfolio["buy_date"] <= cutoff_date]
 
-        if counts["count"] == 0:
-            return {"value": 0.0, "formatted": "$0.00"}
-        
-        total_value = self.calculate_total_portfolio_value()["value"]
-        avg = total_value / counts["count"]
+        past_total_quantity = int(past_portfolio["quantity"].sum())
+        change = total_quantity - past_total_quantity
+        sign = "+" if change >= 0 else "-"
+        change_formatted = f"{sign}{abs(change):,} cards"
 
-        return {"value": avg, "formatted": f"${avg:,.2f}"}
+        return {
+            "count": total_quantity,
+            "unique_cards": unique_cards,
+            "formatted": f"{total_quantity:,} cards",
+            "change": change,
+            "change_formatted": change_formatted,
+        }
+
+    def calculate_average_card_value(self, days: Optional[int] = None) -> Dict[str, Union[float, str]]:
+        counts = self.calculate_card_count(days=days)
+        current_count = counts["count"]
+
+        if current_count == 0:
+            return {
+                "value": 0.0,
+                "formatted": "$0.00",
+                "past_value": 0.0,
+                "past_formatted": "$0.00",
+                "change": 0.0,
+                "change_formatted": "$0.00 (0.0%)"
+            }
+
+        total_value = self.calculate_total_portfolio_value(days=None)["value"]
+        avg_current = total_value / current_count
+
+        if days is None:
+            return {
+                "value": avg_current,
+                "formatted": f"${avg_current:,.2f}",
+                "past_value": 0.0,
+                "past_formatted": "$0.00",
+                "change": 0.0,
+                "change_formatted": "0.0%"
+            }
+
+        # Calculate past average using past total value and past count
+        past_total_value = self.calculate_total_portfolio_value(days=days)["value"]
+        past_count = counts["count"] - counts["change"]  # past count from days ago
+
+        if past_count == 0:
+            avg_past = 0.0
+        else:
+            avg_past = past_total_value / past_count
+
+        change = avg_current - avg_past
+        if avg_past == 0:
+            percent_change = 0.0
+        else:
+            percent_change = (change / avg_past) * 100
+
+        sign = "+" if change >= 0 else "-"
+        change_formatted = f"{sign}{abs(percent_change):.1f}%"
+
+        return {
+            "value": avg_current,
+            "formatted": f"${avg_current:,.2f}",
+            "past_value": avg_past,
+            "past_formatted": f"${avg_past:,.2f}",
+            "change": change,
+            "change_formatted": change_formatted
+        }
 
     # -------------------- PERFORMANCE METRICS --------------------
     def calculate_time_weighted_returns(self) -> Optional[float]:
@@ -143,6 +287,60 @@ class PortfolioCalculator:
         excess_return = portfolio_return - benchmark_return
 
         return {"portfolio_return": portfolio_return, "benchmark_return": benchmark_return, "excess_return": excess_return}
+
+    # Gain or loss per card
+    def calculate_gain_loss_per_card(self) -> pd.DataFrame:
+        """
+        Calculate gain/loss for each card in the portfolio.
+
+        Returns:
+            pd.DataFrame: Columns include:
+                - id
+                - name (if available from metadata)
+                - quantity
+                - buy_price
+                - current_price
+                - total_cost
+                - total_current_value
+                - gain_loss_value
+                - gain_loss_pct
+                - type ('gain', 'loss', 'neutral')
+        """
+        if self.portfolio.empty or self.price_history.empty:
+            return pd.DataFrame()
+
+        current_prices = self.get_current_prices()
+        portfolio_copy = self.portfolio.copy()
+
+        # Merge with metadata for card name if available
+        portfolio_copy = portfolio_copy.merge(
+            self.card_metadata[['id', 'name', 'setName']], on='id', how='left'
+        )
+
+        portfolio_copy['current_price'] = portfolio_copy['id'].map(current_prices)
+        portfolio_copy['total_cost'] = portfolio_copy['buy_price'] * portfolio_copy['quantity']
+        portfolio_copy['total_current_value'] = portfolio_copy['current_price'] * portfolio_copy['quantity']
+        portfolio_copy['gain_loss_value'] = portfolio_copy['total_current_value'] - portfolio_copy['total_cost']
+        
+        # Handle division by zero
+        portfolio_copy['gain_loss_pct'] = np.where(
+            portfolio_copy['total_cost'] == 0,
+            None,
+            (portfolio_copy['gain_loss_value'] / portfolio_copy['total_cost']) * 100
+        )
+
+        def determine_type(val):
+            if val > 0:
+                return 'gain'
+            elif val < 0:
+                return 'loss'
+            else:
+                return 'neutral'
+
+        portfolio_copy['type'] = portfolio_copy['gain_loss_value'].apply(determine_type)
+
+        return portfolio_copy[['name', 'setName', 'quantity', 'buy_price', 'current_price', 
+                            'gain_loss_value', 'gain_loss_pct', 'type']]
 
     # -------------------------------------------------------------
     # RISK METRICS
@@ -328,19 +526,34 @@ if __name__ == "__main__":
     calc: PortfolioCalculator = PortfolioCalculator(portfolio_df, price_history_df, card_metadata_df)
 
     print("\n=== CURRENT PRICES ===")
-    print(calc.get_current_prices())
+    print(calc.get_current_prices(days = None))
+
+    print("\n=== CURRENT PRICES (100 days ago) ===")
+    print(calc.get_current_prices(days = 100))
 
     print("\n=== TOTAL PORTFOLIO VALUE ===")
-    print(calc.calculate_total_portfolio_value())
+    print(calc.calculate_total_portfolio_value(days = None))
+
+    print("\n=== TOTAL PORTFOLIO VALUE (100 days ago) ===")
+    print(calc.calculate_total_portfolio_value(days = 100))
 
     print("\n=== CARD COUNT ===")
-    print(calc.calculate_card_count())
+    print(calc.calculate_card_count(days = None))
+
+    print("\n=== CARD COUNT (7 days ago) ===")
+    print(calc.calculate_card_count(days = 7))
 
     print("\n=== AVERAGE CARD VALUE ===")
-    print(calc.calculate_average_card_value())
+    print(calc.calculate_average_card_value(days = None))
+
+    print("\n=== AVERAGE CARD VALUE (7 days ago) ===")
+    print(calc.calculate_average_card_value(days = 7))
 
     print("\n=== TOTAL GAIN/LOSS ===")
-    print(calc.calculate_total_gain_loss())
+    print(calc.calculate_total_gain_loss(days = 0))
+
+    print("\n=== TOTAL GAIN/LOSS (30 days ago) ===")
+    print(calc.calculate_total_gain_loss(days = 30))
 
     print("\n=== TIME-WEIGHTED RETURN (TWR) ===")
     twr = calc.calculate_time_weighted_returns()
@@ -354,13 +567,7 @@ if __name__ == "__main__":
 
     print("\n=== MARKET EXPOSURE ===")
     print(calc.calculate_market_exposure())
-
-    print("\n=== ALL PORTFOLIO METRICS ===")
-    all_metrics = calc.get_all_portfolio_metrics()
-    for key, value in all_metrics.items():
-        print(f"{key}: {value}")
-
-    print("\n=== ALL RISK METRICS ===")
-    all_risks = calc.get_all_risk_metrics()
-    for key, value in all_risks.items():
-        print(f"{key}: {value}")
+    
+    print("\n=== GAIN OR LOSS PER CARD ===")
+    per_card_gains = calc.calculate_gain_loss_per_card()
+    print(per_card_gains)
