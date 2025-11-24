@@ -4,137 +4,182 @@ from typing import Dict, Any, Optional, Union
 
 
 class PortfolioCalculator:
-    """Handles all portfolio-level calculations for card portfolios."""
+    """
+    PortfolioCalculator handles metrics for card portfolios:
+    - Value & performance metrics
+    - Risk metrics including VaR, Sharpe ratio, correlation
+    """
 
-    portfolio: pd.DataFrame
-    price_history: pd.DataFrame
-    card_metadata: pd.DataFrame
-
-    def __init__(self, 
-                 portfolio_df: pd.DataFrame, 
-                 price_history_df: pd.DataFrame, 
-                 card_metadata_df: pd.DataFrame) -> None:
-        """
-        Initialize the calculator.
-
-        Args:
-            portfolio_df (pd.DataFrame): Current portfolio with columns ['id'].
-            price_history_df (pd.DataFrame): Price history with columns ['id', 'date', 'market'].
-            card_metadata_df (pd.DataFrame): Metadata with ['id', 'set', 'rarity'].
-        """
+    def __init__(self, portfolio_df: pd.DataFrame, price_history_df: pd.DataFrame, card_metadata_df: pd.DataFrame) -> None:
         self.portfolio = portfolio_df.copy()
         self.price_history = price_history_df.copy()
         self.card_metadata = card_metadata_df.copy()
 
-        # Ensure date is clean datetime
-        self.price_history['date'] = (
-            pd.to_datetime(self.price_history['date'], errors='coerce')
-              .dt.tz_localize(None)
-        )
+        # Clean portfolio
+        if not self.portfolio.empty:
+            self.portfolio["buy_date"] = pd.to_datetime(
+                self.portfolio.get("buy_date"), errors="coerce"
+            ).dt.tz_localize(None)
+            self.portfolio["buy_price"] = pd.to_numeric(
+                self.portfolio.get("buy_price"), errors="coerce"
+            ).fillna(0)
+            self.portfolio["quantity"] = pd.to_numeric(
+                self.portfolio.get("quantity"), errors="coerce"
+            ).fillna(0)
 
-    # -------------------------------------------------------------
-    # PRICE LOOKUPS
-    # -------------------------------------------------------------
-    def get_current_prices(self) -> Dict[Any, float]:
-        """Return the most recent market price for each card in the portfolio."""
-        latest_prices = (
-            self.price_history
-            .sort_values("date")
-            .groupby("id", as_index=False)
-            .last()
-        )
-        current_prices = latest_prices.set_index("id")["market"].to_dict()
-        return current_prices
+        # Clean price history
+        if not self.price_history.empty:
+            self.price_history["date"] = pd.to_datetime(
+                self.price_history.get("date"), errors="coerce"
+            ).dt.tz_localize(None)
 
-    # -------------------------------------------------------------
-    # PORTFOLIO VALUE METRICS
-    # -------------------------------------------------------------
+    # -------------------- VALUE METRICS --------------------
+    def get_current_prices(self) -> Dict[str, float]:
+        if self.portfolio.empty or self.price_history.empty:
+            return {}
+        
+        latest_prices = (self.price_history.sort_values(["id", "date"], ascending=[True, False]).groupby("id").first())
+        portfolio_ids = set(self.portfolio["id"].unique())
+
+        return latest_prices.loc[latest_prices.index.isin(portfolio_ids), "market"].fillna(0).to_dict()
+
     def calculate_total_portfolio_value(self) -> Dict[str, Union[float, str]]:
-        """Calculate total current value of portfolio (1 unit per card)."""
+        if self.portfolio.empty:
+            return {"value": 0.0, "formatted": "$0.00"}
+        
         current_prices = self.get_current_prices()
+
         total_value = sum(
-            current_prices.get(row["id"], 0)
+            current_prices.get(row["id"], 0) * row["quantity"]
             for _, row in self.portfolio.iterrows()
         )
+
         return {"value": total_value, "formatted": f"${total_value:,.2f}"}
 
+    def calculate_total_gain_loss(self) -> Dict[str, Any]:
+        if self.portfolio.empty:
+            return {
+                "gain_loss_value": 0.0,
+                "gain_loss_pct": None,
+                "formatted_value": "$0.00",
+                "formatted_pct": "N/A",
+                "type": "neutral",
+            }
+        current_prices = self.get_current_prices()
+
+        total_cost = sum(row["buy_price"] * row["quantity"] for _, row in self.portfolio.iterrows())
+        total_current = sum(current_prices.get(row["id"], 0) * row["quantity"] for _, row in self.portfolio.iterrows())
+
+        gain_loss_value = total_current - total_cost
+        gain_loss_pct = None if total_cost == 0 else (gain_loss_value / total_cost) * 100
+
+        formatted_value = f"{gain_loss_value:+,.2f}"
+        formatted_pct = "N/A" if gain_loss_pct is None else f"{gain_loss_pct:+.1f}%"
+
+        type_ = "gain" if gain_loss_value > 0 else ("loss" if gain_loss_value < 0 else "neutral")
+
+        return {
+            "gain_loss_value": gain_loss_value,
+            "gain_loss_pct": gain_loss_pct,
+            "formatted_value": formatted_value,
+            "formatted_pct": formatted_pct,
+            "type": type_,
+        }
+
     def calculate_card_count(self) -> Dict[str, Union[int, str]]:
-        """Calculate total card count and unique card count."""
-        total_quantity = len(self.portfolio)
-        unique_cards = self.portfolio['id'].nunique()
-        return {"count": int(total_quantity), "unique_cards": unique_cards, "formatted": f"{int(total_quantity):,} cards"}
+        if self.portfolio.empty:
+            return {"count": 0, "unique_cards": 0, "formatted": "0 cards"}
+        
+        total_quantity = int(self.portfolio["quantity"].sum())
+        unique_cards = len(self.portfolio)
+
+        return {"count": total_quantity, "unique_cards": unique_cards, "formatted": f"{total_quantity:,} cards"}
 
     def calculate_average_card_value(self) -> Dict[str, Union[float, str]]:
-        """Average market value per card."""
+        counts = self.calculate_card_count()
+
+        if counts["count"] == 0:
+            return {"value": 0.0, "formatted": "$0.00"}
+        
         total_value = self.calculate_total_portfolio_value()["value"]
-        count = self.calculate_card_count()["count"]
-        avg_value = total_value / count if count > 0 else 0
-        return {"value": avg_value, "formatted": f"${avg_value:.2f}"}
+        avg = total_value / counts["count"]
 
-    def get_all_portfolio_metrics(self) -> Dict[str, Any]:
-        """Return all portfolio metrics at once."""
-        return {
-            "total_value": self.calculate_total_portfolio_value(),
-            "gain_loss": self.calculate_total_gain_loss(baseline_date="2025-01-01"),
-            "card_count": self.calculate_card_count(),
-            "average_value": self.calculate_average_card_value()
-        }
+        return {"value": avg, "formatted": f"${avg:,.2f}"}
 
-    def calculate_total_gain_loss(self, baseline_date: Union[str, pd.Timestamp]) -> Dict[str, Union[float, str]]:
-        """Calculate gain/loss between baseline_date and the most recent date."""
-        baseline_prices = (
-            self.price_history[self.price_history["date"] == baseline_date]
-            .set_index("id")["market"]
-            .to_dict()
-        )
-        current_prices = self.get_current_prices()
-        baseline_value = sum(baseline_prices.get(cid, 0) for cid in self.portfolio["id"])
-        current_value = sum(current_prices.get(cid, 0) for cid in self.portfolio["id"])
-        gain_loss = current_value - baseline_value
-        pct = (gain_loss / baseline_value * 100) if baseline_value > 0 else 0
-        return {
-            "baseline_value": baseline_value,
-            "current_value": current_value,
-            "gain_loss": gain_loss,
-            "gain_loss_pct": pct,
-            "formatted": f"{'+' if gain_loss >= 0 else '-'}${abs(gain_loss):,.2f}"
-        }
+    # -------------------- PERFORMANCE METRICS --------------------
+    def calculate_time_weighted_returns(self) -> Optional[float]:
+        if self.portfolio.empty or self.price_history.empty:
+            return None
+        
+        twr_list = []
 
-    def compare_to_benchmark(self, benchmark_return_pct: float, baseline_date: Union[str, pd.Timestamp]) -> Dict[str, float]:
-        """Compare portfolio gain/loss to an external benchmark."""
-        portfolio_gain = self.calculate_total_gain_loss(baseline_date)['gain_loss_pct']
-        difference = portfolio_gain - benchmark_return_pct
-        return {
-            'portfolio_return_pct': portfolio_gain,
-            'benchmark_return_pct': benchmark_return_pct,
-            'difference_pct': difference
-        }
+        for card_id in self.portfolio["id"].unique():
+            card_prices = self.price_history[self.price_history["id"] == card_id].sort_values("date")
+
+            if len(card_prices) < 2:
+                continue
+
+            period_returns = card_prices["market"].pct_change().dropna()
+            twr_list.append((1 + period_returns).prod() - 1)
+
+        if not twr_list:
+            return None
+        
+        return np.mean(twr_list) * 100
+
+    def compare_to_benchmark(self, benchmark_series: pd.Series) -> Optional[Dict[str, float]]:
+        if self.portfolio.empty or self.price_history.empty or benchmark_series.empty:
+            return None
+        
+        pivot = self.price_history.pivot(index="date", columns="id", values="market")
+        quantities = self.portfolio.set_index("id")["quantity"]
+        portfolio_values = (pivot * quantities).sum(axis=1).sort_index()
+
+        if len(portfolio_values) < 2:
+            return None
+        
+        portfolio_return = (portfolio_values.iloc[-1] / portfolio_values.iloc[0] - 1) * 100
+        benchmark_return = (benchmark_series.iloc[-1] / benchmark_series.iloc[0] - 1) * 100
+        excess_return = portfolio_return - benchmark_return
+
+        return {"portfolio_return": portfolio_return, "benchmark_return": benchmark_return, "excess_return": excess_return}
 
     # -------------------------------------------------------------
     # RISK METRICS
     # -------------------------------------------------------------
-    def calculate_diversity_score(self) -> Dict[str, Any]:
-        """Portfolio diversity based on set and rarity."""
-        if self.card_metadata.empty or self.portfolio.empty:
-            return {'score': 0, 'level': 'low', 'description': 'No data to calculate diversity.'}
 
+    def calculate_diversity_score(self) -> Dict[str, Any]:
+        """
+        Calculate portfolio diversity score.
+
+        Returns:
+            Dict[str, Any]: {
+                'score': float (0-100),
+                'level': str ('low', 'medium', 'high'),
+                'description': str
+            }
+        """
+        if self.portfolio.empty or self.card_metadata.empty:
+            return {'score': 0, 'level': 'low', 'description': 'No data available.'}
+
+        # Merge with card metadata
         portfolio_with_meta = self.portfolio.merge(
-            self.card_metadata[['id', 'setId', 'rarity']],
-            on='id',
-            how='left'
+            self.card_metadata[['id', 'setId', 'rarity']], on='id', how='left'
         )
-        total_cards = len(portfolio_with_meta)
-        if total_cards == 0:
-            return {'score': 0, 'level': 'low', 'description': 'No cards in portfolio.'}
 
         unique_sets = portfolio_with_meta['setId'].nunique()
         unique_rarities = portfolio_with_meta['rarity'].nunique()
 
-        set_shares = portfolio_with_meta.groupby('setId')['id'].count() / total_cards
+        total_cards = portfolio_with_meta['quantity'].sum()
+        if total_cards == 0:
+            return {'score': 0, 'level': 'low', 'description': 'No cards in portfolio.'}
+
+        # Herfindahl index
+        set_shares = portfolio_with_meta.groupby('setId')['quantity'].sum() / total_cards
         herfindahl = (set_shares ** 2).sum()
 
         diversity_score = (1 - herfindahl) * 100
-        diversity_score *= (1 + (unique_sets / 10)) * (1 + (unique_rarities / 5))
+        diversity_score *= (1 + unique_sets / 10) * (1 + unique_rarities / 5)
         diversity_score = min(diversity_score, 100)
 
         if diversity_score >= 70:
@@ -149,28 +194,38 @@ class PortfolioCalculator:
 
         return {'score': diversity_score, 'level': level, 'description': description}
 
+
     def calculate_volatility_rating(self) -> Dict[str, Any]:
-        """Portfolio volatility based on price returns."""
-        if self.portfolio.empty:
-            return {'volatility': 0, 'level': 'low', 'description': 'No portfolio to calculate volatility.'}
+        """
+        Calculate portfolio volatility based on price fluctuations.
+
+        Returns:
+            Dict[str, Any]: {
+                'volatility': float,
+                'level': str ('low', 'medium', 'high'),
+                'description': str
+            }
+        """
+        if self.portfolio.empty or self.price_history.empty:
+            return {'volatility': 0, 'level': 'low', 'description': 'No data available.'}
 
         portfolio_cards = self.portfolio['id'].unique()
         portfolio_prices = self.price_history[self.price_history['id'].isin(portfolio_cards)]
+
         volatilities = []
 
         for card_id in portfolio_cards:
             card_prices = portfolio_prices[portfolio_prices['id'] == card_id].sort_values('date')
             if len(card_prices) >= 2:
-                card_prices = card_prices.copy()
                 card_prices['returns'] = card_prices['market'].pct_change()
-                std_dev = card_prices['returns'].std()
-                if not np.isnan(std_dev):
-                    volatilities.append(std_dev)
+                vol = card_prices['returns'].std()
+                if vol is not None:
+                    volatilities.append(vol)
 
         if not volatilities:
             return {'volatility': 0, 'level': 'low', 'description': 'Insufficient data to calculate volatility.'}
 
-        avg_volatility = np.mean(volatilities) * 100
+        avg_volatility = float(np.mean(volatilities) * 100)
 
         if avg_volatility < 5:
             level = "low"
@@ -184,21 +239,32 @@ class PortfolioCalculator:
 
         return {'volatility': avg_volatility, 'level': level, 'description': description}
 
+
     def calculate_market_exposure(self) -> Dict[str, Any]:
-        """Concentration risk based on largest positions (1 card = 1 unit)."""
+        """
+        Calculate market exposure (concentration risk).
+
+        Returns:
+            Dict[str, Any]: {
+                'exposure': float,
+                'level': str ('low', 'medium', 'high'),
+                'description': str
+            }
+        """
         if self.portfolio.empty:
-            return {'exposure': 0, 'level': 'low', 'description': 'No market exposure.'}
+            return {'exposure': 0, 'level': 'low', 'description': 'No data available.'}
 
         current_prices = self.get_current_prices()
-        df = self.portfolio.copy()
-        df['card_value'] = df['id'].apply(lambda cid: current_prices.get(cid, 0))
-        total_value = df['card_value'].sum()
+        self.portfolio['card_value'] = self.portfolio.apply(
+            lambda row: current_prices.get(row['id'], 0) * row['quantity'], axis=1
+        )
 
+        total_value = self.portfolio['card_value'].sum()
         if total_value == 0:
             return {'exposure': 0, 'level': 'low', 'description': 'No market exposure.'}
 
-        max_position_pct = (df['card_value'].max() / total_value) * 100
-        top_3_pct = (df.nlargest(3, 'card_value')['card_value'].sum() / total_value) * 100
+        max_position_pct = float((self.portfolio['card_value'].max() / total_value) * 100)
+        top_3_pct = float((self.portfolio.nlargest(3, 'card_value')['card_value'].sum() / total_value) * 100)
 
         if max_position_pct > 30 or top_3_pct > 60:
             level = "high"
@@ -212,34 +278,89 @@ class PortfolioCalculator:
 
         return {'exposure': max_position_pct, 'level': level, 'description': description}
 
-    def get_all_risk_metrics(self) -> Dict[str, Any]:
-        """Return all risk metrics for the portfolio."""
+
+    def get_all_risk_metrics(self) -> Dict[str, Dict[str, Any]]:
+        """
+        Return all risk metrics for the portfolio.
+
+        Returns:
+            Dict[str, Dict[str, Any]]: {
+                'diversity': {...},
+                'volatility': {...},
+                'exposure': {...}
+            }
+        """
         return {
             'diversity': self.calculate_diversity_score(),
             'volatility': self.calculate_volatility_rating(),
             'exposure': self.calculate_market_exposure()
         }
 
+    # -------------------- AGGREGATED METRICS --------------------
+    def get_all_portfolio_metrics(self) -> Dict[str, Any]:
+        return {
+            "total_value": self.calculate_total_portfolio_value(),
+            "gain_loss": self.calculate_total_gain_loss(),
+            "card_count": self.calculate_card_count(),
+            "average_value": self.calculate_average_card_value(),
+            "time_weighted_return": self.calculate_time_weighted_returns()
+        }
+
+    def get_all_risk_metrics(self) -> Dict[str, Any]:
+        return {
+            'diversity': self.calculate_diversity_score(),
+            'volatility': self.calculate_volatility_rating(),
+            'exposure': self.calculate_market_exposure()
+        }
 
 # -------------------------------------------------------------
 # Testing Zone
 # -------------------------------------------------------------
 if __name__ == "__main__":
+    import pandas as pd
+
+    # Load CSVs
     price_history_df: pd.DataFrame = pd.read_csv('pokemon_tcg_dashboard/data/price_history.csv', parse_dates=['date'])
     card_metadata_df: pd.DataFrame = pd.read_csv('pokemon_tcg_dashboard/data/cards_metadata_table.csv')
-    portfolio_df: pd.DataFrame = pd.read_csv('pokemon_tcg_dashboard/data/portfolio_sample_id_only.csv')
+    portfolio_df: pd.DataFrame = pd.read_csv('pokemon_tcg_dashboard/data/portfolio_sample_id_only.csv', parse_dates=['buy_date'])
 
+    # Initialize calculator
     calc: PortfolioCalculator = PortfolioCalculator(portfolio_df, price_history_df, card_metadata_df)
 
-    print("Current Prices:", calc.get_current_prices())
-    print("Total Portfolio Value:", calc.calculate_total_portfolio_value())
-    print("Card Count:", calc.calculate_card_count())
-    print("Average Card Value:", calc.calculate_average_card_value())
-    print("Gain/Loss since 2025-10-02:", calc.calculate_total_gain_loss(baseline_date='2025-10-02'))
-    print("Diversity Score:", calc.calculate_diversity_score())
-    print("Volatility Rating:", calc.calculate_volatility_rating())
-    print("Market Exposure:", calc.calculate_market_exposure())
-    print("All Risk Metrics:", calc.get_all_risk_metrics())
+    print("\n=== CURRENT PRICES ===")
+    print(calc.get_current_prices())
 
-    benchmark_result: Dict[str, float] = calc.compare_to_benchmark(benchmark_return_pct=10, baseline_date='2025-10-02')
-    print("Compare to Benchmark:", benchmark_result)
+    print("\n=== TOTAL PORTFOLIO VALUE ===")
+    print(calc.calculate_total_portfolio_value())
+
+    print("\n=== CARD COUNT ===")
+    print(calc.calculate_card_count())
+
+    print("\n=== AVERAGE CARD VALUE ===")
+    print(calc.calculate_average_card_value())
+
+    print("\n=== TOTAL GAIN/LOSS ===")
+    print(calc.calculate_total_gain_loss())
+
+    print("\n=== TIME-WEIGHTED RETURN (TWR) ===")
+    twr = calc.calculate_time_weighted_returns()
+    print(f"{twr:.2f}%" if twr is not None else "N/A")
+
+    print("\n=== DIVERSITY SCORE ===")
+    print(calc.calculate_diversity_score())
+
+    print("\n=== VOLATILITY RATING ===")
+    print(calc.calculate_volatility_rating())
+
+    print("\n=== MARKET EXPOSURE ===")
+    print(calc.calculate_market_exposure())
+
+    print("\n=== ALL PORTFOLIO METRICS ===")
+    all_metrics = calc.get_all_portfolio_metrics()
+    for key, value in all_metrics.items():
+        print(f"{key}: {value}")
+
+    print("\n=== ALL RISK METRICS ===")
+    all_risks = calc.get_all_risk_metrics()
+    for key, value in all_risks.items():
+        print(f"{key}: {value}")
