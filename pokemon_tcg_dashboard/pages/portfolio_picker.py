@@ -446,8 +446,8 @@ def handle_offcanvas(
             card_entry = {
                 "tcgPlayerId": stored_id,
                 "quantity": qty,
-                "unit_price": stored_unit_price,
-                "date": selected_date
+                "buy_price": stored_unit_price,
+                "buy_date": selected_date
             }
 
             if existing_index is not None:
