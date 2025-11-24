@@ -60,6 +60,7 @@ class PortfolioCalculator:
             latest_prices = prices_on_date.set_index("id")
 
         portfolio_ids = set(self.portfolio["id"].unique())
+        
         return latest_prices.loc[latest_prices.index.isin(portfolio_ids), "market"].fillna(0).to_dict()
 
     def calculate_total_portfolio_value(self, days: Optional[int] = None) -> Dict[str, Union[float, str]]:
@@ -335,7 +336,7 @@ class PortfolioCalculator:
 
     # -------------------- AGGREGATED METRICS --------------------
     def get_all_portfolio_metrics(self) -> Dict[str, Any]:
-        
+
         return {
             "total_value": self.calculate_total_portfolio_value(),
             "gain_loss": self.calculate_total_gain_loss(),
