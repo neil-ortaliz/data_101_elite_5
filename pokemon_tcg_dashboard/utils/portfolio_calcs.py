@@ -7,7 +7,6 @@ class PortfolioCalculator:
     """
     PortfolioCalculator handles metrics for card portfolios:
     - Value & performance metrics
-    - Risk metrics including VaR, Sharpe ratio, correlation
     """
 
     def __init__(self, portfolio_df: pd.DataFrame, price_history_df: pd.DataFrame, card_metadata_df: pd.DataFrame) -> None:
@@ -33,12 +32,21 @@ class PortfolioCalculator:
                 self.price_history.get("date"), errors="coerce"
             ).dt.tz_localize(None)
 
+    # -------------------- HELPER FUNCTIONS --------------------
+    def format_value(self, value: float, sign: str = "") -> str:
+        """Format number with $ and K/M suffixes."""
+        if abs(value) >= 1_000_000:
+            return f"{sign}${abs(value)/1_000_000:.1f}M"
+        elif abs(value) >= 1_000:
+            return f"{sign}${abs(value)/1_000:.1f}K"
+        else:
+            return f"{sign}${abs(value):.2f}"
+
     # -------------------- VALUE METRICS --------------------
     def get_current_prices(self, days: Optional[int] = None) -> Dict[str, float]:
         if self.portfolio.empty or self.price_history.empty:
             return {}
 
-        # If days is None, get the latest prices
         if days is None:
             latest_prices = (
                 self.price_history
@@ -47,10 +55,7 @@ class PortfolioCalculator:
                 .first()
             )
         else:
-            # Calculate the target date
             target_date = pd.Timestamp.today().normalize() - pd.Timedelta(days=days)
-
-            # Filter price history to the target date
             prices_on_date = self.price_history[self.price_history["date"] == target_date]
             latest_prices = prices_on_date.set_index("id")
 
@@ -68,16 +73,13 @@ class PortfolioCalculator:
                 "percent_change_formatted": "0.0%"
             }
         
-        current_prices = self.get_current_prices(days=None)  # Always get latest prices
-        total_value = sum(
-            current_prices.get(row["id"], 0) * row["quantity"]
-            for _, row in self.portfolio.iterrows()
-        )
+        current_prices = self.get_current_prices(days=None)  # always latest
+        total_value = sum(current_prices.get(row["id"], 0) * row["quantity"] for _, row in self.portfolio.iterrows())
         
         if days is None:
             return {
                 "value": total_value,
-                "formatted": f"${total_value:,.2f}",
+                "formatted": self.format_value(total_value),
                 "past_value": 0.0,
                 "past_formatted": "$0.00",
                 "percent_change": 0.0,
@@ -85,13 +87,7 @@ class PortfolioCalculator:
             }
         
         past_prices = self.get_current_prices(days=days)
-        if not past_prices:
-            past_value = 0.0
-        else:
-            past_value = sum(
-                past_prices.get(row["id"], 0) * row["quantity"]
-                for _, row in self.portfolio.iterrows()
-            )
+        past_value = sum(past_prices.get(row["id"], 0) * row["quantity"] for _, row in self.portfolio.iterrows())
         
         if past_value == 0:
             percent_change = 0.0
@@ -103,9 +99,9 @@ class PortfolioCalculator:
         
         return {
             "value": total_value,
-            "formatted": f"${total_value:,.2f}",
+            "formatted": self.format_value(total_value),
             "past_value": past_value,
-            "past_formatted": f"${past_value:,.2f}",
+            "past_formatted": self.format_value(past_value),
             "percent_change": percent_change,
             "percent_change_formatted": percent_change_formatted,
         }
@@ -120,33 +116,22 @@ class PortfolioCalculator:
                 "type": "neutral",
             }
 
-        # Get current prices (always latest for current total)
         current_prices = self.get_current_prices(days=None)
-        total_current = sum(
-            current_prices.get(row["id"], 0) * row["quantity"]
-            for _, row in self.portfolio.iterrows()
-        )
+        total_current = sum(current_prices.get(row["id"], 0) * row["quantity"] for _, row in self.portfolio.iterrows())
 
-        # Get past prices if days specified, else use buy_price as cost basis
         if days is None:
             total_cost = sum(row["buy_price"] * row["quantity"] for _, row in self.portfolio.iterrows())
         else:
             past_prices = self.get_current_prices(days=days)
             if not past_prices:
-                # If no past prices, fallback to buy_price as cost basis
                 total_cost = sum(row["buy_price"] * row["quantity"] for _, row in self.portfolio.iterrows())
             else:
-                total_cost = sum(
-                    past_prices.get(row["id"], row["buy_price"]) * row["quantity"]
-                    for _, row in self.portfolio.iterrows()
-                )
+                total_cost = sum(past_prices.get(row["id"], row["buy_price"]) * row["quantity"] for _, row in self.portfolio.iterrows())
 
         gain_loss_value = total_current - total_cost
         gain_loss_pct = 0.0 if total_cost == 0 else (gain_loss_value / total_cost) * 100
-
-        formatted_value = f"{gain_loss_value:+,.2f}"
+        formatted_value = self.format_value(gain_loss_value, sign="+" if gain_loss_value>=0 else "-")
         formatted_pct = f"{gain_loss_pct:+.1f}%"
-
         type_ = "gain" if gain_loss_value > 0 else ("loss" if gain_loss_value < 0 else "neutral")
 
         return {
@@ -159,223 +144,109 @@ class PortfolioCalculator:
 
     def calculate_card_count(self, days: Optional[int] = None) -> Dict[str, Union[int, str]]:
         if self.portfolio.empty:
-            return {
-                "count": 0,
-                "unique_cards": 0,
-                "formatted": "0 cards",
-                "change": 0,
-                "change_formatted": "+0 cards",
-            }
+            return {"count": 0, "unique_cards": 0, "formatted": "0 cards", "change": 0, "change_formatted": "+0 cards"}
 
         total_quantity = int(self.portfolio["quantity"].sum())
         unique_cards = len(self.portfolio)
 
         if days is None:
-            return {
-                "count": total_quantity,
-                "unique_cards": unique_cards,
-                "formatted": f"{total_quantity:,} cards",
-                "change": 0,
-                "change_formatted": "+0 cards",
-            }
+            return {"count": total_quantity, "unique_cards": unique_cards, "formatted": f"{total_quantity:,} cards", "change": 0, "change_formatted": "+0 cards"}
 
-        # Calculate past total based on buy_date
         cutoff_date = pd.Timestamp.today().normalize() - pd.Timedelta(days=days)
         past_portfolio = self.portfolio[self.portfolio["buy_date"] <= cutoff_date]
-
         past_total_quantity = int(past_portfolio["quantity"].sum())
         change = total_quantity - past_total_quantity
         sign = "+" if change >= 0 else "-"
         change_formatted = f"{sign}{abs(change):,} cards"
 
-        return {
-            "count": total_quantity,
-            "unique_cards": unique_cards,
-            "formatted": f"{total_quantity:,} cards",
-            "change": change,
-            "change_formatted": change_formatted,
-        }
+        return {"count": total_quantity, "unique_cards": unique_cards, "formatted": f"{total_quantity:,} cards", "change": change, "change_formatted": change_formatted}
 
     def calculate_average_card_value(self, days: Optional[int] = None) -> Dict[str, Union[float, str]]:
         counts = self.calculate_card_count(days=days)
         current_count = counts["count"]
 
         if current_count == 0:
-            return {
-                "value": 0.0,
-                "formatted": "$0.00",
-                "past_value": 0.0,
-                "past_formatted": "$0.00",
-                "change": 0.0,
-                "change_formatted": "$0.00 (0.0%)"
-            }
+            return {"value": 0.0, "formatted": "$0.00", "past_value": 0.0, "past_formatted": "$0.00", "change": 0.0, "change_formatted": "$0.00 (0.0%)"}
 
         total_value = self.calculate_total_portfolio_value(days=None)["value"]
         avg_current = total_value / current_count
 
         if days is None:
-            return {
-                "value": avg_current,
-                "formatted": f"${avg_current:,.2f}",
-                "past_value": 0.0,
-                "past_formatted": "$0.00",
-                "change": 0.0,
-                "change_formatted": "0.0%"
-            }
+            return {"value": avg_current, "formatted": self.format_value(avg_current), "past_value": 0.0, "past_formatted": "$0.00", "change": 0.0, "change_formatted": "0.0%"}
 
-        # Calculate past average using past total value and past count
         past_total_value = self.calculate_total_portfolio_value(days=days)["value"]
-        past_count = counts["count"] - counts["change"]  # past count from days ago
-
-        if past_count == 0:
-            avg_past = 0.0
-        else:
-            avg_past = past_total_value / past_count
+        past_count = counts["count"] - counts["change"]
+        avg_past = 0 if past_count == 0 else past_total_value / past_count
 
         change = avg_current - avg_past
-        if avg_past == 0:
-            percent_change = 0.0
-        else:
-            percent_change = (change / avg_past) * 100
-
-        sign = "+" if change >= 0 else "-"
+        percent_change = 0 if avg_past == 0 else (change / avg_past) * 100
+        sign = "+" if percent_change >= 0 else "-"
         change_formatted = f"{sign}{abs(percent_change):.1f}%"
 
-        return {
-            "value": avg_current,
-            "formatted": f"${avg_current:,.2f}",
-            "past_value": avg_past,
-            "past_formatted": f"${avg_past:,.2f}",
-            "change": change,
-            "change_formatted": change_formatted
-        }
+        return {"value": avg_current, "formatted": self.format_value(avg_current), "past_value": avg_past, "past_formatted": self.format_value(avg_past), "change": change, "change_formatted": change_formatted}
 
     # -------------------- PERFORMANCE METRICS --------------------
     def calculate_time_weighted_returns(self) -> Optional[float]:
         if self.portfolio.empty or self.price_history.empty:
             return None
-        
-        twr_list = []
 
+        twr_list = []
         for card_id in self.portfolio["id"].unique():
             card_prices = self.price_history[self.price_history["id"] == card_id].sort_values("date")
-
             if len(card_prices) < 2:
                 continue
-
             period_returns = card_prices["market"].pct_change().dropna()
             twr_list.append((1 + period_returns).prod() - 1)
-
         if not twr_list:
             return None
-        
         return np.mean(twr_list) * 100
 
     def compare_to_benchmark(self, benchmark_series: pd.Series) -> Optional[Dict[str, float]]:
         if self.portfolio.empty or self.price_history.empty or benchmark_series.empty:
             return None
-        
+
         pivot = self.price_history.pivot(index="date", columns="id", values="market")
         quantities = self.portfolio.set_index("id")["quantity"]
         portfolio_values = (pivot * quantities).sum(axis=1).sort_index()
-
         if len(portfolio_values) < 2:
             return None
-        
         portfolio_return = (portfolio_values.iloc[-1] / portfolio_values.iloc[0] - 1) * 100
         benchmark_return = (benchmark_series.iloc[-1] / benchmark_series.iloc[0] - 1) * 100
         excess_return = portfolio_return - benchmark_return
-
         return {"portfolio_return": portfolio_return, "benchmark_return": benchmark_return, "excess_return": excess_return}
 
-    # Gain or loss per card
     def calculate_gain_loss_per_card(self) -> pd.DataFrame:
-        """
-        Calculate gain/loss for each card in the portfolio.
-
-        Returns:
-            pd.DataFrame: Columns include:
-                - id
-                - name (if available from metadata)
-                - quantity
-                - buy_price
-                - current_price
-                - total_cost
-                - total_current_value
-                - gain_loss_value
-                - gain_loss_pct
-                - type ('gain', 'loss', 'neutral')
-        """
         if self.portfolio.empty or self.price_history.empty:
             return pd.DataFrame()
-
+        
         current_prices = self.get_current_prices()
         portfolio_copy = self.portfolio.copy()
-
-        # Merge with metadata for card name if available
-        portfolio_copy = portfolio_copy.merge(
-            self.card_metadata[['id', 'name', 'setName']], on='id', how='left'
-        )
+        portfolio_copy = portfolio_copy.merge(self.card_metadata[['id', 'name', 'setName']], on='id', how='left')
 
         portfolio_copy['current_price'] = portfolio_copy['id'].map(current_prices)
         portfolio_copy['total_cost'] = portfolio_copy['buy_price'] * portfolio_copy['quantity']
         portfolio_copy['total_current_value'] = portfolio_copy['current_price'] * portfolio_copy['quantity']
         portfolio_copy['gain_loss_value'] = portfolio_copy['total_current_value'] - portfolio_copy['total_cost']
-        
-        # Handle division by zero
-        portfolio_copy['gain_loss_pct'] = np.where(
-            portfolio_copy['total_cost'] == 0,
-            None,
-            (portfolio_copy['gain_loss_value'] / portfolio_copy['total_cost']) * 100
-        )
+        portfolio_copy['gain_loss_pct'] = np.where(portfolio_copy['total_cost'] == 0, None, (portfolio_copy['gain_loss_value'] / portfolio_copy['total_cost']) * 100)
+        portfolio_copy['type'] = portfolio_copy['gain_loss_value'].apply(lambda val: 'gain' if val > 0 else ('loss' if val < 0 else 'neutral'))
 
-        def determine_type(val):
-            if val > 0:
-                return 'gain'
-            elif val < 0:
-                return 'loss'
-            else:
-                return 'neutral'
+        return portfolio_copy[['name', 'setName', 'quantity', 'buy_price', 'current_price', 'gain_loss_value', 'gain_loss_pct', 'type']]
 
-        portfolio_copy['type'] = portfolio_copy['gain_loss_value'].apply(determine_type)
-
-        return portfolio_copy[['name', 'setName', 'quantity', 'buy_price', 'current_price', 
-                            'gain_loss_value', 'gain_loss_pct', 'type']]
-
-    # -------------------------------------------------------------
-    # RISK METRICS
-    # -------------------------------------------------------------
-
+    # -------------------- RISK METRICS --------------------
     def calculate_diversity_score(self) -> Dict[str, Any]:
-        """
-        Calculate portfolio diversity score.
-
-        Returns:
-            Dict[str, Any]: {
-                'score': float (0-100),
-                'level': str ('low', 'medium', 'high'),
-                'description': str
-            }
-        """
         if self.portfolio.empty or self.card_metadata.empty:
             return {'score': 0, 'level': 'low', 'description': 'No data available.'}
-
-        # Merge with card metadata
-        portfolio_with_meta = self.portfolio.merge(
-            self.card_metadata[['id', 'setId', 'rarity']], on='id', how='left'
-        )
-
+        
+        portfolio_with_meta = self.portfolio.merge(self.card_metadata[['id', 'setId', 'rarity']], on='id', how='left')
         unique_sets = portfolio_with_meta['setId'].nunique()
         unique_rarities = portfolio_with_meta['rarity'].nunique()
-
         total_cards = portfolio_with_meta['quantity'].sum()
+
         if total_cards == 0:
             return {'score': 0, 'level': 'low', 'description': 'No cards in portfolio.'}
-
-        # Herfindahl index
+        
         set_shares = portfolio_with_meta.groupby('setId')['quantity'].sum() / total_cards
         herfindahl = (set_shares ** 2).sum()
-
         diversity_score = (1 - herfindahl) * 100
         diversity_score *= (1 + unique_sets / 10) * (1 + unique_rarities / 5)
         diversity_score = min(diversity_score, 100)
@@ -392,37 +263,27 @@ class PortfolioCalculator:
 
         return {'score': diversity_score, 'level': level, 'description': description}
 
-
     def calculate_volatility_rating(self) -> Dict[str, Any]:
-        """
-        Calculate portfolio volatility based on price fluctuations.
-
-        Returns:
-            Dict[str, Any]: {
-                'volatility': float,
-                'level': str ('low', 'medium', 'high'),
-                'description': str
-            }
-        """
         if self.portfolio.empty or self.price_history.empty:
             return {'volatility': 0, 'level': 'low', 'description': 'No data available.'}
-
+        
         portfolio_cards = self.portfolio['id'].unique()
         portfolio_prices = self.price_history[self.price_history['id'].isin(portfolio_cards)]
-
         volatilities = []
 
         for card_id in portfolio_cards:
             card_prices = portfolio_prices[portfolio_prices['id'] == card_id].sort_values('date')
+
             if len(card_prices) >= 2:
                 card_prices['returns'] = card_prices['market'].pct_change()
                 vol = card_prices['returns'].std()
+
                 if vol is not None:
                     volatilities.append(vol)
 
         if not volatilities:
             return {'volatility': 0, 'level': 'low', 'description': 'Insufficient data to calculate volatility.'}
-
+        
         avg_volatility = float(np.mean(volatilities) * 100)
 
         if avg_volatility < 5:
@@ -436,31 +297,19 @@ class PortfolioCalculator:
             description = "High volatility. Expect significant price swings."
 
         return {'volatility': avg_volatility, 'level': level, 'description': description}
-
-
+    
     def calculate_market_exposure(self) -> Dict[str, Any]:
-        """
-        Calculate market exposure (concentration risk).
-
-        Returns:
-            Dict[str, Any]: {
-                'exposure': float,
-                'level': str ('low', 'medium', 'high'),
-                'description': str
-            }
-        """
         if self.portfolio.empty:
             return {'exposure': 0, 'level': 'low', 'description': 'No data available.'}
-
+        
         current_prices = self.get_current_prices()
-        self.portfolio['card_value'] = self.portfolio.apply(
-            lambda row: current_prices.get(row['id'], 0) * row['quantity'], axis=1
-        )
 
+        self.portfolio['card_value'] = self.portfolio.apply(lambda row: current_prices.get(row['id'], 0) * row['quantity'], axis=1)
         total_value = self.portfolio['card_value'].sum()
+        
         if total_value == 0:
             return {'exposure': 0, 'level': 'low', 'description': 'No market exposure.'}
-
+        
         max_position_pct = float((self.portfolio['card_value'].max() / total_value) * 100)
         top_3_pct = float((self.portfolio.nlargest(3, 'card_value')['card_value'].sum() / total_value) * 100)
 
@@ -476,18 +325,8 @@ class PortfolioCalculator:
 
         return {'exposure': max_position_pct, 'level': level, 'description': description}
 
+    def get_all_risk_metrics(self) -> Dict[str, Any]:
 
-    def get_all_risk_metrics(self) -> Dict[str, Dict[str, Any]]:
-        """
-        Return all risk metrics for the portfolio.
-
-        Returns:
-            Dict[str, Dict[str, Any]]: {
-                'diversity': {...},
-                'volatility': {...},
-                'exposure': {...}
-            }
-        """
         return {
             'diversity': self.calculate_diversity_score(),
             'volatility': self.calculate_volatility_rating(),
@@ -496,19 +335,13 @@ class PortfolioCalculator:
 
     # -------------------- AGGREGATED METRICS --------------------
     def get_all_portfolio_metrics(self) -> Dict[str, Any]:
+        
         return {
             "total_value": self.calculate_total_portfolio_value(),
             "gain_loss": self.calculate_total_gain_loss(),
             "card_count": self.calculate_card_count(),
             "average_value": self.calculate_average_card_value(),
             "time_weighted_return": self.calculate_time_weighted_returns()
-        }
-
-    def get_all_risk_metrics(self) -> Dict[str, Any]:
-        return {
-            'diversity': self.calculate_diversity_score(),
-            'volatility': self.calculate_volatility_rating(),
-            'exposure': self.calculate_market_exposure()
         }
 
 # -------------------------------------------------------------
