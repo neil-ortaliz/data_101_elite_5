@@ -196,20 +196,17 @@ class MarketCalculator:
     # ---------------------------------------------------------
     # TOP MOVERS (N-DAY OR ALL-TIME)
     # ---------------------------------------------------------
-    def calculate_top_movers(self, period: str = '1d', n: int = 20, min_volume: Optional[int] = None) -> Dict[str, List[Dict[str, Any]]]:
+    def calculate_top_movers(self, days: Optional[int] = 1, n: int = 20, min_volume: Optional[int] = None) -> Dict[str, List[Dict[str, Any]]]:
         """
-        period supports: '1d', '7d', '15d', '30d', 'all'
+        Calculate top gainers and losers over the past `days`.
+        days: number of days to look back; None means all time.
         """
-        if period == 'all':
-            days: Optional[int] = None
-        else:
-            days = int(period.replace("d", ""))
-
         if self.price_history.empty:
             return {'gainers': [], 'losers': []}
 
         df = self.price_history.sort_values('date')
 
+        # Filter by days
         if days is None:
             period_data = df.copy()
         else:
@@ -320,11 +317,14 @@ if __name__ == "__main__":
     best_perf_set: Dict[str, Any] = market_calc.calculate_best_performing_set(days=30)
     active_listings: Dict[str, Any] = market_calc.count_active_listings(days=7)
     all_func: Dict[str, Any] = market_calc.get_all_market_metrics()
-    top_movers: Dict[str, List[Dict[str, Any]]] = market_calc.calculate_top_movers(period='7d', n=10)
+    
+    top_movers_none: Dict[str, List[Dict[str, Any]]] = market_calc.calculate_top_movers(days = None, n=10)
+    top_movers_7: Dict[str, List[Dict[str, Any]]] = market_calc.calculate_top_movers(days = 7, n=10)
 
     print(tot_market_val)
     print(market_change)
     print(best_perf_set)
     print(active_listings)
     print(all_func)
-    print(top_movers)
+    print(top_movers_none)
+    print(top_movers_7)
