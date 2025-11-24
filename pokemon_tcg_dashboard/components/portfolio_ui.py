@@ -2,20 +2,34 @@ import dash_bootstrap_components as dbc
 from dash import html, dash_table
 from components.market_ui import create_metric_card  # Reuse!
 
-def create_portfolio_summary_metrics():
+from utils.portfolio_calcs import PortfolioCalculator
+
+import logging
+logger = logging.getLogger(__name__)
+
+def create_portfolio_summary_metrics(selected_cards=None, days=1):
     """
     Create the 4 metric cards for Portfolio View
     
     Returns:
         dbc.Row with 4 portfolio metric cards
     """
-    # TODO: Values will come from Member 2's portfolio calculations
-    
+    logging.debug("create_portfolio_summary_metrics called!")
+    if selected_cards is None:
+        logging.debug(f"selected_cards is None")
+    else:
+        logging.debug(f"passing selected_cards len with lenght of {len(selected_cards)}")
+        logging.debug(f"selected_cards: {selected_cards}")
+    portfolio_calculator = PortfolioCalculator(selected_cards)
+    total_portfolio_value = portfolio_calculator.calculate_total_portfolio_value()
+    logger.debug(f"total_portfolio_value {total_portfolio_value}")
+    card_nums = portfolio_calculator.calculate_card_count()
+
     metrics_row = dbc.Row([
         dbc.Col(
             create_metric_card(
                 title="Total Portfolio Value",
-                value="$12,450",
+                value= total_portfolio_value['formatted'],
                 change="+$1,250 (+11.2%)",
                 change_type="positive"
             ),
@@ -33,8 +47,8 @@ def create_portfolio_summary_metrics():
         dbc.Col(
             create_metric_card(
                 title="Number of Cards",
-                value="156",
-                change="+3 this week",
+                value=card_nums['formatted'],
+                change=f"{card_nums['unique_cards']} unique cards",
                 change_type="neutral"
             ),
             width=12, md=6, lg=3, className="mb-3"

@@ -46,7 +46,7 @@ class MarketCalculator:
     # ---------------------------------------------------------
     # N-DAY OR ALL-TIME MARKET CHANGE
     # ---------------------------------------------------------
-    def calculate_change(self, days: Optional[int] = None) -> Dict[str, Any]:
+    def calculate_change(self, days: Optional[int] = -1) -> Dict[str, Any]:
         """
         Calculate market change.
         days=None means all-time.
@@ -58,7 +58,7 @@ class MarketCalculator:
             # Latest price
             latest = df.groupby('id').last()['market']
 
-            if days is None:
+            if days is -1:
                 # Use earliest available price
                 past = df.groupby('id').first()['market']
             else:
@@ -110,16 +110,16 @@ class MarketCalculator:
     # ---------------------------------------------------------
     # BEST PERFORMING SET (N-DAY OR ALL-TIME)
     # ---------------------------------------------------------
-    def calculate_best_performing_set(self, days: Optional[int] = None) -> Dict[str, Any]:
+    def calculate_best_performing_set(self, days: Optional[int] = -1) -> Dict[str, Any]:
         """
         Best performing set over N days or all-time.
-        days=None means all-time.
+        days=-1 means all-time.
         """
 
         df = self.price_history.sort_values("date")
 
         try:
-            if days is None:
+            if days is -1:
                 recent = df
             else:
                 cutoff = df['date'].max() - timedelta(days=days)
@@ -164,14 +164,14 @@ class MarketCalculator:
     # ---------------------------------------------------------
     # ACTIVE LISTINGS (N-DAY OR ALL-TIME)
     # ---------------------------------------------------------
-    def count_active_listings(self, days: Optional[int] = None) -> Dict[str, Any]:
+    def count_active_listings(self, days: Optional[int] = -1) -> Dict[str, Any]:
         """
         Count active listings.
-        days=None means all-time.
+        days=-1 means all-time.
         """
 
         try:
-            if days is None:
+            if days is -1:
                 active = self.price_history
             else:
                 cutoff = self.price_history['date'].max() - timedelta(days=days)

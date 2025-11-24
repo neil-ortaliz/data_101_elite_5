@@ -2,6 +2,12 @@ import dash
 from dash import Dash, html, dcc
 import dash_bootstrap_components as dbc
 
+import logging
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s — %(levelname)s — %(name)s — %(message)s"
+)
 
 app = Dash(__name__, use_pages=True, 
            external_stylesheets=[
@@ -34,4 +40,5 @@ app.layout = html.Div([
 
 
 if __name__ == '__main__':
+    
     app.run(debug=True)

@@ -5,6 +5,10 @@ import pandas as pd
 from utils.market_calcs import MarketCalculator
 from utils.loader import load_data
 
+import logging
+logger = logging.getLogger(__name__)
+
+
 def create_metric_card(title, value, change=None, change_type="neutral"):
     """
     Create a single metric card
@@ -66,42 +70,44 @@ def create_market_overview_metrics(days:int=1):
     price_history_df = load_data("price_history.csv")
     card_metadata_df = load_data("cards_metadata_table.csv")
     market_calculator = MarketCalculator(price_history_df, card_metadata_df)
-
-
+    market_change_type = "positive" if market_calculator.calculate_change(days)['change_value'] > 0 else "negative" if market_calculator.calculate_change(days)['change_value'] < 0 else "neutral"
+    set_change_type = "positive" if market_calculator.calculate_best_performing_set(days)['change_pct'] > 0 else "negative" if market_calculator.calculate_best_performing_set(days)['change_pct'] < 0 else "neutral"
+    logger.debug(f"total_market_value: {market_calculator.calculate_total_market_value()}")
+    logger.debug(f"price_change: {market_calculator.calculate_change(days)}")
     metrics_row = dbc.Row([
         dbc.Col(
             create_metric_card(
                 title="Total Market Value",
                 value=market_calculator.calculate_total_market_value()['formatted'],
-                change=market_calculator.calculate_change(days)['formatted_value'],
-                change_type="positive"
+                #change=market_calculator.calculate_change(days)['formatted_value'],
+                change_type= market_change_type
             ),
             width=12, md=6, lg=3, className="mb-3"
         ),
         dbc.Col(
             create_metric_card(
-                title="24h Change",
-                value="+1.8%",
-                change="↑ $812K",
-                change_type="positive"
+                title=f"{days} Change",
+                value=market_calculator.calculate_change(days)['formatted_pct'],
+                change=market_calculator.calculate_change(days)['formatted_value'],
+                change_type=market_change_type
             ),
             width=12, md=6, lg=3, className="mb-3"
         ),
         dbc.Col(
             create_metric_card(
                 title="Best Performing Set",
-                value="SV151",
-                change="+5.2%",
-                change_type="positive"
+                value=market_calculator.calculate_best_performing_set(days)['set_name'],
+                change=market_calculator.calculate_best_performing_set(days)['formatted'],
+                change_type=set_change_type
             ),
             width=12, md=6, lg=3, className="mb-3"
         ),
         dbc.Col(
             create_metric_card(
                 title="Active Listings",
-                value="12,453",
-                change="+342",
-                change_type="neutral"
+                value=market_calculator.count_active_listings(days)['count'],
+                #change="+342",
+                #change_type="neutral"
             ),
             width=12, md=6, lg=3, className="mb-3"
         ),
