@@ -47,6 +47,7 @@ def update_card_page(pathname):
     #print(f"card_number: {card_number}")
     card_metadata = CARD_DATA_FETCHER.get_card_by_id(card_number)
     logger.debug(f"card_metadata retrieved: {card_metadata}")
+    
     if card_metadata is None:
         # GO TO 404 PAGE
         #return html.H3("Card Not Found"), None
