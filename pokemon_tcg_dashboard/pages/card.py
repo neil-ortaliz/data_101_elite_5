@@ -1,11 +1,11 @@
 import dash
 from dash import html, dcc, Input, Output, callback, State, ALL, ctx
 import dash_bootstrap_components as dbc
-from utils import get_card_metadata
+#from utils import get_card_metadata
 from components import ban_card_container, graph_container, tab_card_container
 from components.card_ui import create_card_header, create_action_buttons
 
-
+from global_variables import CARD_DATA_FETCHER
 
 #dash.register_page(__name__, path_template="/card/<report_id>")
 
@@ -13,8 +13,6 @@ dash.register_page(__name__, path_template="/card/<card_id>",
                     #title="Card View", 
                     #name="Card View",
                     )
-
-
 
 
 def layout(card_id=None, **kwargs):
@@ -43,10 +41,12 @@ def update_card_page(pathname):
     print(pathname)
     card_number = pathname.split("/")[-1]
     #print(f"card_number: {card_number}")
-    card_metadata = get_card_metadata(card_number)
+    card_metadata = CARD_DATA_FETCHER.get_card_by_id(card_number)
 
     if card_metadata.empty:
-        return html.H3("Card Not Found"), None
+        # GO TO 404 PAGE
+        #return html.H3("Card Not Found"), None
+        pass
     
     else:
         # Prepare data for create_card_header
@@ -56,7 +56,7 @@ def update_card_page(pathname):
             "rarity": card_metadata['rarity'],
             "card_number": card_metadata['cardNumber'],
             "image_url": card_metadata['imageUrl'],
-            "current_price": "$45.99",  # TODO: Get from Member 2
+            "current_price": card_metadata['prices.market'],  
             "psa10_price": "$120.00",   # TODO: Get from Member 2
             "ungraded_price": "$38.50", # TODO: Get from Member 2
             "total_listings": 234       # TODO: Get from Member 2

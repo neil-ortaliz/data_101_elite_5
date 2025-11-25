@@ -92,7 +92,7 @@ class CardDataFetcher:
         if use_cache and cache_key in self._cache:
             return self._cache[cache_key]
 
-        card_info_df = self.card_metadata[self.card_metadata["id"] == card_id]
+        card_info_df = self.card_metadata[self.card_metadata["tcgPlayerId"] == card_id]
         if card_info_df.empty:
             return None
 
