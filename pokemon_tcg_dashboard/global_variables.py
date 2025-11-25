@@ -10,3 +10,5 @@ SET_PRICE_HISTORY_DFS = get_set_price_history()
 
 SET_OPTIONS = sorted(CARD_METADATA_DF["setName"].dropna().unique())
 RARITY_OPTIONS = sorted(CARD_METADATA_DF["rarity"].dropna().unique())
+
+CARD_DATA_FETCHER = CardDataFetcher(CARD_METADATA_DF, PRICE_HISTORY_DF, EBAY_METADATA_DF)
