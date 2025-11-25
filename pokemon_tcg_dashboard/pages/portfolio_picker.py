@@ -451,7 +451,7 @@ def handle_offcanvas(
             # Check if card already exists in selected_cards
             existing_index = next((i for i, c in enumerate(selected_cards) if c["tcgPlayerId"] == stored_id), None)
             card_entry = {
-                "tcgPlayerId": stored_id,
+                "tcgPlayerId": int(stored_id),
                 "quantity": qty,
                 "buy_price": stored_unit_price,
                 "buy_date": selected_date
