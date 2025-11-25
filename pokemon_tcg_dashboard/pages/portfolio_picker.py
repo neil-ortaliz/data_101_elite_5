@@ -291,10 +291,18 @@ def update_images(selected_sets, selected_types, searched_text,page, cards_metad
     cards = []
     for _, row in filtered.iterrows():
         cards.append(
-            html.Button(
+            dbc.Button(
                 dbc.Card(
                     [
-                        dbc.CardImg(src=row["imageUrl"], top=True),
+                        dbc.CardImg(src=row["imageUrl"], 
+                                    top=True,
+                                    class_name='card-image'),
+                        dbc.CardImgOverlay(
+                            dbc.CardBody(
+                                dbc.Button("View Details", color="Link")
+                            ),
+                            class_name="hover-overlay"
+                        ),
                         dbc.CardFooter(
                             [
                                 html.P(row["name"], className="card-text", style={"marginBottom": "8px"}),
@@ -318,7 +326,7 @@ def update_images(selected_sets, selected_types, searched_text,page, cards_metad
                         "height": "100%",
                     },
                 ),
-                id={"type": "card-button", "index": row["tcgPlayerId"]},
+                id={"type": "portfolio-card-button", "index": row["tcgPlayerId"]},
                 style={
                     "border": "none",
                     "background": "none",
@@ -326,7 +334,7 @@ def update_images(selected_sets, selected_types, searched_text,page, cards_metad
                     "width": "100%",
                     "cursor": "pointer",
                 },
-                href=f"/card/{row['tcgPlayerId']}
+                href=f"/card/{row['tcgPlayerId']}",
             )
         )
     return cards

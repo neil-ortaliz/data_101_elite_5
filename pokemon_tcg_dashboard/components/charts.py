@@ -45,11 +45,11 @@ import logging
 # initialize module logger
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
-
+from global_variables import PRICE_HISTORY_DF, CARD_METADATA_DF
 # ----------------------------- Call data -------------------------------------
 ebay_df = load_data('ebay_price_history.csv')
-metadata_df = load_data('cards_metadata_table.csv')
-price_history_df = load_data('price_history.csv')
+metadata_df = CARD_METADATA_DF
+price_history_df = PRICE_HISTORY_DF
 #portfolio_sample_df = load_data('portfolio_cards_metadata_table.csv')
 
 # ------------------------------ Merge Data --------------------------------------
@@ -87,9 +87,6 @@ def merge_price_history_metadata_dfs(price_history_metadata, metadata_df):
 def merge_all_pricing_dfs():
     logger.debug("merge_all_pricing_dfs was called!")
     # All three combined
-    ebay_df = load_data('ebay_price_history.csv')
-    metadata_df = load_data('cards_metadata_table.csv')
-    price_history_df = load_data('price_history.csv')
     ebay_metadata = merge_ebay_metadata_dfs(ebay_df, metadata_df)
     price_history_metadata = merge_price_history_metadata_dfs(price_history_df, metadata_df)
     market_df = ebay_metadata.merge(
@@ -153,8 +150,6 @@ def market_view_set_performance_bar_chart(time_range="All Time"):
     - Plotly Figure
     """
     # 'date' is datetime
-    ebay_df = load_data('ebay_price_history.csv')
-    metadata_df = load_data('cards_metadata_table.csv')
     ebay_metadata_df = merge_ebay_metadata_dfs(ebay_df, metadata_df)
     latest_set_prices = compute_price_change(ebay_metadata_df)
     latest_set_prices['date'] = pd.to_datetime(latest_set_prices['date'])
