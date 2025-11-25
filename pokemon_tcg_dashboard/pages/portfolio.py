@@ -104,7 +104,8 @@ def show_portfolio(selected_ids):
     if not selected_ids:
         return html.Div("No selected cards for your portfolio")
     
-    portfolio_df = get_image_urls(ids=selected_ids)
+    selected_ids_list = [item['tcgPlayerId'] for item in selected_ids]
+    portfolio_df = get_image_urls(ids=selected_ids_list)
     #print(portfolio_df)
 
     cards = []

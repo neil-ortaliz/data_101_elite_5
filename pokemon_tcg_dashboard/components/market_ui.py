@@ -1,12 +1,15 @@
 import dash_bootstrap_components as dbc
 from dash import html, dash_table
 import pandas as pd
-
+from dash import dcc
 from utils.market_calcs import MarketCalculator
 from utils.loader import load_data
 
+from global_variables import SET_OPTIONS, RARITY_OPTIONS
+
 import logging
 logger = logging.getLogger(__name__)
+
 
 
 def create_metric_card(title, value, change=None, change_type="neutral"):
@@ -126,25 +129,25 @@ def create_market_filters():
     # TODO: Dropdown options will come from Member 2's data
     # Placeholder options for now
     
-    from dash import dcc
     
-    set_options = [
+    
+    '''set_options = [
         {"label": "All Sets", "value": "all"},
         {"label": "Scarlet & Violet 151", "value": "sv151"},
         {"label": "Obsidian Flames", "value": "obf"},
         {"label": "Paldea Evolved", "value": "pev"},
         {"label": "Temporal Forces", "value": "tef"},
         {"label": "Twilight Masquerade", "value": "twm"},
-    ]
+    ]'''
     
-    rarity_options = [
+    '''rarity_options = [
         {"label": "All Rarities", "value": "all"},
         {"label": "Common", "value": "common"},
         {"label": "Uncommon", "value": "uncommon"},
         {"label": "Rare", "value": "rare"},
         {"label": "Ultra Rare", "value": "ultra_rare"},
         {"label": "Special Illustration Rare", "value": "special_rare"},
-    ]
+    ]'''
     
     filters = dbc.Row([
         # Search bar
@@ -162,9 +165,10 @@ def create_market_filters():
         # Set filter
         dbc.Col([
             dcc.Dropdown(
-                id="set-filter",
-                options=set_options,
-                value="all",
+                id="market-set-select",
+                options=SET_OPTIONS,
+                #value="all",
+                multi=True,
                 placeholder="Filter by Set",
                 clearable=False,
                 style={"borderRadius": "5px"}
@@ -174,10 +178,11 @@ def create_market_filters():
         # Rarity filter
         dbc.Col([
             dcc.Dropdown(
-                id="rarity-filter",
-                options=rarity_options,
-                value="all",
+                id="market-rarity-select",
+                options=RARITY_OPTIONS,
+                #value="all",
                 placeholder="Filter by Rarity",
+                multi=True,
                 clearable=False,
                 style={"borderRadius": "5px"}
             )

@@ -45,7 +45,7 @@ import logging
 # initialize module logger
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
-from global_variables import PRICE_HISTORY_DF, CARD_METADATA_DF, EBAY_METADATA_DF
+from global_variables import PRICE_HISTORY_DF, CARD_METADATA_DF, EBAY_METADATA_DF, SET_PRICE_HISTORY_DFS
 # ----------------------------- Call data -------------------------------------
 ebay_df = EBAY_METADATA_DF.set_index('date')
 metadata_df = CARD_METADATA_DF
@@ -201,7 +201,7 @@ def market_view_set_performance_bar_chart(time_range="All Time"):
     return fig
 
 # ------------------------------------ TABLE FORM ------------------------------------------
-def create_top_sets_table(price_col="price",days=7):
+def create_top_sets_table(price_col="price",days=7, set_names=None):
     logger.debug(f"Calling create_top_sets_table")
     """
     Parameters
@@ -215,7 +215,13 @@ def create_top_sets_table(price_col="price",days=7):
     #ebay_metadata[price_col] = pd.to_numeric(ebay_metadata[price_col], errors="coerce")
     #ebay_metadata["date"] = pd.to_datetime(ebay_metadata["date"], errors="coerce")
     days = int(days) # Ensure Numeric value
-    set_price_history_df = get_set_price_history()
+    set_price_history_df = SET_PRICE_HISTORY_DFS.copy()
+
+    if set_names is not None:
+        if isinstance(set_names, str):
+            set_names = [set_names]
+        set_price_history_df = set_price_history_df[set_price_history_df['set_name'].isin(set_names)]
+        
     set_price_history_df[price_col] = pd.to_numeric(set_price_history_df[price_col], errors="coerce")
     #logger.debug(f"Loaded set price history (rows={set_price_history_df.shape[0]}, cols={set_price_history_df.shape[1]})")
 

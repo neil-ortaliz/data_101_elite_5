@@ -7,7 +7,7 @@ from datetime import date
 import logging
 logger = logging.getLogger(__name__)
 
-from global_variables import PRICE_HISTORY_DF, CARD_METADATA_DF
+from global_variables import PRICE_HISTORY_DF, CARD_METADATA_DF, SET_OPTIONS, RARITY_OPTIONS
 
 dash.register_page(
     __name__,
@@ -34,14 +34,16 @@ clear_button = dbc.Button("Clear Selected Cards",
 # Dropdowns
 set_select = dcc.Dropdown(
     id="set-select",
+    options=SET_OPTIONS,
     multi=True,
     placeholder="Filter By Set"
 )
 
 rarity_select = dcc.Dropdown(
     id="rarity-select",
+    options=RARITY_OPTIONS,
     multi=True,
-    placeholder="Filter a Rarity"
+    placeholder="Filter By Rarity"
 )
 
 # Offcanvas
@@ -291,21 +293,30 @@ def update_images(selected_sets, selected_types, searched_text,page, cards_metad
     cards = []
     for _, row in filtered.iterrows():
         cards.append(
-            dbc.Button(
+            html.Div(
                 dbc.Card(
                     [
-                        dbc.CardImg(src=row["imageUrl"], 
-                                    top=True,
-                                    class_name='card-image'),
+                        dbc.CardImg(
+                            src=row["imageUrl"],
+                            top=True,
+                            class_name='card-image'
+                        ),
                         dbc.CardImgOverlay(
                             dbc.CardBody(
-                                dbc.Button("View Details", color="Link")
+                                dbc.Button("View Details", 
+                                color="Link",
+                                href=f"/card/{row['tcgPlayerId']}",),
+                                class_name="d-flex justify-content-center align-items-center"
                             ),
                             class_name="hover-overlay"
                         ),
                         dbc.CardFooter(
                             [
-                                html.P(row["name"], className="card-text", style={"marginBottom": "8px"}),
+                                html.P(
+                                    row["name"],
+                                    className="card-text",
+                                    style={"marginBottom": "8px"}
+                                ),
                                 dbc.Button(
                                     "Add to My Portfolio",
                                     id={"type": "add-portfolio-button", "index": row["tcgPlayerId"]},
@@ -315,7 +326,7 @@ def update_images(selected_sets, selected_types, searched_text,page, cards_metad
                                     size="sm",
                                 ),
                             ],
-                            style={"textAlign": "center"}
+                            style={"textAlign": "center", "z-index":"10"}
                         ),
                     ],
                     class_name="card-normal",
@@ -326,15 +337,11 @@ def update_images(selected_sets, selected_types, searched_text,page, cards_metad
                         "height": "100%",
                     },
                 ),
-                id={"type": "portfolio-card-button", "index": row["tcgPlayerId"]},
                 style={
-                    "border": "none",
-                    "background": "none",
-                    "padding": "0",
                     "width": "100%",
-                    "cursor": "pointer",
-                },
-                href=f"/card/{row['tcgPlayerId']}",
+                    "padding": "0",
+                    "border": "none",
+                }
             )
         )
     return cards
@@ -523,15 +530,3 @@ def handle_offcanvas(
             stored_id,
             selected_cards
         )
-
-    # ----------------------------------------------------
-    # DEFAULT FALLBACK
-    # ----------------------------------------------------
-    return (
-        is_open, no_update, no_update, no_update, no_update,
-        qty,
-        f"${qty * (stored_unit_price or 0):,.2f}",
-        stored_unit_price,
-        stored_id,
-        selected_cards
-    )
