@@ -360,10 +360,7 @@ if __name__ == "__main__":
     calc: PortfolioCalculator = PortfolioCalculator(portfolio_df, price_history_df, card_metadata_df)
 
     print("\n=== CURRENT PRICES ===")
-    print(calc.get_current_prices(days = None))
-
-    print("\n=== CURRENT PRICES (100 days ago) ===")
-    print(calc.get_current_prices(days = 100))
+    print(calc.get_current_prices())
 
     print("\n=== TOTAL PORTFOLIO VALUE ===")
     print(calc.calculate_total_portfolio_value(days = None))
