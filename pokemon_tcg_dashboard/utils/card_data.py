@@ -34,11 +34,11 @@ class AggregatedPrices(TypedDict):
 
 
 # ==========================================================
-# CardDataFetcher CLASS
+# CardDataFetcher CLASS (All Numerical Returns Formatted)
 # ==========================================================
 
 class CardDataFetcher:
-    """Handles fetching and structuring individual card data."""
+    """Handles fetching and structuring individual card data with formatted price outputs."""
 
     def __init__(
         self,
@@ -62,23 +62,23 @@ class CardDataFetcher:
         self.price_history: pd.DataFrame = price_history_df.copy()
         self.ebay_prices: pd.DataFrame = ebay_prices_df.copy()
 
-        # Clean the date columns
-        self.price_history["date"] = (
-            pd.to_datetime(self.price_history["date"], errors="coerce").dt.tz_localize(None)
-        )
-        self.ebay_prices["date"] = (
-            pd.to_datetime(self.ebay_prices["date"], errors="coerce").dt.tz_localize(None)
-        )
+        self.price_history["date"] = pd.to_datetime(self.price_history["date"], errors="coerce").dt.tz_localize(None)
+        self.ebay_prices["date"] = pd.to_datetime(self.ebay_prices["date"], errors="coerce").dt.tz_localize(None)
 
-        # Cache
         self._cache: Dict[Tuple[Any, ...], CardData] = {}
+
+    # -------------------- HELPER --------------------
+    def format_value(self, value: float, sign: str = "") -> str:
+        if abs(value) >= 1_000_000:
+            return f"{sign}${abs(value)/1_000_000:.1f}M"
+        elif abs(value) >= 1_000:
+            return f"{sign}${abs(value)/1_000:.1f}K"
+        else:
+            return f"{sign}${abs(value):.2f}"
 
     # ==========================================================
     # Main Card Retrieval
     # ==========================================================
-
-
-    #Note can just call this to display data for a card
     def get_card_by_id(
         self,
         card_id: str,
@@ -124,9 +124,8 @@ class CardDataFetcher:
         return card_data
 
     # ==========================================================
-    # Price functions
+    # Price Functions (Formatted)
     # ==========================================================
-
     def get_current_market_price(
         self,
         card_id: str,
@@ -134,19 +133,15 @@ class CardDataFetcher:
         condition: str = "any"
     ) -> str:
         cutoff = None if days is None else datetime.now() - timedelta(days=days)
-
         df = self.price_history[self.price_history["id"] == card_id]
         if condition != "any":
             df = df[df["condition"] == condition]
-
         if cutoff:
             df = df[df["date"] >= cutoff]
-
         if df.empty:
-            return "$0.00"
-
+            return self.format_value(0.0)
         avg_price = float(df["market"].mean())
-        return f"${avg_price:.2f}"
+        return self.format_value(avg_price)
 
     def get_psa_price(
         self,
@@ -155,24 +150,17 @@ class CardDataFetcher:
         days: Optional[int] = None
     ) -> str:
         grade_norm = grade.replace(" ", "").lower()
-
         df = self.ebay_prices[self.ebay_prices["id"] == card_id]
         df = df[df["grade"].str.replace(" ", "").str.lower() == grade_norm]
-
         if df.empty:
             return "N/A"
-
-        # Filter by days if provided
         if days is not None:
             cutoff = datetime.now() - timedelta(days=days)
-            df = df[df["date"] >= cutoff]
-            if df.empty:
-                # fallback to all available data if no recent data exists
-                df = self.ebay_prices[self.ebay_prices["id"] == card_id]
-                df = df[df["grade"].str.replace(" ", "").str.lower() == grade_norm]
-
+            df_recent = df[df["date"] >= cutoff]
+            if not df_recent.empty:
+                df = df_recent
         latest = float(df.sort_values("date").iloc[-1]["average"])
-        return f"${latest:.2f}"
+        return self.format_value(latest)
 
     def get_ungraded_price(
         self,
@@ -183,38 +171,30 @@ class CardDataFetcher:
         df = self.price_history[self.price_history["id"] == card_id]
         if condition != "any":
             df = df[df["condition"] == condition]
-
         if df.empty:
-            return "$0.00"
-
+            return self.format_value(0.0)
         cutoff = None if days is None else datetime.now() - timedelta(days=days)
         recent = df if cutoff is None else df[df["date"] >= cutoff]
-
         if recent.empty:
             recent = df
-
         avg_price = float(recent["market"].mean())
-        return f"${avg_price:.2f}"
+        return self.format_value(avg_price)
 
     # ==========================================================
-    # Listing Count & History
+    # Listings & History
     # ==========================================================
-
     def count_active_listings(
         self,
         card_id: str,
         days: Optional[int] = 7,
         condition: str = "any"
     ) -> int:
-
         cutoff = None if days is None else datetime.now() - timedelta(days=days)
         df = self.price_history[self.price_history["id"] == card_id]
-
         if condition != "any":
             df = df[df["condition"] == condition]
         if cutoff:
             df = df[df["date"] >= cutoff]
-
         return int(df["date"].nunique())
 
     def get_price_history(
@@ -223,29 +203,23 @@ class CardDataFetcher:
         days: Optional[int] = None,
         condition: str = "any"
     ) -> List[PricePoint]:
-
         cutoff = None if days is None else datetime.now() - timedelta(days=days)
         df = self.price_history[self.price_history["id"] == card_id]
-
         if condition != "any":
             df = df[df["condition"] == condition]
         if cutoff:
             df = df[df["date"] >= cutoff]
-
         if df.empty:
             return []
-
         daily_avg = df.groupby("date")["market"].mean().reset_index()
-
         return [
-            {"date": d.strftime("%Y-%m-%d"), "price": float(p)}
+            {"date": d.strftime("%Y-%m-%d"), "price": float(self.format_value(p).replace('$','').replace('K','000').replace('M','000000'))}
             for d, p in zip(daily_avg["date"], daily_avg["market"])
         ]
 
     # ==========================================================
-    # Aggregation
+    # Aggregation (Formatted)
     # ==========================================================
-
     def aggregate_prices(
         self,
         card_id: str,
@@ -253,7 +227,6 @@ class CardDataFetcher:
         grade: Optional[str] = None,
         days: Optional[int] = None
     ) -> AggregatedPrices:
-
         if grade:
             grade_norm = grade.replace(" ", "").lower()
             df = self.ebay_prices[self.ebay_prices["id"] == card_id]
@@ -264,18 +237,15 @@ class CardDataFetcher:
             if condition != "any":
                 df = df[df["condition"] == condition]
             price_col = "market"
-
         if df.empty:
             return {
-                "average_price": 0.0,
-                "median_price": 0.0,
-                "min_price": 0.0,
-                "max_price": 0.0,
+                "average_price": self.format_value(0.0),
+                "median_price": self.format_value(0.0),
+                "min_price": self.format_value(0.0),
+                "max_price": self.format_value(0.0),
                 "confidence": "none",
                 "sample_size": 0,
             }
-
-        # Apply days filter
         if days is not None:
             cutoff = datetime.now() - timedelta(days=days)
             recent = df[df["date"] >= cutoff]
@@ -283,40 +253,32 @@ class CardDataFetcher:
                 recent = df
         else:
             recent = df
-
         prices = recent[price_col]
-
-        # IQR outlier removal
         Q1 = prices.quantile(0.25)
         Q3 = prices.quantile(0.75)
         IQR = Q3 - Q1
         lower, upper = Q1 - 1.5 * IQR, Q3 + 1.5 * IQR
-
         filtered = prices[(prices >= lower) & (prices <= upper)]
         if filtered.empty:
             filtered = prices
-
         avg_price = float(filtered.mean())
         med_price = float(filtered.median())
         min_price = float(filtered.min())
         max_price = float(filtered.max())
         n = len(filtered)
-
         spread = max_price - min_price
         rel_spread = (spread / avg_price * 100) if avg_price > 0 else 100
-
         if n >= 20 and rel_spread < 20:
             confidence = "high"
         elif n >= 10 and rel_spread < 40:
             confidence = "medium"
         else:
             confidence = "low"
-
         return {
-            "average_price": avg_price,
-            "median_price": med_price,
-            "min_price": min_price,
-            "max_price": max_price,
+            "average_price": self.format_value(avg_price),
+            "median_price": self.format_value(med_price),
+            "min_price": self.format_value(min_price),
+            "max_price": self.format_value(max_price),
             "confidence": confidence,
             "sample_size": n,
         }
@@ -326,14 +288,12 @@ class CardDataFetcher:
         card_id: str,
         days: Optional[int] = None
     ) -> Dict[str, AggregatedPrices]:
-
         return {
             "ungraded_nm": self.aggregate_prices(card_id, condition="Near Mint", days=days),
             "psa_8": self.aggregate_prices(card_id, grade="psa8", days=days),
             "psa_9": self.aggregate_prices(card_id, grade="psa9", days=days),
             "psa_10": self.aggregate_prices(card_id, grade="psa10", days=days)
         }
-
 
 # ==========================================================
 # __main__
