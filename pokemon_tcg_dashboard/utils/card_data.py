@@ -88,7 +88,7 @@ class CardDataFetcher:
         card_info = card_info_df.iloc[0]
 
         current_price = self.get_current_market_price(card_id, days=days, condition=condition)
-        psa_price = self.get_psa_price(card_id, psa, days=days)
+        psa_price = self.get_psa_price(card_id, grade = psa, days=days)
         ungraded_price = self.get_ungraded_price(card_id, days=days, condition=condition)
         total_listings = self.count_active_listings(card_id, days=days, condition=condition)
         price_history = self.get_price_history(card_id, days=days, condition=condition)
@@ -142,7 +142,7 @@ class CardDataFetcher:
         df = self.ebay_prices[self.ebay_prices["tcgPlayerId"] == card_id]
         df = df[df["grade"].str.replace(" ", "").str.lower() == grade_norm]
         if df.empty:
-            return "N/A"
+            return "None"
         if days is not None:
             cutoff = datetime.now() - timedelta(days=days)
             df_recent = df[df["date"] >= cutoff]

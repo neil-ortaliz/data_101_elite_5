@@ -38,7 +38,7 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 
 import pandas as pd
-from datetime import timedelta
+from datetime import timedelta, datetime
 from utils.loader import load_data, get_set_price_history
 import logging
 
@@ -432,101 +432,96 @@ date_ranges = {
 }'''
 
 # ---------------------------- Function ----------------------------
-def card_view_price_history_line_chart(card_id, card_name):
-    logger.debug(f"Calling card_view_price_history_line_chart")
-    """
-    Shows TCGplayer vs eBay price history for a single card as a line chart
-    with a date dropdown filter and range slider.
-    """
+import plotly.graph_objects as go
+from datetime import datetime
 
-    card_df = all_prices[all_prices["id"] == card_id].copy()
-    logger.debug(f"Card id {card_id} ({card_name}) price points found: {len(card_df)}")
+def card_view_price_history_line_chart(card_name, card_id, card_df, price_column, grade_filter, platform_name=None, selected_date="all", selected_grade="all"):
+    TCG_GRADE_COLORS = {
+        "Near Mint": "#2ecc71",
+        "Lightly Played": "#3498db",
+        "Moderately Played": "#e67e22",
+        "Heavily Played": "#e74c3c",
+        "Damaged": "#7f8c8d"  
+    }
 
-    if card_df.empty:
-        logger.debug(f"No price history available for card_id={card_id}")
+    PSA_GRADE_COLORS = {
+        "psa8": "#9b59b6",
+        "psa9": "#f1c40f",
+        "psa10": "#2ecc71"
+    }
+    
+    if platform_name is None:
+        platform_name = price_column
+
+    # Filter by card_id
+    df = card_df[card_df["tcgPlayerId"] == card_id].copy()
+    if df.empty or price_column not in df.columns or df[price_column].isna().all():
         fig = go.Figure()
         fig.update_layout(
-            title=f"No price history available for {card_name}",
+            title=f"No price history available for {card_name} ({platform_name})",
             template="plotly_white"
         )
         return fig
 
-    card_df = card_df.sort_values("date")
+    # Filter by date range
+    if selected_date != "all":
+        days = int(selected_date)
+        max_date = df["date"].max() if not df.empty else datetime.now()
+        df = df[df["date"] >= max_date - timedelta(days=days)]
 
-    # Initialize traces
-    traces = []
-    if "ebay_price" in card_df.columns and card_df["ebay_price"].notna().any():
-        traces.append(go.Scatter(
-            x=card_df["date"],
-            y=card_df["ebay_price"],
-            mode="lines",
-            name="eBay",
-            line=dict(width=2)
-        ))
-    if "tcg_price" in card_df.columns and card_df["tcg_price"].notna().any():
-        traces.append(go.Scatter(
-            x=card_df["date"],
-            y=card_df["tcg_price"],
-            mode="lines",
-            name="TCGplayer (Near Mint)",
-            line=dict(width=2, dash="dash")
-        ))
+    df = df.sort_values("date")
 
-    fig = go.Figure(traces)
+    fig = go.Figure()
 
-    # ---------------- Dropdown Buttons ----------------
-    buttons = []
-    for label, df in date_ranges.items():
-        card_specific = df[df["id"] == card_id]
-
-        ebay_y = card_specific["ebay_price"] if "ebay_price" in card_specific.columns else [None]*len(card_specific)
-        tcg_y = card_specific["tcg_price"] if "tcg_price" in card_specific.columns else [None]*len(card_specific)
-
-        y_data = []
-        if any(traces[i].name == "eBay" for i in range(len(traces))):
-            y_data.append(ebay_y)
-        if any(traces[i].name == "TCGplayer (Near Mint)" for i in range(len(traces))):
-            y_data.append(tcg_y)
-
-        buttons.append(dict(
-            label=label,
-            method="update",
-            args=[{"x": [card_specific["date"]]*len(y_data), "y": y_data}]
+    # If "all" grades selected and grade column exists, plot one line per grade
+    if selected_grade == "all" and grade_filter in df.columns:
+        grades = df[grade_filter].dropna().unique()
+        for grade in grades:
+            df_grade = df[df[grade_filter] == grade]
+            if df_grade.empty:
+                continue
+            # Select color palette
+            if platform_name.lower() == "tcgplayer":
+                color = TCG_GRADE_COLORS.get(grade, "#000000")
+            else:
+                color = PSA_GRADE_COLORS.get(grade, "#000000")
+            
+            fig.add_trace(go.Scatter(
+                x=df_grade["date"],
+                y=df_grade[price_column],
+                mode="lines+markers",
+                name=str(grade),
+                line=dict(color=color, width=2),
+                marker=dict(size=4)
+            ))
+    else:
+        # Single grade or no grade column
+        if selected_grade != "all" and grade_filter in df.columns:
+            df = df[df[grade_filter] == selected_grade]
+        fig.add_trace(go.Scatter(
+            x=df["date"],
+            y=df[price_column],
+            mode="lines+markers",
+            name=platform_name,
+            line=dict(width=2, color="green"),
+            marker=dict(size=4)
         ))
 
     fig.update_layout(
-        title=f"Price History – {card_name}",
+        title=f"Price History – {card_name} ({platform_name})",
         xaxis_title="Date",
         yaxis_title="Price (USD)",
         template="plotly_white",
         hovermode="x unified",
         height=450,
-        updatemenus=[dict(
-            buttons=buttons,
-            direction="down",
-            showactive=True,
-            x=0.0,
-            xanchor="left",
-            y=1.15,
-            yanchor="top"
-        )],
         xaxis=dict(
-            rangeselector=dict(
-                buttons=list([
-                    dict(count=7, label="7d", step="day", stepmode="backward"),
-                    dict(count=30, label="30d", step="day", stepmode="backward"),
-                    dict(count=90, label="90d", step="day", stepmode="backward"),
-                    dict(step="all")
-                ])
-            ),
-            rangeslider=dict(visible=True),
-            type="date"
+            rangeslider=dict(visible=False),
+            type="date",
+            tickformat="%Y-%m-%d"
         )
     )
 
-    logger.debug(f"Prepared {len(traces)} traces for card price history")
     return fig
-
 # ----------------- FUNCTION 5: Grade Price Comparison  -----------
 def card_view_card_grade_price_comparison(card_name, grading_cost=20):
     logger.debug(f"Calling card_view_card_grade_price_comparison")
