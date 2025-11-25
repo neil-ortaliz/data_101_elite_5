@@ -14,6 +14,8 @@ dash.register_page(__name__, path_template="/card/<card_id>",
                     #name="Card View",
                     )
 
+import logging
+logger = logging.getLogger(__name__)
 
 def layout(card_id=None, **kwargs):
     
@@ -27,6 +29,7 @@ def layout(card_id=None, **kwargs):
 
     return html.Div([
         dcc.Location(id="url"),
+        dcc.Location(id="redirect-404", refresh=True),
         dcc.Store(id="card-data-store"),  # Store for card data
         card_gen_content,
     ])
@@ -35,6 +38,7 @@ def layout(card_id=None, **kwargs):
 @callback(
     Output("card-header-container", "children"),
     Output("card-data-store", "data"),
+    Output("redirect-404", "pathname"),
     Input("url", "pathname"),
 )
 def update_card_page(pathname):
@@ -42,11 +46,11 @@ def update_card_page(pathname):
     card_number = pathname.split("/")[-1]
     #print(f"card_number: {card_number}")
     card_metadata = CARD_DATA_FETCHER.get_card_by_id(card_number)
-
-    if card_metadata.empty:
+    logger.debug(f"card_metadata retrieved: {card_metadata}")
+    if card_metadata is None:
         # GO TO 404 PAGE
         #return html.H3("Card Not Found"), None
-        pass
+        return dash.no_update, dash.no_update, "/page-not-found"
     
     else:
         # Prepare data for create_card_header
@@ -69,5 +73,5 @@ def update_card_page(pathname):
         ])
 
         
-        return card_content, card_data
+        return card_content, card_data, dash.no_update
     
