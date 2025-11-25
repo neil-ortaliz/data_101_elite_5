@@ -1,14 +1,13 @@
 import dash
 import dash_bootstrap_components as dbc
 from dash import html, dcc, Input, Output, callback, State, ALL, ctx, no_update, exceptions
-from utils import load_data, get_price_history
 
 import pandas as pd
 from datetime import date
 import logging
 logger = logging.getLogger(__name__)
 
-PRICE_HISTORY = get_price_history()
+from global_variables import PRICE_HISTORY_DF, CARD_METADATA_DF
 
 dash.register_page(
     __name__,
@@ -234,14 +233,13 @@ def update_dropdowns(data):
     State("set-select", "value"),
     State("rarity-select", "value"),
     State("card_search","value"),
-    State("cards-metadata", "data")
 )
-def change_page(prev, next_, current_page, selected_sets, selected_types, searched_text, cards_metadata):
+def change_page(prev, next_, current_page, selected_sets, selected_types, searched_text):
     prev = prev or 0
     next_ = next_ or 0
     trigger = ctx.triggered_id
     current_page = int(current_page or 0)
-    image_df = pd.DataFrame(cards_metadata)
+    image_df = CARD_METADATA_DF
     filtered = image_df.copy()
     if selected_sets:
         filtered = filtered[filtered["setName"].isin(selected_sets)]
@@ -476,8 +474,8 @@ def handle_offcanvas(
         unit_price = stored_unit_price
 
         try:
-            mask = PRICE_HISTORY["tcgPlayerId"] == card_id
-            day_prices = PRICE_HISTORY[mask].set_index("date")
+            mask = PRICE_HISTORY_DF["tcgPlayerId"] == card_id
+            day_prices = PRICE_HISTORY_DF[mask].set_index("date")
 
             if selected_date in day_prices.index:
                 unit_price = float(day_prices.loc[selected_date]["market"])

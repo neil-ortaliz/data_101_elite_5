@@ -3,11 +3,12 @@ from dash import html, dash_table
 from components.market_ui import create_metric_card  # Reuse!
 
 from utils.portfolio_calcs import PortfolioCalculator
+from global_variables import PRICE_HISTORY_DF, CARD_METADATA_DF
 
 import logging
 logger = logging.getLogger(__name__)
 
-def create_portfolio_summary_metrics(selected_cards=None, days=1):
+def create_portfolio_summary_metrics(selected_cards=None, ,days=1):
     """
     Create the 4 metric cards for Portfolio View
     
@@ -20,7 +21,8 @@ def create_portfolio_summary_metrics(selected_cards=None, days=1):
     else:
         logging.debug(f"passing selected_cards len with lenght of {len(selected_cards)}")
         logging.debug(f"selected_cards: {selected_cards}")
-    portfolio_calculator = PortfolioCalculator(selected_cards)
+
+    portfolio_calculator = PortfolioCalculator(selected_cards, PRICE_HISTORY_DF, CARD_METADATA_DF)
     total_portfolio_value = portfolio_calculator.calculate_total_portfolio_value()
     logger.debug(f"total_portfolio_value {total_portfolio_value}")
     card_nums = portfolio_calculator.calculate_card_count()
