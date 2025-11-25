@@ -42,7 +42,7 @@ body {
 }
 
 .card-text {
-    font-size: 0.7rem;
+    font-size: 1rem;
 }
 
 .card-normal .hover-overlay {
@@ -136,4 +136,8 @@ body {
 .action-button:hover {
     transform: translateY(-3px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.add-portfolio-button {
+    font-size:0.7rem
 }

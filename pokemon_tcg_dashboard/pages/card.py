@@ -5,12 +5,20 @@ from utils import get_card_metadata
 from components import ban_card_container, graph_container, tab_card_container
 from components.card_ui import create_card_header, create_action_buttons
 
-dash.register_page(__name__, path="/card/<card_id>",
-                    title="Card View", 
-                    name="Card View",
-                    order=3)
+
+
+#dash.register_page(__name__, path_template="/card/<report_id>")
+
+dash.register_page(__name__, path_template="/card/<card_id>",
+                    #title="Card View", 
+                    #name="Card View",
+                    )
+
+
+
 
 def layout(card_id=None, **kwargs):
+    
     card_gen_content = html.Div([
         html.Div(id="card-header-container"),  # This will be populated by callback
         html.Hr(),
@@ -32,6 +40,7 @@ def layout(card_id=None, **kwargs):
     Input("url", "pathname"),
 )
 def update_card_page(pathname):
+    print(pathname)
     card_number = pathname.split("/")[-1]
     #print(f"card_number: {card_number}")
     card_metadata = get_card_metadata(card_number)

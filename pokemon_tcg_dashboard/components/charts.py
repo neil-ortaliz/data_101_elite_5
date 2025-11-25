@@ -45,11 +45,11 @@ import logging
 # initialize module logger
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
-
+from global_variables import PRICE_HISTORY_DF, CARD_METADATA_DF
 # ----------------------------- Call data -------------------------------------
 ebay_df = load_data('ebay_price_history.csv')
-metadata_df = load_data('cards_metadata_table.csv')
-price_history_df = load_data('price_history.csv')
+metadata_df = CARD_METADATA_DF
+price_history_df = PRICE_HISTORY_DF
 #portfolio_sample_df = load_data('portfolio_cards_metadata_table.csv')
 
 # ------------------------------ Merge Data --------------------------------------
@@ -57,66 +57,83 @@ price_history_df = load_data('price_history.csv')
 1. Ebay Price History + Metadata
 2. Price History + Metadata
 '''
-# Ebay + Metadata
-ebay_metadata = ebay_df.merge(
-    metadata_df[["id", "setId", "setName", "totalSetNumber", "updatedAt"]],
-    on="id",
-    how="left"
-)
-ebay_metadata = ebay_metadata.dropna(subset='setName')
+
+
+def merge_ebay_metadata_dfs(ebay_df, metadata_df):
+    logger.debug("merge_ebay_metadata_dfs was called!")
+    # Ebay + Metadata
+    ebay_metadata = ebay_df.merge(
+        metadata_df[["id", "setId", "setName", "totalSetNumber", "updatedAt"]],
+        on="id",
+        how="left"
+    )
+    ebay_metadata = ebay_metadata.dropna(subset='setName')
+    ebay_metadata['date'] = pd.to_datetime(ebay_metadata['date'])
+    return ebay_metadata
 
 # Price History + Metadata
-price_history_metadata = price_history_df.merge(
-    metadata_df[["id", "setId", "setName", "totalSetNumber", "updatedAt"]],
-    on="id",
-    how="left"
-)
+def merge_price_history_metadata_dfs(price_history_metadata, metadata_df):
+    logger.debug("merge_price_history_metadata_dfs was called!")
+    price_history_metadata = price_history_df.merge(
+        metadata_df[["id", "setId", "setName", "totalSetNumber", "updatedAt"]],
+        on="id",
+        how="left"
+    )
 
-price_history_metadata = price_history_metadata.dropna(subset="setName")
+    price_history_metadata = price_history_metadata.dropna(subset="setName")
+    price_history_metadata['date'] = pd.to_datetime(price_history_metadata['date'])
+    return price_history_metadata
 
-# All three combined
-market_df = ebay_metadata.merge(
-    price_history_metadata[["id", "setId", "setName", "totalSetNumber", "updatedAt"]],
-    on=['id'],
-    how='left',
-)
+def merge_all_pricing_dfs():
+    logger.debug("merge_all_pricing_dfs was called!")
+    # All three combined
+    ebay_metadata = merge_ebay_metadata_dfs(ebay_df, metadata_df)
+    price_history_metadata = merge_price_history_metadata_dfs(price_history_df, metadata_df)
+    market_df = ebay_metadata.merge(
+        price_history_metadata[["id", "setId", "setName", "totalSetNumber", "updatedAt"]],
+        on=['id'],
+        how='left',
+    )
 
-#print(f"market_df columns: {market_df.columns}")
+    #print(f"market_df columns: {market_df.columns}")
 
-market_df = market_df.dropna(subset='setName_x')
+    market_df = market_df.dropna(subset='setName_x')
 
-# Date Format
-ebay_metadata['date'] = pd.to_datetime(ebay_metadata['date'])
-price_history_metadata['date'] = pd.to_datetime(price_history_metadata['date'])
+
+
 
 
 # ------------------------------- Compute Change in Price -------------------------
-ebay_metadata = ebay_metadata.sort_values(by=['setName', 'date'])
-ebay_metadata['date'] = pd.to_datetime(ebay_metadata['date'])
+def compute_price_change(ebay_metadata):
+    logger.debug("compute_price_change was called")
+    ebay_metadata = ebay_metadata.sort_values(by=['setName', 'date'])
+    ebay_metadata['date'] = pd.to_datetime(ebay_metadata['date'])
 
-# Group by set/day and compute average price per setName per day
-set_daily = (
-    ebay_metadata.groupby(['setName', 'date'])['average']
-    .mean()
-    .reset_index()
-    .sort_values(by=['setName', 'date'])
-)
+    # Group by set/day and compute average price per setName per day
+    set_daily = (
+        ebay_metadata.groupby(['setName', 'date'])['average']
+        .mean()
+        .reset_index()
+        .sort_values(by=['setName', 'date'])
+    )
 
-# Compute previous day price and percentage change
-set_daily['prev_price'] = set_daily.groupby('setName')['average'].shift(1)
-set_daily['price_change'] = set_daily['average'] - set_daily['prev_price']
-set_daily['pct_change'] = (set_daily['price_change'] / set_daily['prev_price']) * 100
-set_daily['pct_change'] = set_daily['pct_change'].fillna(0)
+    # Compute previous day price and percentage change
+    set_daily['prev_price'] = set_daily.groupby('setName')['average'].shift(1)
+    set_daily['price_change'] = set_daily['average'] - set_daily['prev_price']
+    set_daily['pct_change'] = (set_daily['price_change'] / set_daily['prev_price']) * 100
+    set_daily['pct_change'] = set_daily['pct_change'].fillna(0)
 
-# Keep latest price change per set
-latest_set_prices = (
-    set_daily.sort_values('date')
-             .groupby('setName')
-             .tail(1)
-             .reset_index(drop=True)
-)
-latest_set_prices = latest_set_prices[['setName', 'date', 'pct_change']]
-latest_set_prices = latest_set_prices.rename(columns={'pct_change': 'value_change_pct'})
+    # Keep latest price change per set
+    latest_set_prices = (
+        set_daily.sort_values('date')
+                .groupby('setName')
+                .tail(1)
+                .reset_index(drop=True)
+    )
+    latest_set_prices = latest_set_prices[['setName', 'date', 'pct_change']]
+    latest_set_prices = latest_set_prices.rename(columns={'pct_change': 'value_change_pct'})
+
+    return latest_set_prices
 
 #========================================== MARKET VIEW ===================================================
 
@@ -133,6 +150,8 @@ def market_view_set_performance_bar_chart(time_range="All Time"):
     - Plotly Figure
     """
     # 'date' is datetime
+    ebay_metadata_df = merge_ebay_metadata_dfs(ebay_df, metadata_df)
+    latest_set_prices = compute_price_change(ebay_metadata_df)
     latest_set_prices['date'] = pd.to_datetime(latest_set_prices['date'])
     max_date = latest_set_prices['date'].max()
     logger.debug(f"Latest set price max_date: {max_date} (rows={len(latest_set_prices)})")

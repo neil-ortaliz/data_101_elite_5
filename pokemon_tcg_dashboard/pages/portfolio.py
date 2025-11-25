@@ -8,6 +8,8 @@ from utils import get_image_urls
 from components import ban_card_container, graph_container, tab_card_container
 from components.portfolio_ui import create_portfolio_summary_metrics, create_risk_indicators, create_holdings_table
 
+#from global_variables import PRICE_HISTORY_DF, CARD_METADATA_DF
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -15,6 +17,7 @@ dash.register_page(__name__, path="/portfolio",
                     title="Portfolio", 
                     name="Portfolio",
                     order=2)
+
 
 select = dbc.Row([
     dbc.Select(
@@ -75,7 +78,7 @@ owned_cards = html.Div(
 portfolio = html.Div([
     html.Br(),
     select,
-    html.Div(create_portfolio_summary_metrics(), id="portfolio-metrics-row"),
+    html.Div(id="portfolio-metrics-row"),
     create_risk_indicators(),
     html.H3('Holdings Details', className="mt-4 mb-3"),
     create_holdings_table(),
@@ -151,12 +154,11 @@ def update_gain_loss_title(timeframe):
 @callback(
     Output("portfolio-metrics-row", "children"),
     Input("portfolio-url", "pathname"),
-    State("selected-cards", "data")
+    State("selected-cards", "data"),
 )
 def update_portfolio_metrics(pathname, selected_cards):
     logger.debug(f"Pathname: {pathname}")
     logger.debug(f"Selected Cards: {selected_cards}")
-    selected_cards_df = pd.DataFrame(columns=['id'], data=selected_cards)
-
+    selected_cards_df = pd.DataFrame(data=selected_cards)
     portfolio_metrics = create_portfolio_summary_metrics(selected_cards=selected_cards_df)
     return portfolio_metrics
