@@ -28,7 +28,7 @@ class MarketCalculator:
     def calculate_total_market_value(self) -> Dict[str, Any]:
         """Latest total market value"""
         try:
-            latest_prices = self.price_history.sort_values('date').groupby('id').last()
+            latest_prices = self.price_history.sort_values('date').groupby('tcgPlayerId').last()
             total_value = latest_prices['market'].sum()
         except Exception:
             total_value = 0
@@ -56,17 +56,17 @@ class MarketCalculator:
 
         try:
             # Latest price
-            latest = df.groupby('id').last()['market']
+            latest = df.groupby('tcgPlayerId').last()['market']
 
             if days is -1:
                 # Use earliest available price
-                past = df.groupby('id').first()['market']
+                past = df.groupby('tcgPlayerId').first()['market']
             else:
                 comparison_date = df['date'].max() - timedelta(days=days)
                 past = (
                     df[df['date'] <= comparison_date]
                       .sort_values("date")
-                      .groupby('id')
+                      .groupby('tcgPlayerId')
                       .last()['market']
                 )
 
@@ -126,8 +126,8 @@ class MarketCalculator:
                 recent = df[df['date'] >= cutoff]
 
             prices_with_sets = recent.merge(
-                self.card_metadata[['id', 'setName']],
-                on='id',
+                self.card_metadata[['tcgPlayerId', 'setName']],
+                on='tcgPlayerId',
                 how='left'
             )
 
@@ -138,8 +138,8 @@ class MarketCalculator:
             for set_name in prices_with_sets['setName'].unique():
                 set_data = prices_with_sets[prices_with_sets['setName'] == set_name]
 
-                earliest = set_data.groupby('id').first()['market']
-                latest = set_data.groupby('id').last()['market']
+                earliest = set_data.groupby('tcgPlayerId').first()['market']
+                latest = set_data.groupby('tcgPlayerId').last()['market']
 
                 if len(earliest) == 0 or earliest.sum() <= 0:
                     continue
@@ -182,7 +182,7 @@ class MarketCalculator:
 
             latest = (
                 active.sort_values('date')
-                      .groupby('id')
+                      .groupby('tcgPlayerId')
                       .last()
             )
 
@@ -218,8 +218,8 @@ class MarketCalculator:
 
         changes: List[Dict[str, Any]] = []
 
-        for card_id in period_data['id'].unique():
-            card_data = period_data[period_data['id'] == card_id].sort_values('date')
+        for card_id in period_data['tcgPlayerId'].unique():
+            card_data = period_data[period_data['tcgPlayerId'] == card_id].sort_values('date')
 
             if len(card_data) < 2:
                 continue
@@ -237,7 +237,7 @@ class MarketCalculator:
             change_pct = ((end_price - start_price) / start_price) * 100
             change_value = end_price - start_price
 
-            meta = self.card_metadata[self.card_metadata['id'] == card_id]
+            meta = self.card_metadata[self.card_metadata['tcgPlayerId'] == card_id]
             if not meta.empty:
                 name = meta.iloc[0]['name']
                 set_name = meta.iloc[0]['setName']

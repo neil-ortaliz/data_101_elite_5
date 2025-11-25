@@ -10,7 +10,7 @@ class PricePoint(TypedDict):
     price: float
 
 class CardData(TypedDict):
-    card_id: str
+    card_id: int
     name: str
     set: str
     rarity: str
@@ -47,17 +47,6 @@ class CardDataFetcher:
         ebay_prices_df: pd.DataFrame
     ) -> None:
 
-        required_meta_cols = {'id', 'name', 'setName', 'rarity'}
-        required_price_cols = {'id', 'date', 'market', 'condition'}
-        required_ebay_cols = {'id', 'date', 'grade', 'average'}
-
-        if not required_meta_cols.issubset(card_metadata_df.columns):
-            raise ValueError(f"card_metadata_df missing required columns: {required_meta_cols}")
-        if not required_price_cols.issubset(price_history_df.columns):
-            raise ValueError(f"price_history_df missing required columns: {required_price_cols}")
-        if not required_ebay_cols.issubset(ebay_prices_df.columns):
-            raise ValueError(f"ebay_prices_df missing required columns: {required_ebay_cols}")
-
         self.card_metadata: pd.DataFrame = card_metadata_df.copy()
         self.price_history: pd.DataFrame = price_history_df.copy()
         self.ebay_prices: pd.DataFrame = ebay_prices_df.copy()
@@ -81,7 +70,7 @@ class CardDataFetcher:
     # ==========================================================
     def get_card_by_id(
         self,
-        card_id: str,
+        card_id: int,
         use_cache: bool = True,
         days: Optional[int] = None,
         psa: str = "psa9",
@@ -128,12 +117,12 @@ class CardDataFetcher:
     # ==========================================================
     def get_current_market_price(
         self,
-        card_id: str,
+        card_id: int,
         days: Optional[int] = 7,
         condition: str = "any"
     ) -> str:
         cutoff = None if days is None else datetime.now() - timedelta(days=days)
-        df = self.price_history[self.price_history["id"] == card_id]
+        df = self.price_history[self.price_history["tcgPlayerId"] == card_id]
         if condition != "any":
             df = df[df["condition"] == condition]
         if cutoff:
@@ -145,12 +134,12 @@ class CardDataFetcher:
 
     def get_psa_price(
         self,
-        card_id: str,
+        card_id: int,
         grade: str,
         days: Optional[int] = None
     ) -> str:
         grade_norm = grade.replace(" ", "").lower()
-        df = self.ebay_prices[self.ebay_prices["id"] == card_id]
+        df = self.ebay_prices[self.ebay_prices["tcgPlayerId"] == card_id]
         df = df[df["grade"].str.replace(" ", "").str.lower() == grade_norm]
         if df.empty:
             return "N/A"
@@ -164,11 +153,11 @@ class CardDataFetcher:
 
     def get_ungraded_price(
         self,
-        card_id: str,
+        card_id: int,
         days: Optional[int] = 30,
         condition: str = "Near Mint"
     ) -> str:
-        df = self.price_history[self.price_history["id"] == card_id]
+        df = self.price_history[self.price_history["tcgPlayerId"] == card_id]
         if condition != "any":
             df = df[df["condition"] == condition]
         if df.empty:
@@ -185,12 +174,12 @@ class CardDataFetcher:
     # ==========================================================
     def count_active_listings(
         self,
-        card_id: str,
+        card_id: int,
         days: Optional[int] = 7,
         condition: str = "any"
     ) -> int:
         cutoff = None if days is None else datetime.now() - timedelta(days=days)
-        df = self.price_history[self.price_history["id"] == card_id]
+        df = self.price_history[self.price_history["tcgPlayerId"] == card_id]
         if condition != "any":
             df = df[df["condition"] == condition]
         if cutoff:
@@ -199,12 +188,12 @@ class CardDataFetcher:
 
     def get_price_history(
         self,
-        card_id: str,
+        card_id: int,
         days: Optional[int] = None,
         condition: str = "any"
     ) -> List[PricePoint]:
         cutoff = None if days is None else datetime.now() - timedelta(days=days)
-        df = self.price_history[self.price_history["id"] == card_id]
+        df = self.price_history[self.price_history["tcgPlayerId"] == card_id]
         if condition != "any":
             df = df[df["condition"] == condition]
         if cutoff:
@@ -222,18 +211,18 @@ class CardDataFetcher:
     # ==========================================================
     def aggregate_prices(
         self,
-        card_id: str,
+        card_id: int,
         condition: str = "any",
         grade: Optional[str] = None,
         days: Optional[int] = None
     ) -> AggregatedPrices:
         if grade:
             grade_norm = grade.replace(" ", "").lower()
-            df = self.ebay_prices[self.ebay_prices["id"] == card_id]
+            df = self.ebay_prices[self.ebay_prices["tcgPlayerId"] == card_id]
             df = df[df["grade"].str.replace(" ", "").str.lower() == grade_norm]
             price_col = "average"
         else:
-            df = self.price_history[self.price_history["id"] == card_id]
+            df = self.price_history[self.price_history["tcgPlayerId"] == card_id]
             if condition != "any":
                 df = df[df["condition"] == condition]
             price_col = "market"
@@ -285,7 +274,7 @@ class CardDataFetcher:
 
     def get_price_comparison(
         self,
-        card_id: str,
+        card_id: int,
         days: Optional[int] = None
     ) -> Dict[str, AggregatedPrices]:
         return {
@@ -317,7 +306,7 @@ if __name__ == "__main__":
 
     fetcher = CardDataFetcher(card_metadata_df, price_history_df, ebay_price_history_df)
 
-    test_card_id: str = "68af6bbbd14a00763202573c"
+    test_card_id: int = 642623
     test_days: int = 7
     test_psa_grade: str = "psa10"
     test_condition: str = "Near Mint"
