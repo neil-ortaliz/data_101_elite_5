@@ -45,11 +45,11 @@ import logging
 # initialize module logger
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
-from global_variables import PRICE_HISTORY_DF, CARD_METADATA_DF
+from global_variables import PRICE_HISTORY_DF, CARD_METADATA_DF, EBAY_METADATA_DF
 # ----------------------------- Call data -------------------------------------
-ebay_df = load_data('ebay_price_history.csv')
+ebay_df = EBAY_METADATA_DF.set_index('date')
 metadata_df = CARD_METADATA_DF
-price_history_df = PRICE_HISTORY_DF
+price_history_df = PRICE_HISTORY_DF.set_index('date')
 #portfolio_sample_df = load_data('portfolio_cards_metadata_table.csv')
 
 # ------------------------------ Merge Data --------------------------------------
