@@ -328,6 +328,7 @@ def update_images(selected_sets, selected_types, searched_text,page, cards_metad
                     "width": "100%",
                     "cursor": "pointer",
                 },
+                href=f"/card/{row['tcgPlayerId']}
             )
         )
     return cards
