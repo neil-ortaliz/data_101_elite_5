@@ -1,63 +1,95 @@
 import pandas as pd
 import numpy as np
 from typing import Dict, Any, Optional, Union
+from utils import load_data
 
+import logging
+logger = logging.getLogger(__name__)
 
 class PortfolioCalculator:
-    """
-    PortfolioCalculator handles metrics for card portfolios:
-    - Value & performance metrics
-    """
+    """Handles all portfolio-level calculations for card portfolios."""
 
-    def __init__(self, portfolio_df: pd.DataFrame, price_history_df: pd.DataFrame, card_metadata_df: pd.DataFrame) -> None:
-        self.portfolio = portfolio_df.copy()
-        self.price_history = price_history_df.copy()
+    def __init__(self, 
+                 portfolio_df: pd.DataFrame, 
+                 price_history_df: pd.DataFrame=None, 
+                 card_metadata_df: pd.DataFrame=None) -> None:
+        """
+        Initialize the calculator.
+
+        Args:
+            portfolio_df (pd.DataFrame): Current portfolio with columns ['id'].
+            price_history_df (pd.DataFrame): Price history with columns ['id', 'date', 'market'].
+            card_metadata_df (pd.DataFrame): Metadata with ['id', 'set', 'rarity'].
+        """
+        if portfolio_df is None:
+            self.portfolio = pd.DataFrame(columns=['id'])
+        else:    
+            self.portfolio = portfolio_df.copy()
+        
+
+        if price_history_df is None:
+            price_history_df = load_data("price_history.csv")
+        if card_metadata_df is None:
+            card_metadata_df = load_data("cards_metadata_table.csv")
+
+        self.price_history = price_history_df.copy()   
         self.card_metadata = card_metadata_df.copy()
 
-        # Clean portfolio
-        if not self.portfolio.empty:
-            self.portfolio["buy_date"] = pd.to_datetime(
-                self.portfolio.get("buy_date"), errors="coerce"
-            ).dt.tz_localize(None)
-            self.portfolio["buy_price"] = pd.to_numeric(
-                self.portfolio.get("buy_price"), errors="coerce"
-            ).fillna(0)
-            self.portfolio["quantity"] = pd.to_numeric(
-                self.portfolio.get("quantity"), errors="coerce"
-            ).fillna(0)
+        self.price_history = self.price_history.merge(
+            self.card_metadata[['id', 'tcgPlayerId']],
+            on='id',
+            how='left'
+        )
 
-        # Clean price history
-        if not self.price_history.empty:
-            self.price_history["date"] = pd.to_datetime(
-                self.price_history.get("date"), errors="coerce"
-            ).dt.tz_localize(None)
+        logger.debug(self.price_history.head())
+        # Ensure date is clean datetime
+        self.price_history['date'] = (
+            pd.to_datetime(self.price_history['date'], errors='coerce')
+              .dt.tz_localize(None)
+        )
 
-    # -------------------- HELPER FUNCTIONS --------------------
-    def format_value(self, value: float, sign: str = "") -> str:
-        """Format number with $ and K/M suffixes."""
-        if abs(value) >= 1_000_000:
-            return f"{sign}${abs(value)/1_000_000:.1f}M"
-        elif abs(value) >= 1_000:
-            return f"{sign}${abs(value)/1_000:.1f}K"
-        else:
-            return f"{sign}${abs(value):.2f}"
+        logger.debug(f"self.portfolio \n {self.portfolio}")
 
-    # -------------------- VALUE METRICS --------------------
-    def get_current_prices(self, days: Optional[int] = None) -> Dict[str, float]:
-        if self.portfolio.empty or self.price_history.empty:
-            return {}
+    # -------------------------------------------------------------
+    # PRICE LOOKUPS
+    # -------------------------------------------------------------
+    def get_current_prices(self) -> Dict[Any, float]:
+        """Return the most recent market price for each card in the portfolio."""
+        latest_prices = (
+            self.price_history
+            .sort_values("date")
+            .groupby("tcgPlayerId", as_index=False)
+            .last()
+        )
+        current_prices = latest_prices.set_index("tcgPlayerId")["market"].to_dict()
+        return current_prices
 
-        if days is None:
-            latest_prices = (
-                self.price_history
-                .sort_values(["id", "date"], ascending=[True, False])
-                .groupby("id")
-                .first()
-            )
-        else:
-            target_date = pd.Timestamp.today().normalize() - pd.Timedelta(days=days)
-            prices_on_date = self.price_history[self.price_history["date"] == target_date]
-            latest_prices = prices_on_date.set_index("id")
+    # -------------------------------------------------------------
+    # PORTFOLIO VALUE METRICS
+    # -------------------------------------------------------------
+    def calculate_total_portfolio_value(self) -> Dict[str, Union[float, str]]:
+        """Calculate total current value of portfolio (1 unit per card)."""
+        current_prices = self.get_current_prices()
+        #logger.debug(f"===========current_prices=========== \n {current_prices.keys()}")
+        total_value = sum(
+            current_prices.get(row["id"], 0)
+            for _, row in self.portfolio.iterrows()
+        )
+        logger.debug(f"total_value {total_value}")
+        return {"value": total_value, "formatted": f"${total_value:,.2f}"}
+
+    def calculate_card_count(self) -> Dict[str, Union[int, str]]:
+        """Calculate total card count and unique card count."""
+        total_quantity = len(self.portfolio)
+        unique_cards = self.portfolio['id'].nunique()
+        return {"count": int(total_quantity), "unique_cards": unique_cards, "formatted": f"{int(total_quantity):,} cards"}
+
+    def calculate_average_card_value(self) -> Dict[str, Union[float, str]]:
+        """Average market value per card."""
+        total_value = self.calculate_total_portfolio_value()["value"]
+        count = self.calculate_card_count()["count"]
+        avg_value = total_value / count if count > 0 else 0
+        return {"value": avg_value, "formatted": f"${avg_value:.2f}"}
 
         portfolio_ids = set(self.portfolio["id"].unique())
         
