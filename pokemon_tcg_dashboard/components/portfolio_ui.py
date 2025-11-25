@@ -8,7 +8,7 @@ from global_variables import PRICE_HISTORY_DF, CARD_METADATA_DF
 import logging
 logger = logging.getLogger(__name__)
 
-def create_portfolio_summary_metrics(selected_cards=None, ,days=1):
+def create_portfolio_summary_metrics(selected_cards=None,days=1):
     """
     Create the 4 metric cards for Portfolio View
     
