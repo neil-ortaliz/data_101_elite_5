@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from typing import Dict, Any, Optional, Union
-from utils import load_data
+from datetime import datetime, timedelta
 
 import logging
 logger = logging.getLogger(__name__)
@@ -11,8 +11,8 @@ class PortfolioCalculator:
 
     def __init__(self, 
                  portfolio_df: pd.DataFrame, 
-                 price_history_df: pd.DataFrame=None, 
-                 card_metadata_df: pd.DataFrame=None) -> None:
+                 price_history_df: pd.DataFrame, 
+                 card_metadata_df: pd.DataFrame) -> None:
         """
         Initialize the calculator.
 
@@ -21,23 +21,14 @@ class PortfolioCalculator:
             price_history_df (pd.DataFrame): Price history with columns ['id', 'date', 'market'].
             card_metadata_df (pd.DataFrame): Metadata with ['id', 'set', 'rarity'].
         """
-        if portfolio_df is None:
-            self.portfolio = pd.DataFrame(columns=['id'])
-        else:    
-            self.portfolio = portfolio_df.copy()
-        
-
-        if price_history_df is None:
-            price_history_df = load_data("price_history.csv")
-        if card_metadata_df is None:
-            card_metadata_df = load_data("cards_metadata_table.csv")
 
         self.price_history = price_history_df.copy()   
         self.card_metadata = card_metadata_df.copy()
+        self.portfolio = portfolio_df.copy()
 
         self.price_history = self.price_history.merge(
             self.card_metadata[['id', 'tcgPlayerId']],
-            on='id',
+            on='tcgPlayerId',
             how='left'
         )
 
@@ -47,22 +38,53 @@ class PortfolioCalculator:
             pd.to_datetime(self.price_history['date'], errors='coerce')
               .dt.tz_localize(None)
         )
+        self.portfolio['buy_date'] = (
+            pd.to_datetime(self.portfolio['buy_date'], errors='coerce')
+              .dt.tz_localize(None)
+        )
 
         logger.debug(f"self.portfolio \n {self.portfolio}")
+    
+    def format_value(self, value: float, sign: str = "") -> str:
+        if abs(value) >= 1_000_000:
+            return f"{sign}${abs(value)/1_000_000:.1f}M"
+        elif abs(value) >= 1_000:
+            return f"{sign}${abs(value)/1_000:.1f}K"
+        else:
+            return f"{sign}${abs(value):.2f}"
 
     # -------------------------------------------------------------
     # PRICE LOOKUPS
     # -------------------------------------------------------------
-    def get_current_prices(self) -> Dict[Any, float]:
-        """Return the most recent market price for each card in the portfolio."""
+    def get_current_prices(self, days: Optional[int] = None) -> Dict[Any, float]:
+        """
+        Return the most recent market price for each card in the portfolio,
+        optionally restricted to prices within the last `days` days.
+
+        If days=None → uses all available price history.
+        If days=N → uses only prices from N days ago to today.
+        """
+
+        df = self.price_history.copy()
+
+        # Apply cutoff filter only if days is provided
+        if days is not None:
+            cutoff = datetime.now() - timedelta(days=days)
+            df = df[df["date"] >= cutoff]
+
+        if df.empty:
+            return {}
+
+        # Sort by date and take the most recent price per card
         latest_prices = (
-            self.price_history
-            .sort_values("date")
+            df.sort_values("date")
             .groupby("tcgPlayerId", as_index=False)
             .last()
         )
-        current_prices = latest_prices.set_index("tcgPlayerId")["market"].to_dict()
-        return current_prices
+
+        # Convert to dictionary
+        return latest_prices.set_index("tcgPlayerId")["market"].to_dict()
+
 
     # -------------------------------------------------------------
     # PORTFOLIO VALUE METRICS
@@ -72,16 +94,16 @@ class PortfolioCalculator:
         current_prices = self.get_current_prices()
         #logger.debug(f"===========current_prices=========== \n {current_prices.keys()}")
         total_value = sum(
-            current_prices.get(row["id"], 0)
+            current_prices.get(row["tcgPlayerId"], 0)
             for _, row in self.portfolio.iterrows()
         )
         logger.debug(f"total_value {total_value}")
-        return {"value": total_value, "formatted": f"${total_value:,.2f}"}
+        return {"value": total_value, "formatted": self.format_value(total_value)}
 
     def calculate_card_count(self) -> Dict[str, Union[int, str]]:
         """Calculate total card count and unique card count."""
         total_quantity = len(self.portfolio)
-        unique_cards = self.portfolio['id'].nunique()
+        unique_cards = self.portfolio['tcgPlayerId'].nunique()
         return {"count": int(total_quantity), "unique_cards": unique_cards, "formatted": f"{int(total_quantity):,} cards"}
 
     def calculate_average_card_value(self) -> Dict[str, Union[float, str]]:
@@ -89,9 +111,9 @@ class PortfolioCalculator:
         total_value = self.calculate_total_portfolio_value()["value"]
         count = self.calculate_card_count()["count"]
         avg_value = total_value / count if count > 0 else 0
-        return {"value": avg_value, "formatted": f"${avg_value:.2f}"}
+        return {"value": avg_value, "formatted": self.format_value(avg_value)}
 
-        portfolio_ids = set(self.portfolio["id"].unique())
+        portfolio_ids = set(self.portfolio["tcgPlayerId"].unique())
         
         return latest_prices.loc[latest_prices.index.isin(portfolio_ids), "market"].fillna(0).to_dict()
 
@@ -107,7 +129,7 @@ class PortfolioCalculator:
             }
         
         current_prices = self.get_current_prices(days=None)  # always latest
-        total_value = sum(current_prices.get(row["id"], 0) * row["quantity"] for _, row in self.portfolio.iterrows())
+        total_value = sum(current_prices.get(row["tcgPlayerId"], 0) * row["quantity"] for _, row in self.portfolio.iterrows())
         
         if days is None:
             return {
@@ -120,7 +142,7 @@ class PortfolioCalculator:
             }
         
         past_prices = self.get_current_prices(days=days)
-        past_value = sum(past_prices.get(row["id"], 0) * row["quantity"] for _, row in self.portfolio.iterrows())
+        past_value = sum(past_prices.get(row["tcgPlayerId"], 0) * row["quantity"] for _, row in self.portfolio.iterrows())
         
         if past_value == 0:
             percent_change = 0.0
@@ -150,7 +172,7 @@ class PortfolioCalculator:
             }
 
         current_prices = self.get_current_prices(days=None)
-        total_current = sum(current_prices.get(row["id"], 0) * row["quantity"] for _, row in self.portfolio.iterrows())
+        total_current = sum(current_prices.get(row["tcgPlayerId"], 0) * row["quantity"] for _, row in self.portfolio.iterrows())
 
         if days is None:
             total_cost = sum(row["buy_price"] * row["quantity"] for _, row in self.portfolio.iterrows())
@@ -159,7 +181,7 @@ class PortfolioCalculator:
             if not past_prices:
                 total_cost = sum(row["buy_price"] * row["quantity"] for _, row in self.portfolio.iterrows())
             else:
-                total_cost = sum(past_prices.get(row["id"], row["buy_price"]) * row["quantity"] for _, row in self.portfolio.iterrows())
+                total_cost = sum(past_prices.get(row["tcgPlayerId"], row["buy_price"]) * row["quantity"] for _, row in self.portfolio.iterrows())
 
         gain_loss_value = total_current - total_cost
         gain_loss_pct = 0.0 if total_cost == 0 else (gain_loss_value / total_cost) * 100
@@ -224,8 +246,8 @@ class PortfolioCalculator:
             return None
 
         twr_list = []
-        for card_id in self.portfolio["id"].unique():
-            card_prices = self.price_history[self.price_history["id"] == card_id].sort_values("date")
+        for card_id in self.portfolio["tcgPlayerId"].unique():
+            card_prices = self.price_history[self.price_history["tcgPlayerId"] == card_id].sort_values("date")
             if len(card_prices) < 2:
                 continue
             period_returns = card_prices["market"].pct_change().dropna()
@@ -238,8 +260,8 @@ class PortfolioCalculator:
         if self.portfolio.empty or self.price_history.empty or benchmark_series.empty:
             return None
 
-        pivot = self.price_history.pivot(index="date", columns="id", values="market")
-        quantities = self.portfolio.set_index("id")["quantity"]
+        pivot = self.price_history.pivot(index="date", columns="tcgPlayerId", values="market")
+        quantities = self.portfolio.set_index("tcgPlayerId")["quantity"]
         portfolio_values = (pivot * quantities).sum(axis=1).sort_index()
         if len(portfolio_values) < 2:
             return None
@@ -256,7 +278,7 @@ class PortfolioCalculator:
         portfolio_copy = self.portfolio.copy()
         portfolio_copy = portfolio_copy.merge(self.card_metadata[['id', 'name', 'setName']], on='id', how='left')
 
-        portfolio_copy['current_price'] = portfolio_copy['id'].map(current_prices)
+        portfolio_copy['current_price'] = portfolio_copy['tcgPlayerId'].map(current_prices)
         portfolio_copy['total_cost'] = portfolio_copy['buy_price'] * portfolio_copy['quantity']
         portfolio_copy['total_current_value'] = portfolio_copy['current_price'] * portfolio_copy['quantity']
         portfolio_copy['gain_loss_value'] = portfolio_copy['total_current_value'] - portfolio_copy['total_cost']
@@ -270,7 +292,7 @@ class PortfolioCalculator:
         if self.portfolio.empty or self.card_metadata.empty:
             return {'score': 0, 'level': 'low', 'description': 'No data available.'}
         
-        portfolio_with_meta = self.portfolio.merge(self.card_metadata[['id', 'setId', 'rarity']], on='id', how='left')
+        portfolio_with_meta = self.portfolio.merge(self.card_metadata[['tcgPlayerId', 'setId', 'rarity']], on='tcgPlayerId', how='left')
         unique_sets = portfolio_with_meta['setId'].nunique()
         unique_rarities = portfolio_with_meta['rarity'].nunique()
         total_cards = portfolio_with_meta['quantity'].sum()
@@ -300,12 +322,12 @@ class PortfolioCalculator:
         if self.portfolio.empty or self.price_history.empty:
             return {'volatility': 0, 'level': 'low', 'description': 'No data available.'}
         
-        portfolio_cards = self.portfolio['id'].unique()
-        portfolio_prices = self.price_history[self.price_history['id'].isin(portfolio_cards)]
+        portfolio_cards = self.portfolio['tcgPlayerId'].unique()
+        portfolio_prices = self.price_history[self.price_history['tcgPlayerId'].isin(portfolio_cards)]
         volatilities = []
 
         for card_id in portfolio_cards:
-            card_prices = portfolio_prices[portfolio_prices['id'] == card_id].sort_values('date')
+            card_prices = portfolio_prices[portfolio_prices['tcgPlayerId'] == card_id].sort_values('date')
 
             if len(card_prices) >= 2:
                 card_prices['returns'] = card_prices['market'].pct_change()
@@ -337,7 +359,7 @@ class PortfolioCalculator:
         
         current_prices = self.get_current_prices()
 
-        self.portfolio['card_value'] = self.portfolio.apply(lambda row: current_prices.get(row['id'], 0) * row['quantity'], axis=1)
+        self.portfolio['card_value'] = self.portfolio.apply(lambda row: current_prices.get(row['tcgPlayerId'], 0) * row['quantity'], axis=1)
         total_value = self.portfolio['card_value'].sum()
         
         if total_value == 0:
@@ -391,8 +413,8 @@ if __name__ == "__main__":
     # Initialize calculator
     calc: PortfolioCalculator = PortfolioCalculator(portfolio_df, price_history_df, card_metadata_df)
 
-    print("\n=== CURRENT PRICES ===")
-    print(calc.get_current_prices())
+    print("\n=== CURRENT PRICES (7 days ago)===")
+    print(calc.get_current_prices(days = None))
 
     print("\n=== TOTAL PORTFOLIO VALUE ===")
     print(calc.calculate_total_portfolio_value(days = None))
