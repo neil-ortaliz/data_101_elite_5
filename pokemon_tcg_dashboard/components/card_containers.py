@@ -39,3 +39,16 @@ def graph_container(fig=None, title="Visualization Here", class_name=None, fig_i
         
         class_name=class_name
     )
+
+def table_container(table=None, title="Table Here", class_name="", container_id="table-container"):
+    return dbc.Card(
+        [   html.H4(title, className="card-title"),
+            dbc.CardBody(
+                [
+                    html.Div(table)
+                ],
+                id=container_id
+            )
+        ],
+        class_name=class_name
+    )

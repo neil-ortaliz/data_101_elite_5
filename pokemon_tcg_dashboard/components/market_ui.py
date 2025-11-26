@@ -5,7 +5,7 @@ from dash import dcc
 from utils.market_calcs import MarketCalculator
 from utils.loader import load_data
 
-from global_variables import SET_OPTIONS, RARITY_OPTIONS
+from global_variables import SET_OPTIONS, RARITY_OPTIONS, PRICE_HISTORY_DF, CARD_METADATA_DF
 
 import logging
 logger = logging.getLogger(__name__)
@@ -71,8 +71,8 @@ def create_market_overview_metrics(days:int=1):
     # For now, use placeholder values
     logger.debug("create_market_overview_metrics called!")
     
-    price_history_df = load_data("price_history.csv")
-    card_metadata_df = load_data("cards_metadata_table.csv")
+    price_history_df = PRICE_HISTORY_DF
+    card_metadata_df = CARD_METADATA_DF
     market_calculator = MarketCalculator(price_history_df, card_metadata_df)
     market_change_type = "positive" if market_calculator.calculate_change(days)['change_value'] > 0 else "negative" if market_calculator.calculate_change(days)['change_value'] < 0 else "neutral"
     set_change_type = "positive" if market_calculator.calculate_best_performing_set(days)['change_pct'] > 0 else "negative" if market_calculator.calculate_best_performing_set(days)['change_pct'] < 0 else "neutral"
@@ -155,7 +155,7 @@ def create_market_filters():
             dbc.InputGroup([
                 dbc.InputGroupText("🔍"),
                 dbc.Input(
-                    id="search-input",
+                    id="market-search-input",
                     placeholder="Search cards...",
                     type="text"
                 ),
@@ -202,12 +202,12 @@ def create_market_filters():
     
     return filters
 
-def create_top_movers_table(data=None, days=1):
+def create_top_movers_table(data=None):
     """
     Create top movers table
     
     Args:
-        data: List of dicts with keys: name, set, current_price, change_24h, change_7d
+        data: List of dicts with keys: name, set, current_price, price_change, pct_change
     
     Returns:
         html.Div with toggle buttons and table
@@ -218,38 +218,38 @@ def create_top_movers_table(data=None, days=1):
         data = [
             {
                 "name": "Charizard ex",
-                "set": "Obsidian Flames",
+                "setName": "Obsidian Flames",
                 "current_price": "$45.99",
-                "change_24h": "+5.2%",
-                "change_7d": "+12.8%"
+                "price_change": "+5.2%",
+                "pct_change": "+12.8%"
             },
             {
                 "name": "Pikachu VMAX",
-                "set": "Vivid Voltage",
+                "setName": "Vivid Voltage",
                 "current_price": "$32.50",
-                "change_24h": "+3.1%",
-                "change_7d": "+8.4%"
+                "price_change": "+3.1%",
+                "pct_change": "+8.4%"
             },
             {
                 "name": "Mewtwo V",
-                "set": "Pokemon GO",
+                "setName": "Pokemon GO",
                 "current_price": "$18.75",
-                "change_24h": "-2.3%",
-                "change_7d": "-5.1%"
+                "price_change": "-2.3%",
+                "pct_change": "-5.1%"
             },
             {
                 "name": "Umbreon VMAX",
-                "set": "Evolving Skies",
+                "setName": "Evolving Skies",
                 "current_price": "$89.99",
-                "change_24h": "+8.5%",
-                "change_7d": "+15.2%"
+                "price_change": "+8.5%",
+                "pct_change": "+15.2%"
             },
             {
                 "name": "Rayquaza VMAX",
-                "set": "Evolving Skies",
+                "setName": "Evolving Skies",
                 "current_price": "$125.00",
-                "change_24h": "-1.5%",
-                "change_7d": "-3.8%"
+                "price_change": "-1.5%",
+                "pct_change": "-3.8%"
             },
         ]
     
@@ -257,10 +257,10 @@ def create_top_movers_table(data=None, days=1):
         id='top-movers-table',
         columns=[
             {"name": "Card Name", "id": "name"},
-            {"name": "Set", "id": "set"},
+            {"name": "Set", "id": "setName"},
             {"name": "Current Price", "id": "current_price"},
-            {"name": "24h Change", "id": "change_24h"},
-            {"name": "7d Change", "id": "change_7d"},
+            {"name": "Price Change", "id": "price_change"},
+            {"name": "Percent Change", "id": "pct_change"},
         ],
         data=data,
         sort_action="native",
@@ -284,16 +284,16 @@ def create_top_movers_table(data=None, days=1):
             # Color positive changes blue
             {
                 'if': {
-                    'filter_query': '{change_24h} contains "+"',
-                    'column_id': 'change_24h'
+                    'filter_query': '{price_change} contains "+"',
+                    'column_id': 'price_change'
                 },
                 'color': '#1E90FF',
                 'fontWeight': 'bold'
             },
             {
                 'if': {
-                    'filter_query': '{change_7d} contains "+"',
-                    'column_id': 'change_7d'
+                    'filter_query': '{pct_change} contains "+"',
+                    'column_id': 'pct_change'
                 },
                 'color': '#1E90FF',
                 'fontWeight': 'bold'
@@ -301,16 +301,16 @@ def create_top_movers_table(data=None, days=1):
             # Color negative changes orange
             {
                 'if': {
-                    'filter_query': '{change_24h} contains "-"',
-                    'column_id': 'change_24h'
+                    'filter_query': '{price_change} contains "-"',
+                    'column_id': 'price_change'
                 },
                 'color': '#FF8C00',
                 'fontWeight': 'bold'
             },
             {
                 'if': {
-                    'filter_query': '{change_7d} contains "-"',
-                    'column_id': 'change_7d'
+                    'filter_query': '{pct_change} contains "-"',
+                    'column_id': 'pct_change'
                 },
                 'color': '#FF8C00',
                 'fontWeight': 'bold'
@@ -325,12 +325,14 @@ def create_top_movers_table(data=None, days=1):
     )
     
     # Add toggle buttons for Gainers/Losers
-    toggle_buttons = dbc.ButtonGroup([
+    '''toggle_buttons = dbc.ButtonGroup([
         dbc.Button("Gainers", id="btn-gainers", color="primary", outline=True),
         dbc.Button("Losers", id="btn-losers", color="danger", outline=True),
-    ], className="mb-3")
+    ], className="mb-3")'''
     
-    return html.Div([
+    '''return html.Div([
         toggle_buttons,
         table
-    ])
+    ])'''
+
+    return table

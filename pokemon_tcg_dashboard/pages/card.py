@@ -10,8 +10,8 @@ from global_variables import CARD_DATA_FETCHER
 #dash.register_page(__name__, path_template="/card/<report_id>")
 
 dash.register_page(__name__, path_template="/card/<card_id>",
-                    #title="Card View", 
-                    #name="Card View",
+                    title="Card View", 
+                    name="Card View",
                     )
 
 import logging
@@ -44,15 +44,16 @@ def layout(card_id=None, **kwargs):
 def update_card_page(pathname):
     print(pathname)
     card_number = pathname.split("/")[-1]
-    #print(f"card_number: {card_number}")
+    logger.debug(f"card_number: {card_number}")
     card_metadata = CARD_DATA_FETCHER.get_card_by_id(card_number)
     logger.debug(f"card_metadata retrieved: {card_metadata}")
-    
-    if card_metadata is None:
+    test = None
+    '''if card_metadata is None:
         # GO TO 404 PAGE
         #return html.H3("Card Not Found"), None
-        return dash.no_update, dash.no_update, "/page-not-found"
-    
+        return dash.no_update, dash.no_update, "/page-not-found"'''
+    if not test:
+        pass
     else:
         # Prepare data for create_card_header
         card_data = {
