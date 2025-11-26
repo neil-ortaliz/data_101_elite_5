@@ -5,7 +5,7 @@ import numpy as np
 import logging
 logger = logging.getLogger(__name__)
 
-def calculate_top_movers(name:str=None, set_name:str=None, rarity:str=None, days:int=30, top_n=10, ascending:bool=True)-> dict:
+def calculate_top_movers(name:str=None, set_name:str=None, rarity:str=None, days:int=1, top_n=10, ascending:bool=True)-> dict:
     """
     Create a table showing the top price movers for cards.
 
@@ -27,6 +27,8 @@ def calculate_top_movers(name:str=None, set_name:str=None, rarity:str=None, days
     price_history_df = PRICE_HISTORY_DF.copy()
     price_history_df = price_history_df.set_index('date')
     price_history_df = price_history_df[price_history_df['condition']=='Near Mint']
+    if days == -1:
+        days = (price_history_df.index.max() - price_history_df.index.min()).days
 
     meta_df = CARD_METADATA_DF.copy()
     
@@ -84,7 +86,7 @@ def calculate_top_movers(name:str=None, set_name:str=None, rarity:str=None, days
     # Handle missing
     out = out.replace([np.inf, -np.inf], np.nan)
     out[['past_price', 'price_change', 'pct_change']] = (
-        out[['past_price', 'price_change', 'pct_change']].fillna("N/A")
+        out[['past_price', 'price_change', 'pct_change']].fillna("0")
     )
 
     # 8. Sort
@@ -94,7 +96,13 @@ def calculate_top_movers(name:str=None, set_name:str=None, rarity:str=None, days
         key=lambda c: pd.to_numeric(c, errors='coerce')
     )
 
-    logger.debug(out[COLS].head(top_n).to_dict('records'))
+
+    out["current_price"] = out["current_price"].map(lambda x: f"$ {float(x):,.2f}" if pd.notnull(x) else "")
+    out["price_change"] = out["price_change"].map(lambda x: f"$ {float(x):+,.2f}" if pd.notnull(x) else "")
+    out["pct_change"] = out["pct_change"].map(lambda x: f"{float(x):+.2f}%" if pd.notnull(x) else "")
+
+    logger.debug("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    logger.debug(out[COLS].head(2).to_dict('records'))
     return out[COLS].head(top_n).to_dict('records')
 
 

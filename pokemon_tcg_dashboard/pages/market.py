@@ -53,32 +53,49 @@ layout = html.Div([
             dbc.Row([
                 # html.H4("Top Price Movers", className="mb-3"),
                 # create_top_movers_table(),
-                graph_container(
-                    fig=go.Figure(),
+                table_container(
+                    table="",
                     title="Top Price Movers (Set)",
-                    fig_id="top-movers-table-fig",
-                    container_id="top-movers-table-container"
+                    #fig_id="top-movers-table-fig",
+                    container_id="top-movers-table-fig"
                 )
             ], id="top-movers-row"),
             dbc.Row([
                 table_container(
-                    table=go.Figure(),
+                    table="",
                     title="Top Price Movers (Cards)",
                     #class_name="top-movers-card-table-fig",
                     container_id="top-movers-card-table-fig"
                 )
             ])
         ],
-        gap=2
     )
 ])
 
 #logger.info("Market page layout constructed")
 
 @callback(
-    Output("top-movers-table-fig", "figure"),
     Output("market-overview-metrics-row", "children"),
+    Input("select-market", "value")
+)
+def update_market_overview_metrics(days):
+    logger.debug(f"Updating market overview metrics")
+    days= int(days)
+    ban_row = create_market_overview_metrics(days=days)
+    return ban_row
+
+@callback(
     Output("set-performance-list", "figure"),
+    Input("select-market", "value"),
+    Input("market-set-select", "value")
+)
+def update_set_performance_chart(days, set_names):
+    logger.debug(f"Trigger: {ctx.triggered_id}")
+    days= int(days)
+    fig = create_set_line_chart(set_names=set_names, days=days)
+    return fig
+
+@callback(
     Output("top-movers-card-table-fig", "children"),
     Input("select-market", "value"),
     Input("market-set-select", "value"),
@@ -88,14 +105,22 @@ layout = html.Div([
 def update_graphs(days, set_names, search_name, rarities):
     logger.debug(f"Trigger: {ctx.triggered_id}")
     days= int(days)
-    fig=create_top_sets_table(days=days, set_names=set_names)
-    history_fig = create_set_line_chart(set_names=set_names, days=days)
-    ban_row = create_market_overview_metrics(days=days)
     top_movers_table = create_top_movers_table(calculate_top_movers(name=search_name,
                                                set_name=set_names,
                                                rarity=rarities,
                                                days=days,
                                                top_n=10,
                                                ascending=False))
-    return fig, ban_row, history_fig, top_movers_table
+    return top_movers_table
 
+
+@callback(
+    Output("top-movers-table-fig", "children"),
+    Input("select-market", "value"),
+    Input("market-set-select", "value"),
+)
+def update_top_movers_table(days, set_names):
+    logger.debug("Updating top movers table....")
+    days= int(days)
+    fig=create_top_sets_table(days=days, set_names=set_names)
+    return fig

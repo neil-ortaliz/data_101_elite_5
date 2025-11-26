@@ -17,6 +17,12 @@ body {
     padding: 20px;
 }
 
+/* Apply Bootstrap font to all Dash DataTables */
+.dash-table-container .dash-spreadsheet-container {
+    font-family: "Helvetica, Arial, sans-serif";  /* same as Bootstrap */
+}
+
+
 .nav {
     background-color: #f8f9fa;
     padding: 10px;

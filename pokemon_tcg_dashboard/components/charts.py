@@ -36,8 +36,10 @@ Nov 21, 2025
 import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
+from dash import dash_table
 
 import pandas as pd
+import numpy as np
 from datetime import timedelta
 from utils.loader import load_data, get_set_price_history
 import logging
@@ -201,130 +203,125 @@ def market_view_set_performance_bar_chart(time_range="All Time"):
     return fig
 
 # ------------------------------------ TABLE FORM ------------------------------------------
-def create_top_sets_table(price_col="price",days=7, set_names=None):
+def create_top_sets_table(price_col="price", days=7, set_names=None):
     logger.debug(f"Calling create_top_sets_table")
-    """
-    Parameters
-    price_col : str, default ""price"
-        Column name in ebay_metadata representing the market price
-    days: int, default 7
-        Number of days to filter the price history
-    """
-
-    # Ensure numeric price
-    #ebay_metadata[price_col] = pd.to_numeric(ebay_metadata[price_col], errors="coerce")
-    #ebay_metadata["date"] = pd.to_datetime(ebay_metadata["date"], errors="coerce")
-    days = int(days) # Ensure Numeric value
+    days = int(days)
     set_price_history_df = SET_PRICE_HISTORY_DFS.copy()
 
     if set_names is not None:
         if isinstance(set_names, str):
             set_names = [set_names]
-        set_price_history_df = set_price_history_df[set_price_history_df['set_name'].isin(set_names)]
-        
-    set_price_history_df[price_col] = pd.to_numeric(set_price_history_df[price_col], errors="coerce")
-    #logger.debug(f"Loaded set price history (rows={set_price_history_df.shape[0]}, cols={set_price_history_df.shape[1]})")
+        set_price_history_df = set_price_history_df[
+            set_price_history_df['set_name'].isin(set_names)
+        ]
+
+    set_price_history_df[price_col] = pd.to_numeric(
+        set_price_history_df[price_col], errors="coerce"
+    )
 
     # --- DATE RANGES ---
     max_date = set_price_history_df.index.max()
     if days == -1:
         date_range_df = set_price_history_df
     else:
-        date_range_df = set_price_history_df[set_price_history_df.index >= max_date - pd.Timedelta(days=days)]
-    #logger.debug(f"======date_range_df head======= \n {date_range_df.head()}")
+        date_range_df = set_price_history_df[
+            set_price_history_df.index >= max_date - pd.Timedelta(days=days)
+        ]
+
     current_df = (
         date_range_df.sort_index()
         .groupby("set_name")
         .tail(1)
         .reset_index()
     )
-    #logger.debug(f"======current_df head======= \n {current_df}")
-    logger.debug(f"current_df.shape(): {current_df.shape}")
 
-    # Get the row index of the earliest date per set
-
-    
-    # Select the prices at those earliest dates
+    # Get earliest price in the selected range
     filtered_min_date = date_range_df.index.min()
-    logger.debug(f"Ealriest date in range: {filtered_min_date}")
-    earliest_prices_df = date_range_df[date_range_df.index == filtered_min_date][["set_name", "price"]].reset_index()
-    earliest_prices_df = earliest_prices_df.rename(columns={"price": "earliest_price"})
-    #logger.debug(f"======earliest_prices======= \n {earliest_prices_df}")
-    #logger.debug(f"======earliest_prices['set_name'] value counts======= \n {earliest_prices_df['set_name'].value_counts()}")
+    earliest_prices_df = date_range_df[
+        date_range_df.index == filtered_min_date
+    ][["set_name", "price"]].reset_index()
+
+    earliest_prices_df = earliest_prices_df.rename(
+        columns={"price": "earliest_price"}
+    )
 
     current_df = current_df.merge(
         earliest_prices_df[['set_name', 'earliest_price']],
-        on= 'set_name',
+        on='set_name',
         how='left'
     )
-    
-    current_df["Change"] = current_df["price"] - current_df["earliest_price"]
-    current_df["% Change"] = (current_df["Change"] / current_df["earliest_price"]) * 100
-    current_df["Rank"] = current_df["price"].rank(ascending=False, method="first").astype(int)
+
+    current_df["price_change"] = current_df["price"] - current_df["earliest_price"]
+    current_df["pct_change"] = (
+        current_df["price_change"] / current_df["earliest_price"] * 100
+    )
+
+    current_df["Rank"] = (
+        current_df["price"]
+        .rank(ascending=False, method="first")
+        .astype(int)
+    )
+
     current_df = current_df.sort_values(by="Rank", ascending=True)
 
-    #logger.debug(f"======current_df with Change head======= \n {current_df}")
-
-    '''if numeric_tables:
-        prev = numeric_tables[-1][["set_name", "price"]].rename(
-            columns={"price": "prev_price"}
-        )
-        merged = current_df.merge(prev, on="set_name", how="left")
-        merged["Change"] = merged["price"] - merged["prev_price"]
-        merged["% Change"] = merged["Change"] / merged["prev_price"] * 100
-    else:
-        merged = current_df.copy()
-        merged["Change"] = 0
-        merged["% Change"] = 0
-
-    numeric_tables.append(merged.copy())
-    logger.debug(f"numeric_tables count after append: {len(numeric_tables)}")'''
-
-    # --- Create Plotly Figure ---
-    fig = go.Figure()
-
-    # Color coding for Change and % Change
-    change_colors = ["#00CC96" if x > 0 else "#EF553B" if x < 0 else "black" for x in current_df["Change"]]
-
-    fig.add_trace(
-        go.Table(
-            header=dict(
-                values=["Rank", "Set Name", "Current Market Price ($)", "Change ($)", "% Change"],
-                fill_color="#636EFA",
-                align="center",
-                font=dict(color="white", size=13)
-            ),
-            cells=dict(
-                values=[
-                    current_df["Rank"],
-                    current_df["set_name"],
-                    [f"${x:+.2f}" for x in current_df["price"]],
-                    [f"{x:+.2f}" for x in current_df["Change"]],
-                    [f"{x:+.2f}%" for x in current_df["% Change"]],
-                ],
-                fill_color="white",
-                align="center",
-                font=dict(size=12),
-                font_color=[
-                    "black", "black", "black", "black", change_colors, change_colors
-                ],
-            )
-        )
+    current_df = current_df.replace([np.inf, -np.inf], np.nan)
+    current_df[['price', 'price_change', 'pct_change']] =(
+        current_df[['price', 'price_change', 'pct_change']].fillna("N/A")
     )
 
+    # Format values for display
+    current_df["price"] = current_df["price"].map(lambda x: f"${x:,.2f}")
+    current_df["price_change"] = current_df["price_change"].map(lambda x: f"{x:+.2f}")
+    current_df["pct_change"] = current_df["pct_change"].map(lambda x: f"{x:+.2f}%")
 
-    fig.update_layout(
-        updatemenus=[dict(
-            #buttons=buttons,
-            direction="down",
-            x=1.15,
-            y=1.05,
-            showactive=True
-        )],
-        #title={"text": "Top Pokémon Card Sets — All Time", "x": 0.5},
+    data_table_columns = [
+        {"name": "Set Name", "id": "set_name"},
+        {"name": "Current Price", "id": "price"},
+        {"name": "Change", "id": "price_change"},
+        {"name": "% Change", "id": "pct_change"},
+    ]
+
+    style_data_conditional = [
+        # Positive changes blue
+        {"if": {"filter_query": "{price_change} contains '+'", "column_id": "price_change"},
+         "color": "#1E90FF", "fontWeight": "bold"},
+        {"if": {"filter_query": "{pct_change} contains '+'", "column_id": "pct_change"},
+         "color": "#1E90FF", "fontWeight": "bold"},
+        # Negative changes orange
+        {"if": {"filter_query": "{price_change} contains '-'", "column_id": "price_change"},
+         "color": "#FF8C00", "fontWeight": "bold"},
+        {"if": {"filter_query": "{pct_change} contains '-'", "column_id": "pct_change"},
+         "color": "#FF8C00", "fontWeight": "bold"},
+        # Row hover effect
+        {"if": {"state": "active"}, "backgroundColor": "rgba(0, 117, 190, 0.1)",
+         "border": "1px solid #0075BE"}
+    ]
+
+    return dash_table.DataTable(
+        id="top-movers-table",
+        data=current_df.to_dict("records"),
+        columns=data_table_columns,
+        style_header={
+            'backgroundColor': '#0075BE',
+            'color': 'white',
+            'fontWeight': 'bold',
+            'textAlign': 'center',
+            'padding': '10px',
+            "font-family": "Helvetica, Arial, sans-serif"
+        },
+        style_cell={
+            'textAlign': 'left',
+            'padding': '10px',
+            'fontSize': '14px',
+            "font-family": "Helvetica, Arial, sans-serif"
+        },
+        style_data_conditional=style_data_conditional,
+        page_size=20,
+        sort_action="native",
+        #filter_action="native",
+        style_table={"overflowX": "auto"}
     )
 
-    return fig
 
 
 #========================================== PORTFOLIO VIEW ===================================================

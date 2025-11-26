@@ -49,7 +49,7 @@ def create_metric_card(title, value, change=None, change_type="neutral"):
                 className="mb-0"
             ) if change else html.Div()
         ]),
-        className="metric-card shadow-sm",
+        className="metric-card shadow-sm h-100",
         style={
             "borderRadius": "10px",
             "border": "none",
@@ -273,12 +273,14 @@ def create_top_movers_table(data=None):
             'color': 'white',
             'fontWeight': 'bold',
             'textAlign': 'center',
-            'padding': '10px'
+            'padding': '10px',
+            "font-family": "Helvetica, Arial, sans-serif"
         },
         style_cell={
             'textAlign': 'left',
             'padding': '10px',
-            'fontSize': '14px'
+            'fontSize': '14px',
+            "font-family": "Helvetica, Arial, sans-serif"
         },
         style_data_conditional=[
             # Color positive changes blue
