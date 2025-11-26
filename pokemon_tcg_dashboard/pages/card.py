@@ -3,9 +3,10 @@ from dash import html, dcc, Input, Output, State, callback
 import dash_bootstrap_components as dbc
 from datetime import timedelta
 from components.card_ui import create_card_header, create_action_buttons
-from components.charts import card_view_price_history_line_chart
+from components.charts import card_view_price_history_line_chart, card_view_card_grade_price_comparison
 from components import graph_container
 from global_variables import CARD_DATA_FETCHER, PRICE_HISTORY_DF, EBAY_METADATA_DF
+from utils.grade_analysis import create_grade_distribution_chart
 
 # ---------------- Register page ----------------
 dash.register_page(
@@ -33,11 +34,11 @@ def layout(card_id=None, **kwargs):
             ],
             value="all",
             clearable=False
-        )], width=4),
+        )], width=6),
         dbc.Col([dcc.Dropdown(
             id="tcg-grade-dropdown",
             options=[
-                {"label": "All Grades", "value": "all"},
+                {"label": "All Conditions", "value": "all"},
                 {"label": "Near Mint", "value": "Near Mint"},
                 {"label": "Lightly Played", "value": "Lightly Played"},
                 {"label": "Moderately Played", "value": "Moderately Played"},
@@ -46,7 +47,7 @@ def layout(card_id=None, **kwargs):
             ],
             value="all",
             clearable=False
-        )], width=4)
+        )], width=6)
     ])
 
     # Filter controls for eBay chart
@@ -62,7 +63,7 @@ def layout(card_id=None, **kwargs):
             ],
             value="all",
             clearable=False
-        )], width=4),
+        )], width=6),
         dbc.Col([dcc.Dropdown(
             id="ebay-grade-dropdown",
             options=[
@@ -73,7 +74,7 @@ def layout(card_id=None, **kwargs):
             ],
             value="all",
             clearable=False
-        )], width=4)
+        )], width=6)
     ])
 
     return html.Div([
@@ -85,7 +86,11 @@ def layout(card_id=None, **kwargs):
         html.Hr(),
         html.H5("eBay Price History Filters"),
         ebay_filter_controls,
-        html.Div(id="ebay-chart-container")
+        html.Div(id="ebay-chart-container"),
+        html.Hr(),
+        html.Div(id='grade-chart-container'),
+        html.Hr(),
+        html.Div(id='grade-comparison-container')
     ])
 
 
@@ -101,7 +106,7 @@ def update_card_header(pathname):
     except ValueError:
         return html.H3("Invalid Card ID")
 
-    card_metadata = CARD_DATA_FETCHER.get_card_by_id(card_id=card_id, psa="psa10")
+    card_metadata = CARD_DATA_FETCHER.get_card_by_id(card_id=card_id, days = None, condition = 'any')
     if card_metadata is None:
         return html.H3("Card Not Found")
 
@@ -112,9 +117,12 @@ def update_card_header(pathname):
         "card_number": card_id,
         "image_url": card_metadata['image_url'],
         "current_price": card_metadata['current_price'],
-        "psa10_price": card_metadata['psa_price'],
+        "psa10_price": card_metadata['psa10_price'],
+        "psa9_price": card_metadata['psa9_price'],
+        "psa8_price": card_metadata['psa8_price'],
         "ungraded_price": card_metadata['ungraded_price'],
         "total_listings": card_metadata['total_listings'],
+        "card_trend": card_metadata['card_trend']
     }
 
     return html.Div([
@@ -136,7 +144,7 @@ def update_tcg_chart(selected_date, selected_grade, pathname):
     except ValueError:
         return html.Div("Invalid Card ID")
 
-    card_metadata = CARD_DATA_FETCHER.get_card_by_id(card_id=card_id, psa="psa10")
+    card_metadata = CARD_DATA_FETCHER.get_card_by_id(card_id=card_id, days = None, condition = 'any')
     if card_metadata is None:
         return html.Div("Card Not Found")
 
@@ -167,7 +175,7 @@ def update_ebay_chart(selected_date, selected_grade, pathname):
     except ValueError:
         return html.Div("Invalid Card ID")
 
-    card_metadata = CARD_DATA_FETCHER.get_card_by_id(card_id=card_id, psa="psa10")
+    card_metadata = CARD_DATA_FETCHER.get_card_by_id(card_id=card_id, days = None, condition = 'any')
     if card_metadata is None:
         return html.Div("Card Not Found")
 
@@ -182,3 +190,56 @@ def update_ebay_chart(selected_date, selected_grade, pathname):
         selected_grade=selected_grade
     )
     return graph_container(fig=fig, title="eBay Price History")
+
+# ---------------- Update Graded Bar Chart ---------------- 
+@callback(
+    Output("grade-chart-container", "children"),
+    Input("url", "pathname")
+)
+def update_grade_chart(pathname):
+    card_number = pathname.split("/")[-1]
+    try:
+        card_id = int(card_number)
+    except ValueError:
+        return html.Div("Invalid Card ID")
+
+    card_metadata = CARD_DATA_FETCHER.get_card_by_id(card_id=card_id, days=None, condition='any')
+    if card_metadata is None:
+        return html.Div("Card Not Found")
+
+    print(card_metadata["name"])
+
+    grade_df = EBAY_METADATA_DF
+    
+    fig = create_grade_distribution_chart(
+        data=grade_df,
+        card_id=card_id,
+        card_name=card_metadata["name"]
+    )
+    return graph_container(fig=fig, title = 'Card Grade Distribution')
+
+# ---------------- Grade Price Comparison Chart ---------------- 
+@callback(
+    Output("grade-comparison-container", "children"),
+    Input("url", "pathname")
+)
+def update_grade_comparison_chart(pathname):
+    card_number = pathname.split("/")[-1]
+    try:
+        card_id = int(card_number)
+    except ValueError:
+        return html.Div("Invalid Card ID")
+
+    card_metadata = CARD_DATA_FETCHER.get_card_by_id(card_id=card_id, days=None, condition='any')
+    if card_metadata is None:
+        return html.Div("Card Not Found")
+
+    print(card_metadata["name"])
+    
+    fig = card_view_card_grade_price_comparison(
+        price_history_df = PRICE_HISTORY_DF,
+        ebay_history_df = EBAY_METADATA_DF,
+        card_id=card_id,
+        card_name=card_metadata["name"]
+    )
+    return graph_container(fig=fig, title = 'Ungraded vs Graded Comparison')

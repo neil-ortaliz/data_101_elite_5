@@ -191,7 +191,7 @@ def market_view_set_performance_bar_chart(time_range="All Time"):
         title=f'Pokemon Set Performance - {time_range}',
         xaxis_title='Price Change (%)',
         yaxis_title='',
-        height=450,
+        height=700,
         template='plotly_white',
         showlegend=False,
         margin=dict(l=150, r=50, t=50, b=50)
@@ -498,12 +498,26 @@ def card_view_price_history_line_chart(card_name, card_id, card_df, price_column
         # Single grade or no grade column
         if selected_grade != "all" and grade_filter in df.columns:
             df = df[df[grade_filter] == selected_grade]
+
+        if df.empty or price_column not in df.columns or df[price_column].isna().all():
+            fig = go.Figure()
+            fig.update_layout(
+                title=f"No price history available for {card_name} ({platform_name}) in selected grade/condition",
+                template="plotly_white"
+            )
+            return fig
+        
+        if platform_name.lower() == "tcgplayer":
+            color = TCG_GRADE_COLORS.get(selected_grade, "#000000")
+        else:
+            color = PSA_GRADE_COLORS.get(selected_grade, "#000000")
+
         fig.add_trace(go.Scatter(
             x=df["date"],
             y=df[price_column],
             mode="lines+markers",
             name=platform_name,
-            line=dict(width=2, color="green"),
+            line=dict(width=2, color=color),
             marker=dict(size=4)
         ))
 
@@ -523,47 +537,83 @@ def card_view_price_history_line_chart(card_name, card_id, card_df, price_column
 
     return fig
 # ----------------- FUNCTION 5: Grade Price Comparison  -----------
-def card_view_card_grade_price_comparison(card_name, grading_cost=20):
-    logger.debug(f"Calling card_view_card_grade_price_comparison")
+def card_view_card_grade_price_comparison(price_history_df, ebay_history_df, card_id, card_name, grading_cost=20):
+    """
+    Compare graded vs ungraded card prices and sales volumes, and calculate ROI for grading to PSA 10.
+
+    Parameters:
+    - price_history_df: DataFrame of historical ungraded card prices
+    - ebay_history_df: DataFrame of graded card listings
+    - card_id: unique identifier for the card (tcgPlayerId)
+    - card_name: human-readable card name (for titles)
+    - grading_cost: cost to grade a card (default $20)
+
+    Returns:
+    - graded_data: filtered DataFrame of graded cards
+    - ungraded_data: filtered DataFrame of ungraded cards
+    - fig: Plotly figure object
+    """
+    GRADE_COLORS = {
+        "Ungraded": "#95a5a6",
+        "PSA 8": "#9b59b6",
+        "PSA 9": "#f1c40f",
+        "PSA 10": "#2ecc71"
+    }
+
+    logger.debug(f"Calling card_view_card_grade_price_comparison for {card_name} ({card_id})")
+
     # -------------------- Filter Data --------------------
-    graded_data = ebay_metadata[ebay_metadata['name'].str.contains(card_name, case=False, na=False)].copy()
-    ungraded_data = price_history_metadata[price_history_metadata['name'].str.contains(card_name, case=False, na=False)].copy()
+    graded_data = ebay_history_df[ebay_history_df['tcgPlayerId'] == card_id].copy()
+    ungraded_data = price_history_df[price_history_df['tcgPlayerId'] == card_id].copy()
+    
     logger.debug(f"Found graded rows={len(graded_data)}, ungraded rows={len(ungraded_data)} for '{card_name}'")
 
-    if len(graded_data) == 0:
-        print(f"No graded data found for: {card_name}")
-        return
+    if graded_data.empty:
+        fig = go.Figure()
+        fig.update_layout(
+            title=f"No graded data found for {card_name}",
+            template="plotly_white"
+        )
+        return fig
 
+    # Extract numeric PSA grades
     graded_data['psa_grade_numeric'] = graded_data['grade'].str.extract(r'psa(\d+)', expand=False).astype(float)
     graded_data = graded_data[graded_data['psa_grade_numeric'].isin([8.0, 9.0, 10.0])]
 
-    if len(ungraded_data) == 0:
-        ungraded_avg_price = graded_data['average'].iloc[0]
+    # Ungraded average price and sales count
+    if ungraded_data.empty:
+        ungraded_avg_price = graded_data['average'].iloc[0] if 'average' in graded_data.columns else 0
         ungraded_sales_count = 0
     else:
-        ungraded_avg_price = ungraded_data['market'].mean()
+        ungraded_avg_price = ungraded_data['market'].mean() if 'market' in ungraded_data.columns else 0
         ungraded_sales_count = len(ungraded_data)
 
     # -------------------- Prepare Data --------------------
     # Sales Volume
     grade_counts = graded_data['psa_grade_numeric'].value_counts().sort_index()
-    categories_volume = ['Ungraded\n(Near Mint)'] + [f'PSA {int(g)}' for g in grade_counts.index]
+    categories_volume = ['Ungraded'] + [f'PSA {int(g)}' for g in grade_counts.index]
     counts = [max(ungraded_sales_count, 1)] + grade_counts.tolist()
-    colors = ['#95a5a6', '#3498db', '#2ecc71', '#f39c12']
+    colors_volume = [GRADE_COLORS.get(cat, "#7f8c8d") for cat in categories_volume]  # fallback color if missing
 
     # Price
     price_by_grade = graded_data.groupby('psa_grade_numeric')['average'].mean().sort_index()
-    categories_price = ['Ungraded\n(Near Mint)'] + [f'PSA {int(g)}' for g in price_by_grade.index]
+    categories_price = ['Ungraded'] + [f'PSA {int(g)}' for g in price_by_grade.index]
     prices = [ungraded_avg_price] + price_by_grade.tolist()
+    colors_price = [GRADE_COLORS.get(cat, "#7f8c8d") for cat in categories_price]  # fallback color
 
     # -------------------- Create Subplots --------------------
     fig = make_subplots(rows=1, cols=2, subplot_titles=("Sales Volume", "Average Price (USD)"))
+
+    fig.update_layout(
+        height=600,  # taller to fit annotations below
+        template='plotly_white'
+    )
 
     # Sales Volume Bar Chart
     fig.add_trace(go.Bar(
         x=categories_volume,
         y=counts,
-        marker_color=colors[:len(counts)],
+        marker_color=colors_volume,
         text=counts,
         textposition='outside',
         name='Sales Volume'
@@ -573,47 +623,41 @@ def card_view_card_grade_price_comparison(card_name, grading_cost=20):
     fig.add_trace(go.Bar(
         x=categories_price,
         y=prices,
-        marker_color=colors[:len(prices)],
+        marker_color=colors_price,
         text=[f"${p:.2f}" for p in prices],
         textposition='outside',
         name='Average Price'
     ), row=1, col=2)
 
-    # -------------------- ROI Annotation for PSA 10 --------------------
-    if 10.0 in price_by_grade.index:
-        psa10_price = price_by_grade[10.0]
-        roi = psa10_price - ungraded_avg_price - grading_cost
-        roi_pct = (roi / (ungraded_avg_price + grading_cost)) * 100
-        logger.debug(f"Computed ROI for PSA10: roi={roi:.2f}, roi_pct={roi_pct:.2f}")
-        verdict = "✓ WORTH GRADING" if roi > 0 else "✗ NOT WORTH GRADING"
-        color = 'green' if roi > 0 else 'red'
+    # -------------------- ROI Annotations for PSA 8, 9, 10 (horizontal) --------------------
+    y_pos = -0.15  # row below the chart in paper coordinates
+    x_start = 0.02  # starting horizontal position
+    x_step = 0.32   # space between annotations (adjust as needed)
 
-        fig.add_annotation(
-            x=0.75,  # position relative to the figure (right chart)
-            y=-0.15,
-            xref='paper',
-            yref='paper',
-            text=f"PSA 10 ROI: ${roi:.2f} ({roi_pct:+.0f}%) | {verdict}",
-            showarrow=False,
-            font=dict(size=12, color=color),
-            align='center',
-            bordercolor=color,
-            borderwidth=1,
-            borderpad=4,
-            bgcolor='wheat',
-            opacity=0.7
-        )
+    for i, grade in enumerate([8.0, 9.0, 10.0]):
+        if grade in price_by_grade.index:
+            psa_price = price_by_grade[grade]
+            roi = psa_price - ungraded_avg_price - grading_cost
+            roi_pct = (roi / (ungraded_avg_price + grading_cost)) * 100
+            verdict = "✓ WORTH GRADING" if roi > 0 else "✗ NOT WORTH GRADING"
+            color = 'green' if roi > 0 else 'red'
 
-    fig.update_layout(
-        title_text=f"Graded vs Ungraded Analysis: {card_name}",
-        height=600,
-        template='plotly_white',
-        showlegend=False
-    )
-
-    fig.show()
-
-    return graded_data, ungraded_data
+            fig.add_annotation(
+                x=x_start + i * x_step,  # position horizontally
+                y=y_pos,
+                xref='paper',
+                yref='paper',
+                text=f"PSA {int(grade)} ROI: ${roi:.2f} ({roi_pct:+.0f}%) | {verdict}",
+                showarrow=False,
+                font=dict(size=12, color=color),
+                align='center',
+                bordercolor=color,
+                borderwidth=1,
+                borderpad=4,
+                bgcolor='wheat',
+                opacity=0.8
+            )
+    return fig
 '''
 # -------------------- CALL FUNCTION --------------------
 graded_data, ungraded_data = portfolio_view_graded_ungraded_plotly("Zekrom ex - 172/086")
