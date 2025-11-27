@@ -76,6 +76,20 @@ def create_card_header(card_data=None):
                 ], width=6),
                 dbc.Col([
                     html.Div([
+                        html.P("PSA 9 Price", className="text-muted mb-1"),
+                        html.H5(card_data.get("psa9_price", ""), className="mb-0")
+                    ])
+                ], width=6),
+            ], className="mb-3"),
+            dbc.Row([
+                dbc.Col([
+                    html.Div([
+                        html.P("PSA 8 Price", className="text-muted mb-1"),
+                        html.H5(card_data.get("psa8_price", ""), className="mb-0")
+                    ])
+                ], width=6),
+                dbc.Col([
+                    html.Div([
                         html.P("Ungraded Price", className="text-muted mb-1"),
                         html.H5(card_data.get("ungraded_price", ""), className="mb-0")
                     ])
@@ -85,16 +99,35 @@ def create_card_header(card_data=None):
                 dbc.Col([
                     html.Div([
                         html.P("Total Listings", className="text-muted mb-1"),
-                        html.H5(str(card_data.get("total_listings", 0)), className="mb-0")
+                        html.H5(str(card_data.get("total_listings")), className="mb-0")
                     ])
                 ], width=6),
                 dbc.Col([
                     html.Div([
                         html.P("Market Trend", className="text-muted mb-1"),
-                        html.H5([
-                            html.Span("↑", style={"marginRight": "5px", "color": "#1E90FF"}),
-                            "Trending Up"
-                        ], className="mb-0", style={"color": "#1E90FF"})
+                        html.H5(
+                            [
+                                html.Span(
+                                    "↑" if card_data.get("card_trend") == "up" else ("↓" if card_data.get("card_trend") == "down" else "→"),
+                                    style={
+                                        "marginRight": "5px",
+                                        "color": (
+                                            "#1E90FF" if card_data.get("card_trend") == "up"
+                                            else ("red" if card_data.get("card_trend") == "down" else "gray")
+                                        )
+                                    }
+                                ),
+                                "Trending Up" if card_data.get("card_trend") == "up" 
+                                else ("Trending Down" if card_data.get("card_trend") == "down" else "Stable")
+                            ],
+                            className="mb-0",
+                            style={
+                                "color": (
+                                    "#1E90FF" if card_data.get("card_trend") == "up"
+                                    else ("red" if card_data.get("card_trend") == "down" else "gray")
+                                )
+                            }
+                        )
                     ])
                 ], width=6),
             ])

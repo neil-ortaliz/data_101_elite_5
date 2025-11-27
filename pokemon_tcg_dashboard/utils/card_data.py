@@ -17,8 +17,9 @@ class CardData(TypedDict):
     card_number: str
     image_url: str
     current_price: str
-    psa_grade: str
-    psa_price: str
+    psa10_price: str
+    psa9_price: str
+    psa8_price: str
     ungraded_price: str
     total_listings: int
     price_history: List[PricePoint]
@@ -73,11 +74,10 @@ class CardDataFetcher:
         card_id: int,
         use_cache: bool = True,
         days: Optional[int] = None,
-        psa: str = "psa9",
         condition: str = "any"
     ) -> Optional[CardData]:
 
-        cache_key = (card_id, days, psa, condition)
+        cache_key = (card_id, days, condition)
         if use_cache and cache_key in self._cache:
             return self._cache[cache_key]
 
@@ -88,10 +88,13 @@ class CardDataFetcher:
         card_info = card_info_df.iloc[0]
 
         current_price = self.get_current_market_price(card_id, days=days, condition=condition)
-        psa_price = self.get_psa_price(card_id, psa, days=days)
+        psa10_price = self.get_psa_price(card_id, grade = "psa10", days=days)
+        psa9_price = self.get_psa_price(card_id, grade = "psa9", days=days)
+        psa8_price = self.get_psa_price(card_id, grade = "psa8", days=days)
         ungraded_price = self.get_ungraded_price(card_id, days=days, condition=condition)
         total_listings = self.count_active_listings(card_id, days=days, condition=condition)
         price_history = self.get_price_history(card_id, days=days, condition=condition)
+        card_trend = self.card_trend(card_id)
 
         card_data: CardData = {
             "card_id": card_id,
@@ -101,12 +104,14 @@ class CardDataFetcher:
             "card_number": card_info.get("cardNumber", "N/A"),
             "image_url": card_info.get("imageUrl", ""),
             "current_price": current_price,
-            "psa_grade": psa,
-            "psa_price": psa_price,
+            "psa10_price": psa10_price,
+            "psa9_price": psa9_price,
+            "psa8_price": psa8_price,
             "ungraded_price": ungraded_price,
             "total_listings": total_listings,
             "price_history": price_history,
-            "condition": condition
+            "condition": condition,
+            "card_trend": card_trend
         }
 
         self._cache[cache_key] = card_data
@@ -142,7 +147,7 @@ class CardDataFetcher:
         df = self.ebay_prices[self.ebay_prices["tcgPlayerId"] == card_id]
         df = df[df["grade"].str.replace(" ", "").str.lower() == grade_norm]
         if df.empty:
-            return "N/A"
+            return "None"
         if days is not None:
             cutoff = datetime.now() - timedelta(days=days)
             df_recent = df[df["date"] >= cutoff]
@@ -283,6 +288,36 @@ class CardDataFetcher:
             "psa_9": self.aggregate_prices(card_id, grade="psa9", days=days),
             "psa_10": self.aggregate_prices(card_id, grade="psa10", days=days)
         }
+    def card_trend(self, card_id, threshold=0.02):
+        """
+        Determine whether a card is trending up, down, or stable based on price history.
+        
+        prices    : list of prices ordered oldest → newest
+        threshold : minimum % change to consider it a real trend (default 2%)
+        
+        Returns:
+            "up", "down", or "stable"
+        """
+        prices = (self.price_history[self.price_history["tcgPlayerId"] == card_id].sort_values("date", ascending=False))["market"]
+        if len(prices) < 2:
+            return "not enough data"
+
+        # Convert to numpy for easier math
+        prices = np.array(prices)
+
+        # Fit a simple linear regression line: y = m*x + b
+        x = np.arange(len(prices))
+        m, b = np.polyfit(x, prices, 1)
+
+        # Percent change from beginning to end
+        pct_change = (prices[-1] - prices[0]) / prices[0]
+
+        if m > 0 and pct_change > threshold:
+            return "up"
+        elif m < 0 and pct_change < -threshold:
+            return "down"
+        else:
+            return "stable"
 
 # ==========================================================
 # __main__
@@ -308,13 +343,11 @@ if __name__ == "__main__":
 
     test_card_id: int = 642623
     test_days: int = 7
-    test_psa_grade: str = "psa10"
     test_condition: str = "Near Mint"
 
     card_data: Optional[CardData] = fetcher.get_card_by_id(
         card_id=test_card_id,
         days=test_days,
-        psa=test_psa_grade,
         condition=test_condition
     )
 
@@ -323,8 +356,17 @@ if __name__ == "__main__":
         days=test_days
     )
 
+    card_trend = fetcher.card_trend(
+        card_id=test_card_id
+    )
+
     print("\n=== CARD DATA ===")
     print(card_data)
 
     print("\n=== PRICE COMPARISON ===")
     print(price_comparison)
+
+    print("\n=== PRICE TREND===")
+    print(card_trend)
+
+
