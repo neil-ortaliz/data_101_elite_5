@@ -125,6 +125,9 @@ def calculate_holdings_price_change(data: list[dict]):
     price_history_df = price_history_df.set_index('date')
     price_history_df = price_history_df[price_history_df['condition'] == 'Near Mint']
 
+    if not data:
+        return []
+
     for card in data:
         card_df = price_history_df[price_history_df["tcgPlayerId"] == card['tcgPlayerId']]
         current_price = get_latest_price(card['tcgPlayerId'], card_df)

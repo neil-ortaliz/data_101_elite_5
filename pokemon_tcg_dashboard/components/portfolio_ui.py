@@ -184,46 +184,19 @@ def create_holdings_table(data=None):
     Returns:
         html.Div with add button and table
     """
-    # TODO: Data from Member 2
-    if data is None:
-        data = [
-            {
-                "name": "Charizard ex",
-                "set_name": "Obsidian Flames",
-                "quantity": 2,
-                "buy_price": "$38.00",
-                "current_price": "$45.99",
-                "price_change": "+$15.98",
-                "pct_change": "+21.0%"
-            },
-            {
-                "name": "Pikachu VMAX",
-                "set_name": "Vivid Voltage",
-                "quantity": 1,
-                "buy_price": "$28.00",
-                "current_price": "$32.50",
-                "price_change": "+$4.50",
-                "pct_change": "+16.1%"
-            },
-            {
-                "name": "Mewtwo V",
-                "set_name": "Pokemon GO",
-                "quantity": 3,
-                "buy_price": "$22.00",
-                "current_price": "$18.75",
-                "price_change": "-$9.75",
-                "pct_change": "-14.8%"
-            },
-            {
-                "name": "Umbreon VMAX",
-                "set_name": "Evolving Skies",
-                "quantity": 1,
-                "buy_price": "$75.00",
-                "current_price": "$89.99",
-                "price_change": "+$14.99",
-                "pct_change": "+20.0%"
-            },
-        ]
+    if not data:
+        return html.Div(
+            "No cards in your portfolio yet.",
+            style={
+                "padding": "30px",
+                "textAlign": "center",
+                "fontSize": "20px",
+                "color": "#666",
+                "border": "2px dashed #ccc",
+                "borderRadius": "10px",
+                "marginTop": "20px"
+            }
+        )
     
     table = dash_table.DataTable(
         id='holdings-table',
