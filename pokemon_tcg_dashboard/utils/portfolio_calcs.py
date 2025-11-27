@@ -89,16 +89,6 @@ class PortfolioCalculator:
     # -------------------------------------------------------------
     # PORTFOLIO VALUE METRICS
     # -------------------------------------------------------------
-    def calculate_total_portfolio_value(self) -> Dict[str, Union[float, str]]:
-        """Calculate total current value of portfolio (1 unit per card)."""
-        current_prices = self.get_current_prices()
-        #logger.debug(f"===========current_prices=========== \n {current_prices.keys()}")
-        total_value = sum(
-            current_prices.get(row["tcgPlayerId"], 0)
-            for _, row in self.portfolio.iterrows()
-        )
-        logger.debug(f"total_value {total_value}")
-        return {"value": total_value, "formatted": self.format_value(total_value)}
 
     def calculate_card_count(self) -> Dict[str, Union[int, str]]:
         """Calculate total card count and unique card count."""
@@ -122,8 +112,8 @@ class PortfolioCalculator:
             return {
                 "value": 0.0,
                 "formatted": "$0.00",
-                "past_value": 0.0,
-                "past_formatted": "$0.00",
+                "value_change": 0.0,
+                "value_change_formatted": "$0.00",
                 "percent_change": 0.0,
                 "percent_change_formatted": "0.0%"
             }
@@ -135,8 +125,8 @@ class PortfolioCalculator:
             return {
                 "value": total_value,
                 "formatted": self.format_value(total_value),
-                "past_value": 0.0,
-                "past_formatted": "$0.00",
+                "value_change": 0.0,
+                "value_change_formatted": "$0.00",
                 "percent_change": 0.0,
                 "percent_change_formatted": "0.0%"
             }
@@ -145,18 +135,26 @@ class PortfolioCalculator:
         past_value = sum(past_prices.get(row["tcgPlayerId"], 0) * row["quantity"] for _, row in self.portfolio.iterrows())
         
         if past_value == 0:
-            percent_change = 0.0
-            percent_change_formatted = "0.0%"
+            percent_change = 0.0 
+            percent_change_formatted = "-%"
         else:
             percent_change = (total_value - past_value) / past_value * 100
             sign = "+" if percent_change >= 0 else "-"
             percent_change_formatted = f"{sign}{abs(percent_change):.1f}%"
+    
+        value_change = total_value - past_value
+        if value_change > 0:
+            value_change_formatted = self.format_value(abs(value_change), sign = "+")
+        elif value_change < 0:
+            value_change_formatted = self.format_value(abs(value_change), sign = "-")
+        else:
+            value_change_formatted = self.format_value(abs(value_change), sign = "")
         
         return {
             "value": total_value,
             "formatted": self.format_value(total_value),
-            "past_value": past_value,
-            "past_formatted": self.format_value(past_value),
+            "value_change": value_change,
+            "value_change_formatted": value_change_formatted,
             "percent_change": percent_change,
             "percent_change_formatted": percent_change_formatted,
         }
@@ -238,6 +236,7 @@ class PortfolioCalculator:
         sign = "+" if percent_change >= 0 else "-"
         change_formatted = f"{sign}{abs(percent_change):.1f}%"
 
+        print("Past", change)
         return {"value": avg_current, "formatted": self.format_value(avg_current), "past_value": avg_past, "past_formatted": self.format_value(avg_past), "change": change, "change_formatted": change_formatted}
 
     # -------------------- PERFORMANCE METRICS --------------------
