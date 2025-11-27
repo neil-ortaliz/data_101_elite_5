@@ -472,31 +472,47 @@ def portfolio_view_performance_line_chart(ids:list, days:int=1):
     return fig
 
 # ------------------------ FUNCTION 3: Collection Breakdown Pie Chart -----------
-def portfolio_view_collection_pie_chart(ids:list):
-    logger.debug(f"Calling portfolio_view_collection_pie_chart")
-    portfolio_breakdown_df = metadata_df[metadata_df['tcgPlayerId'].isin(ids)]
-    logger.debug(f"Filtered metadata for ids -> rows={len(portfolio_breakdown_df)}")
-    portfolio_breakdown_df = portfolio_breakdown_df.groupby('setName')['id'].nunique().reset_index()
-    portfolio_breakdown_df.columns = ['setName', 'UniqueItemCount']
-    portfolio_breakdown_df = portfolio_breakdown_df.sort_values(by='UniqueItemCount', ascending=False)
+def portfolio_view_collection_pie_chart(portfolio: list[dict]):
+    """
+    Build a pie chart of set distribution
+    """
+    logger.debug("Calling portfolio_view_collection_pie_chart")
+    if not portfolio:
+        logger.debug("Portfolio is empty, returning empty figure")
+        return go.Figure()
 
-    fig = go.Figure()
-    fig.add_trace(go.Pie(
-        labels=portfolio_breakdown_df['setName'],
-        values=portfolio_breakdown_df['UniqueItemCount'],
-        hole=0.4,
-        marker=dict(colors=px.colors.qualitative.Vivid),
-        hovertemplate='<b>%{label}</b><br>Unique Items: %{value}<br>%{percent}<extra></extra>'
-    ))
+    df = pd.DataFrame(portfolio)
+    logger.debug(f"Portfolio DataFrame rows={len(df)}")
+
+    # Sum quantities per set
+    set_breakdown = df.groupby('set_name')['quantity'].sum().reset_index()
+    set_breakdown = set_breakdown.sort_values(by='quantity', ascending=False)
+    logger.debug(f"Aggregated quantities per set:\n{set_breakdown}")
+
+    fig = go.Figure(
+        go.Pie(
+            labels=set_breakdown['set_name'],
+            values=set_breakdown['quantity'],
+            hole=0.4,
+            marker=dict(colors=px.colors.qualitative.Vivid),
+            hovertemplate='<b>%{label}</b><br>Total Cards: %{value}<br>%{percent}<extra></extra>'
+        )
+    )
 
     fig.update_layout(
         title='Collection Breakdown by Set',
         template='plotly_white',
-        height=400,
-        margin=dict(l=20, r=20, t=60, b=20),
-        legend=dict(orientation="h", yanchor="bottom", y=-0.05, xanchor="center", x=0.5)
+        height=450,  # a bit taller
+        margin=dict(l=20, r=20, t=60, b=100),  # increase bottom margin for legend
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=-0.2,   # move legend below the pie
+            xanchor="center",
+            x=0.5
+        )
     )
-    logger.debug(f"Prepared pie chart data with {len(portfolio_breakdown_df['setName'].unique())} sets")
+    logger.debug(f"Prepared pie chart with {len(set_breakdown)} sets")
     return fig
 
 

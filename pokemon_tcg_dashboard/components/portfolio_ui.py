@@ -146,30 +146,30 @@ def create_risk_indicators(selected_cards=None):
         dbc.Col([
             html.H5("Portfolio Risk Analysis", className="mb-3"),
         ], width=12),
-        dbc.Col(
-            create_risk_badge(
-                title="Diversity Score",
-                level= diversity["level"],
-                description= diversity["description"]
+        dbc.Stack([
+            html.Div(
+                create_risk_badge(
+                    title="Diversity Score",
+                    level= diversity["level"],
+                    description= diversity["description"]
+                )
             ),
-            width=12, md=4
-        ),
-        dbc.Col(
-            create_risk_badge(
-                title="Volatility Rating",
-                level= volatility["level"],
-                description= volatility["description"]
+            html.Div(
+                create_risk_badge(
+                    title="Volatility Rating",
+                    level= volatility["level"],
+                    description= volatility["description"]
+                ),
             ),
-            width=12, md=4
-        ),
-        dbc.Col(
-            create_risk_badge(
+            html.Div(
+                create_risk_badge(
                 title="Market Exposure",
                 level= market_exp["level"],
                 description= market_exp["description"]
-            ),
-            width=12, md=4
-        )
+                )
+            )
+        ],
+        class_name="w-100")
     ], className="mb-4")
     
     return risk_row
@@ -258,8 +258,8 @@ def create_holdings_table(data=None):
             # Gains in blue
             {
                 'if': {
-                    'filter_query': '{gain_loss} contains "+"',
-                    'column_id': ['gain_loss', 'gain_loss_pct']
+                    'filter_query': '{price_change} contains "+"',
+                    'column_id': ['price_change', 'pct_change']
                 },
                 'color': '#1E90FF',
                 'fontWeight': 'bold'
@@ -267,8 +267,8 @@ def create_holdings_table(data=None):
             # Losses in orange
             {
                 'if': {
-                    'filter_query': '{gain_loss} contains "-"',
-                    'column_id': ['gain_loss', 'gain_loss_pct']
+                    'filter_query': '{price_change} contains "-"',
+                    'column_id': ['price_change', 'pct_change']
                 },
                 'color': '#FF8C00',
                 'fontWeight': 'bold'
@@ -283,14 +283,14 @@ def create_holdings_table(data=None):
     )
     
     # Add "Add Card" button
-    add_button = dbc.Button(
+    '''add_button = dbc.Button(
         [html.Span("➕ ", style={"marginRight": "8px"}), "Add Card to Portfolio"],
         id="add-card-btn",
         color="success",
         className="mb-3"
-    )
+    )'''
     
     return html.Div([
-        add_button,
+        #add_button,
         table
     ])

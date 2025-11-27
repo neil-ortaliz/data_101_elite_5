@@ -5,7 +5,7 @@ import pandas as pd
 
 import plotly.graph_objects as go
 from utils import get_image_urls, calculate_holdings_price_change
-from components import ban_card_container, graph_container, tab_card_container, table_container
+from components import ban_card_container, graph_container, tab_card_container, table_container, portfolio_view_collection_pie_chart
 from components.portfolio_ui import create_portfolio_summary_metrics, create_risk_indicators, create_holdings_table
 
 from global_variables import PRICE_HISTORY_DF, CARD_METADATA_DF
@@ -70,7 +70,7 @@ owned_cards = html.Div(
             id="portfolio-image-grid",
             style={
                 "display": "grid",
-                "gridTemplateColumns": "repeat(auto-fit, minmax(150px, 1fr))",
+                "gridTemplateColumns": "repeat(auto-fit, minmax(200px, 1fr))",
                 "gap": "16px"
             }
         )
@@ -79,9 +79,13 @@ portfolio = html.Div([
     html.Br(),
     select,
     html.Div(id="portfolio-metrics-row"),
-    html.Div(id="portfolio-risk-row"),
+    dbc.Row([
+        dbc.Col(id="portfolio-risk-row"),
+        dbc.Col(id="portfolio-set-distribution")
+    ]),
     html.H3('Holdings Details', className="mt-4 mb-3"),
     table_container(create_holdings_table(), title="", container_id="holdings-table-container"),
+    html.Br()
 ])
 
 tabs = dbc.Tabs(
@@ -127,7 +131,7 @@ def show_portfolio(selected_ids):
                         html.H4(row["name"], className="card-text")])],
                     class_name="card-normal",
                     style={
-                        "borderRadius": "8px"
+                        "borderRadius": "8px",
                     }
                 ),
                 id={"type": "portfolio-card-button", "index": row["tcgPlayerId"]},
@@ -210,3 +214,12 @@ def update_risk_indicators(value, selected_cards):
 
     risk_row = create_risk_indicators(selected_cards=selected_cards_df)
     return risk_row
+
+@callback(
+    Output("portfolio-set-distribution", "children"),
+    Input("select-portfolio", "value"),
+    State("selected-cards", "data")
+)
+def update_set_distribution_chart(value, selected_cards):
+    
+    return dcc.Graph(figure=portfolio_view_collection_pie_chart(selected_cards))

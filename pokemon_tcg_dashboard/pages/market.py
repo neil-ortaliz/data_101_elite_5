@@ -60,6 +60,7 @@ layout = html.Div([
                     container_id="top-movers-table-fig"
                 )
             ], id="top-movers-row"),
+            html.Hr(),
             dbc.Row([
                 table_container(
                     table="",
@@ -67,7 +68,8 @@ layout = html.Div([
                     #class_name="top-movers-card-table-fig",
                     container_id="top-movers-card-table-fig"
                 )
-            ])
+            ]),
+            html.Hr(),
         ],
     )
 ])
