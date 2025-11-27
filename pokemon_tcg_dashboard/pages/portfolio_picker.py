@@ -103,7 +103,7 @@ offcanvas = html.Div([
                 dbc.Row(
                     [
                         dbc.Col(
-                            html.Small("Total: **$0.00**", id="offcanvas-total", style={'textAlign': 'right'}),
+                            html.Small("Current Price: **$0.00**", id="offcanvas-current", style={'textAlign': 'right'}),
                             width=6
                         ),
                     ],
@@ -368,14 +368,15 @@ def update_classes(selected_ids, ids):
 def show_debug(selected):
     return f"Selected IDs = {selected}"
 
+
 @callback(
     Output("offcanvas-placement", "is_open"),
     Output("offcanvas-name", "children"),
     Output("offcanvas-rarity", "children"),
-    Output("offcanvas-price", "children"),
+    #Output("offcanvas-price", "children"),
     Output("offcanvas-image", "children"),
     Output({"type":"quantity-input","index":"offcanvas"}, "value"),
-    Output("quantity-price", "children"),
+    #Output("quantity-price", "children"),
     Output("offcanvas-unit-price", "data"),
     Output("offcanvas-tcgplayerid", "data"),
     Output("selected-cards","data"),
@@ -388,18 +389,18 @@ def show_debug(selected):
     Input("add-to-portfolio", "n_clicks"),   # <-- add-to-portfolio button
     State("offcanvas-placement", "is_open"),
     State({"type":"quantity-input","index":"offcanvas"}, "value"),
-    #State("cards-metadata", "data"),
     State("offcanvas-unit-price", "data"),
     State("offcanvas-tcgplayerid", "data"),
     State("selected-cards", "data"),
+    Input("offcanvas-price", "children"),
     prevent_initial_call=True
 )
 def handle_offcanvas(
     add_buttons_clicks, plus_clicks, minus_clicks,
     selected_date, clear_click, add_to_portfolio_click,  # <-- parameter for add-to-portfolio
     is_open, qty, 
-    #card_data, 
-    stored_unit_price, stored_id, selected_cards
+    stored_unit_price, stored_id, selected_cards,
+    offcanvas_unit_price
 ):
     trigger = ctx.triggered_id
     trigger_value = ctx.triggered[0]["value"] if ctx.triggered else None
@@ -414,8 +415,9 @@ def handle_offcanvas(
     # ----------------------------------------------------
     if trigger == "clear-portfolio":
         return (
-            is_open, no_update, no_update, no_update, no_update,
-            0, "$0.00",
+            is_open, no_update, no_update, no_update, #no_update,
+            0, 
+            #"$0.00",
             stored_unit_price,
             stored_id,
             []  # clears selected-cards
@@ -443,10 +445,10 @@ def handle_offcanvas(
             not is_open,                       # open offcanvas
             row["name"],                       # name
             row["rarity"],                     # rarity
-            f"${unit_price:,.2f}",             # price text
+            #f"${unit_price:,.2f}",             # price text
             img,                               # image
-            0,                                 # reset qty
-            "$0.00",                           # reset total
+            1,                                 # reset qty
+            #"$0.00",                           # reset total
             unit_price,                        # store price
             card_id,                           # store tcgplayer id
             selected_cards
@@ -457,40 +459,44 @@ def handle_offcanvas(
     # ----------------------------------------------------
     if trigger == "add-to-portfolio":
         if stored_id is not None:
-            # Check if card already exists in selected_cards
-            logger.debug("*************************************************")
-            logger.debug(df.head())
-            existing_index = next((i for i, c in enumerate(selected_cards) if c["tcgPlayerId"] == stored_id), None)
-            card_entry = {
-                "tcgPlayerId": int(stored_id),
-                "name": df.loc[stored_id,"name"],
-                "set_name": df.loc[stored_id,"setName"],
-                "quantity": qty,
-                "buy_price": stored_unit_price,
-                "buy_date": selected_date
-            }
+            if qty > 0:
+                # Check if card already exists in selected_cards
+                #logger.debug("*************************************************")
+                #logger.debug(df.head())
+                #Output("offcanvas-price", "children"),
+                logger.debug(f"Off canvas price: {offcanvas_unit_price}")
+                existing_index = next((i for i, c in enumerate(selected_cards) if c["tcgPlayerId"] == stored_id), None)
+                card_entry = {
+                    "tcgPlayerId": int(stored_id),
+                    "name": df.loc[stored_id,"name"],
+                    "set_name": df.loc[stored_id,"setName"],
+                    "quantity": qty,
+                    "buy_price": float(offcanvas_unit_price.replace("$", "").replace(",", "")),
+                    "buy_date": selected_date
+                }
 
-            if existing_index is not None:
-                # Replace the old entry
-                selected_cards[existing_index] = card_entry
-            else:
-                # Append new entry
-                selected_cards.append(card_entry)
+                if existing_index is not None:
+                    # Replace the old entry
+                    selected_cards[existing_index] = card_entry
+                else:
+                    # Append new entry
+                    selected_cards.append(card_entry)
 
-        total_price = qty * stored_unit_price
-        return (
-            False, no_update, no_update, no_update, no_update,
-            qty,
-            f"${total_price:,.2f}",
-            stored_unit_price,
-            stored_id,
-            selected_cards
-        )
+            #total_price = qty * stored_unit_price
+
+            return (
+                False, no_update, no_update, no_update, #no_update,
+                qty,
+                #f"${total_price:,.2f}",
+                stored_unit_price,
+                stored_id,
+                selected_cards
+            )
 
     # ----------------------------------------------------
     # 4) DATE PICKER → UPDATE PRICE
     # ----------------------------------------------------
-    if trigger == "date-picker":
+    '''if trigger == "date-picker":
         card_id = stored_id
         unit_price = stored_unit_price
 
@@ -513,7 +519,7 @@ def handle_offcanvas(
             unit_price,
             stored_id,
             selected_cards
-        )
+        )'''
 
     # ----------------------------------------------------
     # 5) PLUS / MINUS BUTTONS
@@ -526,13 +532,60 @@ def handle_offcanvas(
         elif trigger["type"] == "btn-minus" and qty > 0:
             qty -= 1
 
-        total_price = qty * unit_price
+        #total_price = qty * unit_price
 
         return (
-            True, no_update, no_update, no_update, no_update,
+            True, no_update, no_update, no_update, #no_update,
             qty,
-            f"${total_price:,.2f}",
+            #f"${total_price:,.2f}",
             unit_price,
             stored_id,
             selected_cards
         )
+    
+    #just in case callback called but no
+    return (
+    no_update,  # offcanvas is_open
+    no_update,  # offcanvas-name
+    no_update,  # offcanvas-rarity
+    no_update,  # offcanvas-image
+    no_update,  # quantity-input value
+    no_update,  # offcanvas-unit-price
+    no_update,  # offcanvas-tcgplayerid
+    no_update   # selected-cards
+    )
+
+@callback(
+    Output("offcanvas-price", "children"),
+    Output("quantity-price", "children"),
+    Output("offcanvas-current", "children"),
+    Input("date-picker", "date"),
+    State("offcanvas-unit-price", "data"),
+    State("offcanvas-tcgplayerid", "data"),
+    Input({"type":"quantity-input","index":"offcanvas"}, "value"),
+)
+def update_offcanvas_price(selected_date, stored_unit_price, stored_id, qty):
+    logger.debug("Updating offcanvas price...")
+    logger.debug(ctx.triggered_id)
+    logger.debug(f"selected_date: {selected_date}, stored_unit_price: {stored_unit_price}, stored_id: {stored_id}, qty: {qty}")
+    card_id = stored_id
+    unit_price = stored_unit_price
+
+    if isinstance(unit_price, pd.Series):
+        unit_price = unit_price.iloc[0]
+
+    current_price = unit_price
+    card_prices = PRICE_HISTORY_DF.copy()
+    card_prices = card_prices.set_index('date')
+    card_prices = card_prices[card_prices['condition'] == 'Near Mint']
+    mask = card_prices["tcgPlayerId"] == card_id
+    day_prices = card_prices[mask]
+    logger.debug(f"selected_date in day_prices.index: {selected_date in day_prices.index}")
+    if selected_date in day_prices.index:
+        unit_price = day_prices.loc[selected_date, "market"]
+        logger.debug(day_prices.loc[selected_date])
+        logger.debug(f"updated unit price based on date picker: {unit_price}")
+
+    total_price = int(qty) * float(unit_price)
+    logger.debug(f"unit_price: {unit_price}, total_price: {total_price}")
+    return f"${unit_price:,.2f}", f"${total_price:,.2f}", f"Current Price: ${current_price:,.2f}"

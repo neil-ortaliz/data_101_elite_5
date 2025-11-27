@@ -129,16 +129,17 @@ def calculate_holdings_price_change(data: list[dict]):
         card_df = price_history_df[price_history_df["tcgPlayerId"] == card['tcgPlayerId']]
         current_price = get_latest_price(card['tcgPlayerId'], card_df)
 
-        logger.debug(f"current_price: {current_price}")
         if current_price is not None:
             price_change = current_price - card['buy_price']
             pct_change = (price_change / card['buy_price']) * 100
             card['current_price'] = f"$ {current_price:,.2f}"
-            card['price_change'] = f"$ {price_change:,.2f}"
-            card['pct_change'] = f"{pct_change:,.2f}%"
+
+            # Add '+' sign for positive values
+            card['price_change'] = f"$ +{price_change:,.2f}" if price_change > 0 else f"$ -{abs(price_change):,.2f}"
+            card['pct_change'] = f"+{pct_change:.2f}%" if pct_change > 0 else f"-{abs(pct_change):.2f}%"
         else:
-            card['current_price'] = 0
-            card['price_change'] = 0
+            card['current_price'] = "$0.00"
+            card['price_change'] = "$0.00"
             card['pct_change'] = "0.00%"
 
         card['buy_price'] = f"$ {card['buy_price']:,.2f}"
