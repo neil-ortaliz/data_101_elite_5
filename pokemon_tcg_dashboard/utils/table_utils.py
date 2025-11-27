@@ -105,7 +105,42 @@ def calculate_top_movers(name:str=None, set_name:str=None, rarity:str=None, days
     logger.debug(out[COLS].head(2).to_dict('records'))
     return out[COLS].head(top_n).to_dict('records')
 
+def get_latest_price(card_id, df):
+    today = pd.Timestamp.today().normalize()
+    card_df = df[df["tcgPlayerId"] == card_id]
+    if today in card_df.index:
+        return card_df.loc[today, "market"]
 
+    # 2 — else find the most recent available date BEFORE today
+    earlier = card_df[card_df.index <= today]
 
+    if earlier.empty:
+        return None
 
-    
+    latest_row = earlier.sort_index().tail(1)
+    return latest_row["market"].iloc[0]
+
+def calculate_holdings_price_change(data: list[dict]):
+    price_history_df = PRICE_HISTORY_DF.copy()
+    price_history_df = price_history_df.set_index('date')
+    price_history_df = price_history_df[price_history_df['condition'] == 'Near Mint']
+
+    for card in data:
+        card_df = price_history_df[price_history_df["tcgPlayerId"] == card['tcgPlayerId']]
+        current_price = get_latest_price(card['tcgPlayerId'], card_df)
+
+        logger.debug(f"current_price: {current_price}")
+        if current_price is not None:
+            price_change = current_price - card['buy_price']
+            pct_change = (price_change / card['buy_price']) * 100
+            card['current_price'] = f"$ {current_price:,.2f}"
+            card['price_change'] = f"$ {price_change:,.2f}"
+            card['pct_change'] = f"{pct_change:,.2f}%"
+        else:
+            card['current_price'] = 0
+            card['price_change'] = 0
+            card['pct_change'] = "0.00%"
+
+        card['buy_price'] = f"$ {card['buy_price']:,.2f}"
+
+    return data

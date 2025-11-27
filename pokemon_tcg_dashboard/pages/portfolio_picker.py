@@ -388,7 +388,7 @@ def show_debug(selected):
     Input("add-to-portfolio", "n_clicks"),   # <-- add-to-portfolio button
     State("offcanvas-placement", "is_open"),
     State({"type":"quantity-input","index":"offcanvas"}, "value"),
-    State("cards-metadata", "data"),
+    #State("cards-metadata", "data"),
     State("offcanvas-unit-price", "data"),
     State("offcanvas-tcgplayerid", "data"),
     State("selected-cards", "data"),
@@ -397,7 +397,9 @@ def show_debug(selected):
 def handle_offcanvas(
     add_buttons_clicks, plus_clicks, minus_clicks,
     selected_date, clear_click, add_to_portfolio_click,  # <-- parameter for add-to-portfolio
-    is_open, qty, card_data, stored_unit_price, stored_id, selected_cards
+    is_open, qty, 
+    #card_data, 
+    stored_unit_price, stored_id, selected_cards
 ):
     trigger = ctx.triggered_id
     trigger_value = ctx.triggered[0]["value"] if ctx.triggered else None
@@ -406,7 +408,7 @@ def handle_offcanvas(
 
     qty = qty or 0
     selected_cards = selected_cards or []
-
+    card_data = CARD_METADATA_DF
     # ----------------------------------------------------
     # 1) CLEAR PORTFOLIO
     # ----------------------------------------------------
@@ -456,9 +458,13 @@ def handle_offcanvas(
     if trigger == "add-to-portfolio":
         if stored_id is not None:
             # Check if card already exists in selected_cards
+            logger.debug("*************************************************")
+            logger.debug(df.head())
             existing_index = next((i for i, c in enumerate(selected_cards) if c["tcgPlayerId"] == stored_id), None)
             card_entry = {
                 "tcgPlayerId": int(stored_id),
+                "name": df.loc[stored_id,"name"],
+                "set_name": df.loc[stored_id,"setName"],
                 "quantity": qty,
                 "buy_price": stored_unit_price,
                 "buy_date": selected_date

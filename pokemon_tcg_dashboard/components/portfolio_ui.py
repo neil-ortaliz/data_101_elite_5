@@ -181,39 +181,39 @@ def create_holdings_table(data=None):
         data = [
             {
                 "name": "Charizard ex",
-                "set": "Obsidian Flames",
+                "set_name": "Obsidian Flames",
                 "quantity": 2,
                 "buy_price": "$38.00",
                 "current_price": "$45.99",
-                "gain_loss": "+$15.98",
-                "gain_loss_pct": "+21.0%"
+                "price_change": "+$15.98",
+                "pct_change": "+21.0%"
             },
             {
                 "name": "Pikachu VMAX",
-                "set": "Vivid Voltage",
+                "set_name": "Vivid Voltage",
                 "quantity": 1,
                 "buy_price": "$28.00",
                 "current_price": "$32.50",
-                "gain_loss": "+$4.50",
-                "gain_loss_pct": "+16.1%"
+                "price_change": "+$4.50",
+                "pct_change": "+16.1%"
             },
             {
                 "name": "Mewtwo V",
-                "set": "Pokemon GO",
+                "set_name": "Pokemon GO",
                 "quantity": 3,
                 "buy_price": "$22.00",
                 "current_price": "$18.75",
-                "gain_loss": "-$9.75",
-                "gain_loss_pct": "-14.8%"
+                "price_change": "-$9.75",
+                "pct_change": "-14.8%"
             },
             {
                 "name": "Umbreon VMAX",
-                "set": "Evolving Skies",
+                "set_name": "Evolving Skies",
                 "quantity": 1,
                 "buy_price": "$75.00",
                 "current_price": "$89.99",
-                "gain_loss": "+$14.99",
-                "gain_loss_pct": "+20.0%"
+                "price_change": "+$14.99",
+                "pct_change": "+20.0%"
             },
         ]
     
@@ -221,12 +221,12 @@ def create_holdings_table(data=None):
         id='holdings-table',
         columns=[
             {"name": "Card Name", "id": "name"},
-            {"name": "Set", "id": "set"},
+            {"name": "Set", "id": "set_name"},
             {"name": "Qty", "id": "quantity"},
             {"name": "Buy Price", "id": "buy_price"},
             {"name": "Current Price", "id": "current_price"},
-            {"name": "Gain/Loss", "id": "gain_loss"},
-            {"name": "%", "id": "gain_loss_pct"},
+            {"name": "Price Change", "id": "price_change"},
+            {"name": "% Change", "id": "pct_change"},
         ],
         data=data,
         sort_action="native",

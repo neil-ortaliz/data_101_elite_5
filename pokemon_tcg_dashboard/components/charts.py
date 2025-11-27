@@ -36,7 +36,7 @@ Nov 21, 2025
 import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
-from dash import dash_table
+from dash import dash_table, html
 
 import pandas as pd
 import numpy as np
@@ -328,6 +328,103 @@ def create_top_sets_table(price_col="price", days=7, set_names=None):
         page_size=20,
         sort_action="native",
         #filter_action="native",
+        style_table={"overflowX": "auto"}
+    )
+
+def create_card_holdings_table(store_data, price_history_df=PRICE_HISTORY_DF):
+    """
+    Build a holdings table using dcc.Store values + metadata + latest market prices.
+    """
+    if not store_data:
+        return html.Div("No cards in collection.", style={"padding": "20px"})
+
+    df = pd.DataFrame(store_data)
+
+    # --- 🔥 Merge store_data with CARD_METADATA_DF (adds name + setName) ---
+    df = df.merge(CARD_METADATA_DF[["tcgPlayerId", "name", "setName"]],
+                  on="tcgPlayerId", how="left")
+
+    # --- Latest market price from price_history_df ---
+    latest = (
+        price_history_df.sort_index()
+        .groupby("tcgPlayerId")
+        .tail(1)[["tcgPlayerId", "market"]]
+        .rename(columns={"market": "current_price"})
+    )
+
+    df = df.merge(latest, on="tcgPlayerId", how="left")
+
+    # --- Calculations ---
+    df["gain"] = df["current_price"] - df["buy_price"]
+    df["pct_change"] = (df["gain"] / df["buy_price"]) * 100
+
+    # --- Formatters ---
+    def money(x):
+        return "N/A" if pd.isna(x) else f"${x:,.2f}"
+
+    def change(x):
+        return "N/A" if pd.isna(x) else f"{x:+.2f}"
+
+    def pct(x):
+        return "N/A" if pd.isna(x) else f"{x:+.2f}%"
+
+    df["buy_price"] = df["buy_price"].apply(money)
+    df["gain"] = df["gain"].apply(change)
+    df["pct_change"] = df["pct_change"].apply(pct)
+
+    # --- Final Columns for Display ---
+    df_display = df[
+        ["name", "setName", "quantity", "buy_price", "buy_date", "gain", "pct_change"]
+    ]
+
+    columns = [
+        {"name": "Card Name",   "id": "name"},
+        {"name": "Set",         "id": "setName"},
+        {"name": "Qty",         "id": "quantity"},
+        {"name": "Buy Price",   "id": "buy_price"},
+        {"name": "Buy Date",    "id": "buy_date"},
+        {"name": "Gain/Loss",   "id": "gain"},
+        {"name": "% Change",    "id": "pct_change"},
+    ]
+
+    # --- Styling ---
+    style_data_conditional = [
+        {"if": {"filter_query": "{gain} contains '+'", "column_id": "gain"},
+         "color": "#1E90FF", "fontWeight": "bold"},
+        {"if": {"filter_query": "{pct_change} contains '+'", "column_id": "pct_change"},
+         "color": "#1E90FF", "fontWeight": "bold"},
+
+        {"if": {"filter_query": "{gain} contains '-'", "column_id": "gain"},
+         "color": "#FF8C00", "fontWeight": "bold"},
+        {"if": {"filter_query": "{pct_change} contains '-'", "column_id": "pct_change"},
+         "color": "#FF8C00", "fontWeight": "bold"},
+
+        {"if": {"state": "active"},
+         "backgroundColor": "rgba(0, 117, 190, 0.1)",
+         "border": "1px solid #0075BE"}
+    ]
+
+    return dash_table.DataTable(
+        id="card-holdings-table",
+        data=df_display.to_dict("records"),
+        columns=columns,
+        style_header={
+            'backgroundColor': '#0075BE',
+            'color': 'white',
+            'fontWeight': 'bold',
+            'textAlign': 'center',
+            'padding': '10px',
+            "font-family": "Helvetica, Arial, sans-serif"
+        },
+        style_cell={
+            'textAlign': 'left',
+            'padding': '10px',
+            'fontSize': '14px',
+            "font-family": "Helvetica, Arial, sans-serif"
+        },
+        style_data_conditional=style_data_conditional,
+        sort_action="native",
+        page_size=20,
         style_table={"overflowX": "auto"}
     )
 
