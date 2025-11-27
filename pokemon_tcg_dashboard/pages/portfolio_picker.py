@@ -473,7 +473,7 @@ def handle_offcanvas(
 
         total_price = qty * stored_unit_price
         return (
-            is_open, no_update, no_update, no_update, no_update,
+            False, no_update, no_update, no_update, no_update,
             qty,
             f"${total_price:,.2f}",
             stored_unit_price,

@@ -124,3 +124,15 @@ def update_top_movers_table(days, set_names):
     days= int(days)
     fig=create_top_sets_table(days=days, set_names=set_names)
     return fig
+
+
+@callback(
+    Output("market-set-select", "value"),
+    Output("market-rarity-select", "value"),
+    Output("market-search-input", "value"),
+    Input("clear-filters-btn", "n_clicks"),
+    prevent_initial_call=True
+)
+def clear_all_filters(_):
+    """Resets all filters instantly."""
+    return None, None, ""

@@ -78,6 +78,8 @@ def create_market_overview_metrics(days:int=1):
     set_change_type = "positive" if market_calculator.calculate_best_performing_set(days)['change_pct'] > 0 else "negative" if market_calculator.calculate_best_performing_set(days)['change_pct'] < 0 else "neutral"
     logger.debug(f"total_market_value: {market_calculator.calculate_total_market_value()}")
     logger.debug(f"price_change: {market_calculator.calculate_change(days)}")
+    label = "All time Change" if days == -1 else f"{days} Change"
+    
     metrics_row = dbc.Row([
         dbc.Col(
             create_metric_card(
@@ -90,7 +92,7 @@ def create_market_overview_metrics(days:int=1):
         ),
         dbc.Col(
             create_metric_card(
-                title=f"{days} Change",
+                title=label,
                 value=market_calculator.calculate_change(days)['formatted_pct'],
                 change=market_calculator.calculate_change(days)['formatted_value'],
                 change_type=market_change_type

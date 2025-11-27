@@ -136,6 +136,7 @@ def create_card_header(card_data=None):
     
     return header
 
+'''
 def create_action_buttons():
     """
     Create action buttons for Card View
@@ -187,3 +188,4 @@ def create_action_buttons():
     ], className="mb-4")
     
     return buttons
+'''

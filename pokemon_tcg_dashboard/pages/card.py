@@ -2,7 +2,7 @@ import dash
 from dash import html, dcc, Input, Output, State, callback
 import dash_bootstrap_components as dbc
 from datetime import timedelta
-from components.card_ui import create_card_header, create_action_buttons
+from components.card_ui import create_card_header
 from components.charts import card_view_price_history_line_chart, card_view_card_grade_price_comparison
 from components import graph_container
 from global_variables import CARD_DATA_FETCHER, PRICE_HISTORY_DF, EBAY_METADATA_DF
@@ -126,8 +126,7 @@ def update_card_header(pathname):
     }
 
     return html.Div([
-        create_card_header(card_data),
-        create_action_buttons()
+        create_card_header(card_data)
     ])
 
 # ---------------- Update TCGPlayer chart ----------------

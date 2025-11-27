@@ -264,15 +264,24 @@ def create_top_sets_table(price_col="price", days=7, set_names=None):
 
     current_df = current_df.sort_values(by="Rank", ascending=True)
 
-    current_df = current_df.replace([np.inf, -np.inf], np.nan)
-    current_df[['price', 'price_change', 'pct_change']] =(
-        current_df[['price', 'price_change', 'pct_change']].fillna("N/A")
-    )
+    def safe_money(x):
+        if pd.isna(x) or isinstance(x, str):
+            return "N/A"
+        return f"${x:,.2f}"
 
-    # Format values for display
-    current_df["price"] = current_df["price"].map(lambda x: f"${x:,.2f}")
-    current_df["price_change"] = current_df["price_change"].map(lambda x: f"{x:+.2f}")
-    current_df["pct_change"] = current_df["pct_change"].map(lambda x: f"{x:+.2f}%")
+    def safe_change(x):
+        if pd.isna(x) or isinstance(x, str):
+            return "N/A"
+        return f"{x:+.2f}"
+
+    def safe_pct(x):
+        if pd.isna(x) or isinstance(x, str):
+            return "N/A"
+        return f"{x:+.2f}%"
+
+    current_df["price"] = current_df["price"].apply(safe_money)
+    current_df["price_change"] = current_df["price_change"].apply(safe_change)
+    current_df["pct_change"] = current_df["pct_change"].apply(safe_pct)
 
     data_table_columns = [
         {"name": "Set Name", "id": "set_name"},
