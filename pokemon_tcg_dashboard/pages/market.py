@@ -6,8 +6,10 @@ import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
 
 from components import ban_card_container, graph_container, create_set_line_chart, table_container
-from components.market_ui import create_market_overview_metrics, create_market_filters, create_top_movers_table
+from components.market_ui import create_market_overview_metrics, create_market_filters, create_top_movers_table, create_set_release_date_table
 from components.charts import market_view_set_performance_bar_chart, create_top_sets_table
+from utils.lgs_map import create_spatial_map
+from global_variables import MAP_LOCATIONS_DF, RELEASE_DATE_DF
 
 from utils import calculate_top_movers
 
@@ -37,6 +39,27 @@ ban_row = html.Div(
     create_market_overview_metrics(days=-1),
     id="market-overview-metrics-row")
 
+map_row = dbc.Row([
+    dbc.Col([
+        html.H4("Pokémon Store Locations", className="mb-3"),
+        dcc.Graph(
+            id="pokemon-store-map",
+            figure=create_spatial_map(MAP_LOCATIONS_DF),
+            style={'height': '500px', 'width': '100%'}
+        )
+    ], width=7, style={'height': '500px', 'display': 'flex', 'flexDirection': 'column'}),
+
+    dbc.Col([
+        html.H4("Set Release Dates", className="mb-3"),
+        html.Div(
+            create_set_release_date_table(RELEASE_DATE_DF),
+            style={'flex': '1', 'display': 'flex', 'flexDirection': 'column', 'height': '100%'}
+        )
+    ], width=5, style={'display': 'flex', 'flexDirection': 'column', 'height': '100%'})
+],
+className="g-3",
+style={'alignItems': 'stretch'})
+
 layout = html.Div([
     dbc.Stack(
         [
@@ -50,6 +73,8 @@ layout = html.Div([
                     title="Set Performance Overview"
                 ),
             ]),
+            html.Hr(),
+            map_row,
             html.Hr(),
             dbc.Row([
                 # html.H4("Top Price Movers", className="mb-3"),
@@ -93,6 +118,9 @@ def update_market_overview_metrics(days):
     Input("market-set-select", "value")
 )
 def update_set_performance_chart(days, set_names):
+    if not set_names:
+        set_names = None
+        
     logger.debug(f"Trigger: {ctx.triggered_id}")
     days= int(days)
     fig = create_set_line_chart(set_names=set_names, days=days)
@@ -108,6 +136,14 @@ def update_set_performance_chart(days, set_names):
 def update_graphs(days, set_names, search_name, rarities):
     logger.debug(f"Trigger: {ctx.triggered_id}")
     days= int(days)
+
+    if not set_names:
+        set_names = None
+    if not search_name:
+        search_name = None
+    if not rarities:
+        rarities = None
+
     top_movers_table = create_top_movers_table(calculate_top_movers(name=search_name,
                                                set_name=set_names,
                                                rarity=rarities,
@@ -125,6 +161,10 @@ def update_graphs(days, set_names, search_name, rarities):
 def update_top_movers_table(days, set_names):
     logger.debug("Updating top movers table....")
     days= int(days)
+
+    if not set_names:
+        set_names = None
+
     fig=create_top_sets_table(days=days, set_names=set_names)
     return fig
 

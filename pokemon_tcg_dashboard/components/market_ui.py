@@ -340,3 +340,50 @@ def create_top_movers_table(data=None):
     ])'''
 
     return table
+
+def create_set_release_date_table(data):
+    """
+    Creates a Dash DataTable showing Pokémon set names and release dates.
+
+    Parameters:
+    -----------
+    data : pd.DataFrame
+        Must contain at least two columns: 'setName' and 'release_date'
+
+    Returns:
+    --------
+    dash_table.DataTable
+    """
+    df = data[['setName', 'release_date']].copy()
+    df['release_date'] = pd.to_datetime(df['release_date']).dt.date.astype(str)
+
+    table = dash_table.DataTable(
+        columns=[
+            {"name": "Set Name", "id": "setName", "type": "text"},
+            {"name": "Release Date", "id": "release_date", "type": "text"}
+        ],
+        data=df.to_dict('records'),
+        sort_action='native',      # allow sorting by clicking headers
+        page_size=20,              # show 10 rows per page
+        style_table={
+            'height': '100%',      
+            'overflowY': 'auto',   
+            'width': '100%'
+        },
+        style_header={
+            'backgroundColor': '#0075BE',
+            'color': 'white',
+            'fontWeight': 'bold',
+            'textAlign': 'center',
+            'padding': '10px',
+            "font-family": "Helvetica, Arial, sans-serif"
+        },
+        style_cell={
+            'textAlign': 'left',
+            'padding': '10px',
+            'fontSize': '14px',
+            "font-family": "Helvetica, Arial, sans-serif"
+        }
+    )
+
+    return table
