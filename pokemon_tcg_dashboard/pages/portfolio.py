@@ -28,7 +28,7 @@ select = dbc.Row([
             {"label": "30 Days", "value": "30"},
             {"label": "3 Months", "value": "90"},
             {"label": "1 Year", "value": "365"},
-            {"label": "All Time", "value": "-1"},
+            {"label": "All Time", "value": "all"},
         ],
         value="30"
     )
@@ -79,7 +79,7 @@ portfolio = html.Div([
     html.Br(),
     select,
     html.Div(id="portfolio-metrics-row"),
-    create_risk_indicators(),
+    html.Div(id="portfolio-risk-row"),
     html.H3('Holdings Details', className="mt-4 mb-3"),
     table_container(create_holdings_table(), title="", container_id="holdings-table-container"),
 ])
@@ -155,13 +155,31 @@ def update_gain_loss_title(timeframe):
 @callback(
     Output("portfolio-metrics-row", "children"),
     Input("portfolio-url", "pathname"),
+    Input("select-portfolio", "value"),
     State("selected-cards", "data"),
 )
-def update_portfolio_metrics(pathname, selected_cards):
+def update_portfolio_metrics(pathname, value, selected_cards):
     logger.debug(f"Pathname: {pathname}")
+    logger.debug(f"Timeframe: {value}")
     logger.debug(f"Selected Cards: {selected_cards}")
-    selected_cards_df = pd.DataFrame(data=selected_cards)
-    portfolio_metrics = create_portfolio_summary_metrics(selected_cards=selected_cards_df)
+
+    if not selected_cards:
+        return html.Div("No selected cards to calculate metrics.")
+
+    selected_cards_df = pd.DataFrame(selected_cards)
+
+    print(value)
+    if value == "all":
+        days = None
+    else:
+        days = int(value) 
+
+    # Pass timeframe into your metrics function
+    portfolio_metrics = create_portfolio_summary_metrics(
+        selected_cards=selected_cards_df,
+        days=days,  
+    )
+
     return portfolio_metrics
 
 
@@ -178,3 +196,17 @@ def update_portfolio_metrics(pathname, selected_cards):
     portfolio_metrics = create_holdings_table(data=selected_cards)
 
     return portfolio_metrics
+
+@callback(
+    Output("portfolio-risk-row", "children"),
+    Input("select-portfolio", "value"),
+    State("selected-cards", "data")
+)
+def update_risk_indicators(value, selected_cards):
+    if not selected_cards:
+        return html.Div("No cards selected for risk metrics.")
+    
+    selected_cards_df = pd.DataFrame(selected_cards)
+
+    risk_row = create_risk_indicators(selected_cards=selected_cards_df)
+    return risk_row

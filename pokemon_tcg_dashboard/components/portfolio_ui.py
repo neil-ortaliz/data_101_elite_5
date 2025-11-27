@@ -22,27 +22,39 @@ def create_portfolio_summary_metrics(selected_cards=None,days=1):
         logging.debug(f"passing selected_cards len with lenght of {len(selected_cards)}")
         logging.debug(f"selected_cards: {selected_cards}")
 
+    type_map = {
+        "gain": "positive",
+        "loss": "negative",
+        "neutral": "neutral"
+    }
+    
     portfolio_calculator = PortfolioCalculator(selected_cards, PRICE_HISTORY_DF, CARD_METADATA_DF)
-    total_portfolio_value = portfolio_calculator.calculate_total_portfolio_value()
-    logger.debug(f"total_portfolio_value {total_portfolio_value}")
-    card_nums = portfolio_calculator.calculate_card_count()
+    totals = portfolio_calculator.calculate_total_portfolio_value(days)
+    gain_loss = portfolio_calculator.calculate_total_gain_loss(days)
+    portfolio_change_type = "positive" if totals['value_change'] > 0 else "negative" if totals['value_change'] < 0 else "neutral"
+    gain_loss_change_type = type_map.get(gain_loss['type'], "neutral")
+
+    card_nums = portfolio_calculator.calculate_card_count(days)
+    average = portfolio_calculator.calculate_average_card_value(days)
+    average_change_type = "positive" if average['change'] > 0 else "negative" if average['change'] < 0 else "neutral"
+
 
     metrics_row = dbc.Row([
         dbc.Col(
             create_metric_card(
                 title="Total Portfolio Value",
-                value= total_portfolio_value['formatted'],
-                change="+$1,250 (+11.2%)",
-                change_type="positive"
+                value= totals['formatted'],
+                change=f"{totals['value_change_formatted']} ({totals['percent_change_formatted']})",
+                change_type=portfolio_change_type
             ),
             width=12, md=6, lg=3, className="mb-3"
         ),
         dbc.Col(
             create_metric_card(
                 title="Total Gain/Loss",
-                value="+$1,250",
-                change="+11.2%",
-                change_type="positive"
+                value=gain_loss['formatted_value'],
+                change=gain_loss['formatted_pct'],
+                change_type=gain_loss_change_type
             ),
             width=12, md=6, lg=3, className="mb-3"
         ),
@@ -58,9 +70,9 @@ def create_portfolio_summary_metrics(selected_cards=None,days=1):
         dbc.Col(
             create_metric_card(
                 title="Average Card Value",
-                value="$79.81",
-                change="+$5.20",
-                change_type="positive"
+                value=average['formatted'],
+                change=average['change_formatted'],
+                change_type=average_change_type
             ),
             width=12, md=6, lg=3, className="mb-3"
         ),
@@ -117,14 +129,18 @@ def create_risk_badge(title, level, description):
     
     return badge_card
 
-def create_risk_indicators():
+def create_risk_indicators(selected_cards=None):
     """
     Create risk indicator section for Portfolio View
     
     Returns:
         dbc.Row with 3 risk badges
     """
-    # TODO: Risk levels will come from Member 2's risk calculations
+
+    portfolio_calculator = PortfolioCalculator(selected_cards, PRICE_HISTORY_DF, CARD_METADATA_DF)
+    diversity = portfolio_calculator.calculate_diversity_score()
+    volatility = portfolio_calculator.calculate_volatility_rating()
+    market_exp = portfolio_calculator.calculate_market_exposure()
     
     risk_row = dbc.Row([
         dbc.Col([
@@ -133,35 +149,27 @@ def create_risk_indicators():
         dbc.Col(
             create_risk_badge(
                 title="Diversity Score",
-                level="high",
-                description="Your portfolio is well-diversified across multiple sets and rarities."
+                level= diversity["level"],
+                description= diversity["description"]
             ),
             width=12, md=4
         ),
         dbc.Col(
             create_risk_badge(
                 title="Volatility Rating",
-                level="medium",
-                description="Moderate price fluctuations expected based on card types."
+                level= volatility["level"],
+                description= volatility["description"]
             ),
             width=12, md=4
         ),
         dbc.Col(
             create_risk_badge(
                 title="Market Exposure",
-                level="low",
-                description="Low concentration in any single card or set."
+                level= market_exp["level"],
+                description= market_exp["description"]
             ),
             width=12, md=4
-        ),
-        dbc.Col([
-            dbc.Button(
-                "Learn More About Risk",
-                color="link",
-                size="sm",
-                className="mt-2"
-            )
-        ], width=12)
+        )
     ], className="mb-4")
     
     return risk_row
