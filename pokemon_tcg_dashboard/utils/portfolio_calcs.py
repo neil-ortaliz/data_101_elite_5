@@ -49,7 +49,7 @@ class PortfolioCalculator:
         if abs(value) >= 1_000_000:
             return f"{sign}${abs(value)/1_000_000:.1f}M"
         elif abs(value) >= 1_000:
-            return f"{sign}${abs(value)/1_000:.1f}K"
+            return f"{sign}${abs(value):,}"
         else:
             return f"{sign}${abs(value):.2f}"
 

@@ -21,10 +21,9 @@ def layout(card_id=None, **kwargs):
         html.Hr()
     ])
 
-    # Filter controls for TCGPlayer chart
-    tcg_filter_controls = dbc.Row([
+    date_filter_controls = dbc.Row([
         dbc.Col([dcc.Dropdown(
-            id="tcg-date-dropdown",
+            id="date-dropdown",
             options=[
                 {"label": "All Time", "value": "all"},
                 {"label": "Last 90 Days", "value": "90"},
@@ -34,7 +33,10 @@ def layout(card_id=None, **kwargs):
             ],
             value="all",
             clearable=False
-        )], width=6),
+        )], width=12)
+    ])
+    # Filter controls for TCGPlayer chart
+    tcg_filter_controls = dbc.Row([
         dbc.Col([dcc.Dropdown(
             id="tcg-grade-dropdown",
             options=[
@@ -47,23 +49,11 @@ def layout(card_id=None, **kwargs):
             ],
             value="all",
             clearable=False
-        )], width=6)
+        )], width=12)
     ])
 
     # Filter controls for eBay chart
     ebay_filter_controls = dbc.Row([
-        dbc.Col([dcc.Dropdown(
-            id="ebay-date-dropdown",
-            options=[
-                {"label": "All Time", "value": "all"},
-                {"label": "Last 90 Days", "value": "90"},
-                {"label": "Last 30 Days", "value": "30"},
-                {"label": "Last 15 Days", "value": "15"},
-                {"label": "Last 7 Days", "value": "7"},
-            ],
-            value="all",
-            clearable=False
-        )], width=6),
         dbc.Col([dcc.Dropdown(
             id="ebay-grade-dropdown",
             options=[
@@ -74,24 +64,57 @@ def layout(card_id=None, **kwargs):
             ],
             value="all",
             clearable=False
-        )], width=6)
+        )], width=12)
     ])
 
     return html.Div([
         dcc.Location(id="url"),
+
+        # --- CARD HEADER SECTION ---
         card_gen_content,
-        html.H5("Price History Filters"),
-        tcg_filter_controls,
-        html.Div(id="tcg-chart-container"),
+        date_filter_controls,
         html.Hr(),
-        html.H5("eBay Price History Filters"),
-        ebay_filter_controls,
-        html.Div(id="ebay-chart-container"),
+
+        # --- SIDE-BY-SIDE TCG + EBAY CHARTS ---
+        html.Div([
+            # LEFT COLUMN — TCGplayer charts
+            html.Div([
+                tcg_filter_controls,
+                html.Div(id="tcg-chart-container"),
+            ], style={
+                "flex": "1",
+                "padding": "10px",
+                "minWidth": "350px"
+            }),
+
+            # RIGHT COLUMN — eBay charts
+            html.Div([
+                ebay_filter_controls,
+                html.Div(id="ebay-chart-container"),
+            ], style={
+                "flex": "1",
+                "padding": "10px",
+                "minWidth": "350px"
+            })
+        ], style={
+            "display": "flex",
+            "gap": "20px",
+            "alignItems": "flex-start",
+            "flexWrap": "wrap",      # responsive stacking
+            "marginBottom": "30px"
+        }),
+
         html.Hr(),
-        html.Div(id='grade-chart-container'),
+
+        # --- GRADE PRICE TREND ---
+        html.Div(id='grade-chart-container', style={"marginTop": "20px"}),
+
         html.Hr(),
-        html.Div(id='grade-comparison-container')
+
+        # --- GRADE COMPARISON ---
+        html.Div(id='grade-comparison-container', style={"marginTop": "20px"})
     ])
+
 
 
 # ---------------- Populate card header ----------------
@@ -132,7 +155,7 @@ def update_card_header(pathname):
 # ---------------- Update TCGPlayer chart ----------------
 @callback(
     Output("tcg-chart-container", "children"),
-    Input("tcg-date-dropdown", "value"),
+    Input("date-dropdown", "value"),
     Input("tcg-grade-dropdown", "value"),
     Input("url", "pathname")
 )
@@ -152,18 +175,18 @@ def update_tcg_chart(selected_date, selected_grade, pathname):
         card_id=card_id,
         card_df=PRICE_HISTORY_DF,
         price_column="market",
-        platform_name="TCGPlayer",
+        platform_name="Ungraded",
         grade_filter="condition",
         selected_date=selected_date,
         selected_grade=selected_grade
     )
-    return graph_container(fig=fig, title="Price History")
+    return graph_container(fig=fig, title="Ungraded Price History")
 
 
 # ---------------- Update eBay chart ----------------
 @callback(
     Output("ebay-chart-container", "children"),
-    Input("ebay-date-dropdown", "value"),
+    Input("date-dropdown", "value"),
     Input("ebay-grade-dropdown", "value"),
     Input("url", "pathname")
 )
@@ -183,12 +206,12 @@ def update_ebay_chart(selected_date, selected_grade, pathname):
         card_id=card_id,
         card_df=EBAY_METADATA_DF,
         price_column="average",
-        platform_name="eBay",
+        platform_name="Graded",
         grade_filter="grade",
         selected_date=selected_date,
         selected_grade=selected_grade
     )
-    return graph_container(fig=fig, title="eBay Price History")
+    return graph_container(fig=fig, title="Graded Price History")
 
 # ---------------- Update Graded Bar Chart ---------------- 
 @callback(

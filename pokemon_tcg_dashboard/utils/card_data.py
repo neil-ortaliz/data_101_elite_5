@@ -62,7 +62,7 @@ class CardDataFetcher:
         if abs(value) >= 1_000_000:
             return f"{sign}${abs(value)/1_000_000:.1f}M"
         elif abs(value) >= 1_000:
-            return f"{sign}${abs(value)/1_000:.1f}K"
+            return f"{sign}${abs(value):,}"
         else:
             return f"{sign}${abs(value):.2f}"
 
@@ -189,7 +189,9 @@ class CardDataFetcher:
             df = df[df["condition"] == condition]
         if cutoff:
             df = df[df["date"] >= cutoff]
-        return int(df["date"].nunique())
+        
+
+        return self.format_value(int(df["date"].nunique()))
 
     def get_price_history(
         self,

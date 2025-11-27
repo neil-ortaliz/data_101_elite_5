@@ -111,7 +111,7 @@ def create_market_overview_metrics(days:int=1):
         dbc.Col(
             create_metric_card(
                 title="Active Listings",
-                value=market_calculator.count_active_listings(days)['count'],
+                value=market_calculator.count_active_listings(days)['formatted'],
                 #change="+342",
                 #change_type="neutral"
             ),

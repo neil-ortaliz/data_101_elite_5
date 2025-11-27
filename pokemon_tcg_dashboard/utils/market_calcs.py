@@ -37,7 +37,7 @@ class MarketCalculator:
         if total_value >= 1_000_000:
             formatted = f"${total_value / 1_000_000:.1f}M"
         elif total_value >= 1_000:
-            formatted = f"${total_value / 1_000:.1f}K"
+            formatted = f"${total_value:,}"
         else:
             formatted = f"${total_value:.2f}"
 
@@ -88,7 +88,7 @@ class MarketCalculator:
             if abs(change_value) >= 1_000_000:
                 formatted_value = f"{sign}${abs(change_value)/1_000_000:.1f}M"
             elif abs(change_value) >= 1_000:
-                formatted_value = f"{sign}${abs(change_value)/1_000:.1f}K"
+                formatted_value = f"{sign}${abs(change_value):,}"
             else:
                 formatted_value = f"{sign}${abs(change_value):.2f}"
 
@@ -191,7 +191,7 @@ class MarketCalculator:
         except Exception:
             count = 0
 
-        return {'count': count, 'formatted': f"{count:,}"}
+        return {'count': count, 'formatted': f"{int(count):,}"}
 
     # ---------------------------------------------------------
     # TOP MOVERS (N-DAY OR ALL-TIME)

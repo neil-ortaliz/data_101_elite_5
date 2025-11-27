@@ -50,6 +50,7 @@ layout = html.Div([
                     title="Set Performance Overview"
                 ),
             ]),
+            html.Hr(),
             dbc.Row([
                 # html.H4("Top Price Movers", className="mb-3"),
                 # create_top_movers_table(),

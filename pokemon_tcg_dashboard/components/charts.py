@@ -583,7 +583,7 @@ def card_view_price_history_line_chart(card_name, card_id, card_df, price_column
     if df.empty or price_column not in df.columns or df[price_column].isna().all():
         fig = go.Figure()
         fig.update_layout(
-            title=f"No price history available for {card_name} ({platform_name})",
+            title=f"No {platform_name.lower()} price history available for {card_name}",
             template="plotly_white"
         )
         return fig
@@ -606,7 +606,7 @@ def card_view_price_history_line_chart(card_name, card_id, card_df, price_column
             if df_grade.empty:
                 continue
             # Select color palette
-            if platform_name.lower() == "tcgplayer":
+            if platform_name.lower() == "ungraded":
                 color = TCG_GRADE_COLORS.get(grade, "#000000")
             else:
                 color = PSA_GRADE_COLORS.get(grade, "#000000")
@@ -627,12 +627,12 @@ def card_view_price_history_line_chart(card_name, card_id, card_df, price_column
         if df.empty or price_column not in df.columns or df[price_column].isna().all():
             fig = go.Figure()
             fig.update_layout(
-                title=f"No price history available for {card_name} ({platform_name}) in selected grade/condition",
+                title=f"No {platform_name.lower()} price history available for {card_name} in selected grade/condition",
                 template="plotly_white"
             )
             return fig
         
-        if platform_name.lower() == "tcgplayer":
+        if platform_name.lower() == "ungraded":
             color = TCG_GRADE_COLORS.get(selected_grade, "#000000")
         else:
             color = PSA_GRADE_COLORS.get(selected_grade, "#000000")
@@ -647,7 +647,7 @@ def card_view_price_history_line_chart(card_name, card_id, card_df, price_column
         ))
 
     fig.update_layout(
-        title=f"Price History – {card_name} ({platform_name})",
+        title=f"{platform_name} Price History – {card_name} ",
         xaxis_title="Date",
         yaxis_title="Price (USD)",
         template="plotly_white",
