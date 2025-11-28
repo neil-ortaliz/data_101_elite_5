@@ -78,6 +78,7 @@ owned_cards = html.Div(
 portfolio = html.Div([
     html.Br(),
     select,
+    html.Br(),
     html.Div(id="portfolio-metrics-row"),
     dbc.Row([
         dbc.Col(id="portfolio-risk-row"),

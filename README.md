@@ -35,7 +35,31 @@ A comprehensive interactive dashboard built with **Dash** and **Plotly** to trac
 1. Clone the repository:
 ```bash
 git clone https://github.com/neil-ortaliz/data_101_elite_5/
-cd your-repo
+cd data_101_elite_5
+cd pokemon_tcg_dashboard 
 ```
 2. Ensure your current directory is the `pokemon_tcg_dashboard`
-3. Run the code `python app.py` in your terminal
+3. Setup a virtual environment (Optional but Recommended)
+```bash
+python -m venv venv
+```
+To activate it:
+macOS/Linux
+```bash
+source venv/bin/activate
+```
+
+Windows
+```bash
+venv\Scripts\activate
+```
+4. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+5. Run the code `python app.py` in your terminal
+6. Open your browser and go to:
+```bash
+http://127.0.0.1:8050/
+```
+   
