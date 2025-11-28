@@ -147,3 +147,18 @@ body {
 .add-portfolio-button {
     font-size:0.7rem
 }
+
+.portfolio-card-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+}
+
+.card-normal .portfolio-card-image {
+    transition: opacity 0.3s ease;
+
+}
+.card-normal:hover .portfolio-card-image {
+    opacity: 0.3;
+}

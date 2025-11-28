@@ -6,7 +6,7 @@ from utils.market_calcs import MarketCalculator
 from utils.loader import load_data
 from components import create_metric_card
 
-from global_variables import SET_OPTIONS, RARITY_OPTIONS, PRICE_HISTORY_DF, CARD_METADATA_DF
+from global_variables import RARITY_OPTIONS, PRICE_HISTORY_DF, CARD_METADATA_DF
 
 import logging
 logger = logging.getLogger(__name__)
@@ -113,20 +113,7 @@ def create_market_filters():
                     type="text"
                 ),
             ])
-        ], width=12, md=4, className="mb-3"),
-        
-        # Set filter
-        dbc.Col([
-            dcc.Dropdown(
-                id="market-set-select",
-                options=SET_OPTIONS,
-                #value="all",
-                multi=True,
-                placeholder="Filter by Set",
-                clearable=False,
-                style={"borderRadius": "5px"}
-            )
-        ], width=12, md=3, className="mb-3"),
+        ], width=4),
         
         # Rarity filter
         dbc.Col([
@@ -139,7 +126,7 @@ def create_market_filters():
                 clearable=False,
                 style={"borderRadius": "5px"}
             )
-        ], width=12, md=3, className="mb-3"),
+        ], width=4),
         
         # Clear button
         dbc.Col([
@@ -150,8 +137,8 @@ def create_market_filters():
                 outline=True,
                 className="w-100"
             )
-        ], width=12, md=2, className="mb-3"),
-    ], className="mb-4")
+        ], width=4),
+    ])
     
     return filters
 
@@ -289,5 +276,52 @@ def create_top_movers_table(data=None):
         toggle_buttons,
         table
     ])'''
+
+    return table
+
+def create_set_release_date_table(data):
+    """
+    Creates a Dash DataTable showing Pokémon set names and release dates.
+
+    Parameters:
+    -----------
+    data : pd.DataFrame
+        Must contain at least two columns: 'setName' and 'release_date'
+
+    Returns:
+    --------
+    dash_table.DataTable
+    """
+    df = data[['setName', 'release_date']].copy()
+    df['release_date'] = pd.to_datetime(df['release_date']).dt.date.astype(str)
+
+    table = dash_table.DataTable(
+        columns=[
+            {"name": "Set Name", "id": "setName", "type": "text"},
+            {"name": "Release Date", "id": "release_date", "type": "text"}
+        ],
+        data=df.to_dict('records'),
+        sort_action='native',      # allow sorting by clicking headers
+        page_size=20,              # show 10 rows per page
+        style_table={
+            'height': '100%',      
+            'overflowY': 'auto',   
+            'width': '100%'
+        },
+        style_header={
+            'backgroundColor': '#0075BE',
+            'color': 'white',
+            'fontWeight': 'bold',
+            'textAlign': 'center',
+            'padding': '10px',
+            "font-family": "Helvetica, Arial, sans-serif"
+        },
+        style_cell={
+            'textAlign': 'left',
+            'padding': '10px',
+            'fontSize': '14px',
+            "font-family": "Helvetica, Arial, sans-serif"
+        }
+    )
 
     return table
