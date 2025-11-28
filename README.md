@@ -30,25 +30,6 @@ A comprehensive interactive dashboard built with **Dash** and **Plotly** to trac
 - **Sources:** Market data and portfolio data are taken from the Pokemon Price Tracker API.
 - **Card Grades:** Supports tracking of ungraded and graded cards with price and ROI metrics.
 
-## Repository Structure
-```bash
-data_101_elite_5/                     ← root
-├── notebooks/                       ← folder
-├── pokemon_tcg_dashboard/           ← folder (the main app)
-│   ├── assets                       ← contains CSS file and favicon
-│   └── callbacks                    
-│   └── components                   ← contains the UI component files
-│   └── data                         ← contains the data being used
-│   └── docs
-│   └── pages                        ← contains the codes used to display the pages
-│   └── tests
-│   └── utils                        ← contains the codes of the formulas
-├── .gitignore                       ← git ignore file
-├── LICENSE                          ← license file (MIT) 
-├── README.md                        ← repo readme / project description
-├── pyproject.toml                   ← Python project config
-└── requirements.txt                 ← Python dependencies list
-```
 
 ## Installation
 1. Clone the repository:

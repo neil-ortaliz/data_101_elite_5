@@ -104,179 +104,179 @@
 102,"['G', 'C', 'C']",Vine Whip,60,,68af6bbfd14a007632025838
 103,['G'],Tackle,10,,68af6bbfd14a00763202583b
 104,"['G', 'G']",Vine Whip,30,,68af6bbfd14a00763202583b
-105,['C'],Aerial Ace,40+,"Flip a coin. If heads, this attack does 40 more damage.",68af6bc0d14a00763202586e
-106,"['C', 'C', 'C', 'C']",Speed Wing,130,,68af6bc0d14a00763202586e
-107,['C'],Aerial Ace,40+,"Flip a coin. If heads, this attack does 40 more damage.",68af6bc0d14a007632025874
-108,"['C', 'C', 'C', 'C']",Speed Wing,130,,68af6bc0d14a007632025874
-109,['C'],Aerial Ace,40+,"Flip a coin. If heads, this attack does 40 more damage.",68af6bc0d14a007632025871
-110,"['C', 'C', 'C', 'C']",Speed Wing,130,,68af6bc0d14a007632025871
-111,['C'],Peck,10,,68af6bc0d14a00763202587a
-112,"['C', 'C']",Glide,20,,68af6bc0d14a00763202587a
-113,['C'],Peck,10,,68af6bc0d14a007632025877
-114,"['C', 'C']",Glide,20,,68af6bc0d14a007632025877
+105,['C'],Aerial Ace,40+,"Flip a coin. If heads, this attack does 40 more damage.",68af6bc0d14a007632025871
+106,"['C', 'C', 'C', 'C']",Speed Wing,130,,68af6bc0d14a007632025871
+107,['C'],Aerial Ace,40+,"Flip a coin. If heads, this attack does 40 more damage.",68af6bc0d14a00763202586e
+108,"['C', 'C', 'C', 'C']",Speed Wing,130,,68af6bc0d14a00763202586e
+109,['C'],Aerial Ace,40+,"Flip a coin. If heads, this attack does 40 more damage.",68af6bc0d14a007632025874
+110,"['C', 'C', 'C', 'C']",Speed Wing,130,,68af6bc0d14a007632025874
+111,['C'],Peck,10,,68af6bc0d14a007632025877
+112,"['C', 'C']",Glide,20,,68af6bc0d14a007632025877
+113,['C'],Peck,10,,68af6bc0d14a00763202587a
+114,"['C', 'C']",Glide,20,,68af6bc0d14a00763202587a
 115,['C'],Peck,10,,68af6bc0d14a00763202587d
 116,"['C', 'C']",Glide,20,,68af6bc0d14a00763202587d
 117,['C'],Do the Wave,20+,This attack does 20 more damage for each of your Benched Pokémon.,68af6bc0d14a007632025880
-118,['C'],Do the Wave,20+,This attack does 20 more damage for each of your Benched Pokémon.,68af6bc0d14a007632025886
-119,['C'],Do the Wave,20+,This attack does 20 more damage for each of your Benched Pokémon.,68af6bc0d14a007632025883
-120,['C'],Tail Slap,20x,Flip 2 coins. This attack does 20 damage for each heads.,68af6bc0d14a00763202588c
-121,['C'],Tail Slap,20x,Flip 2 coins. This attack does 20 damage for each heads.,68af6bc0d14a007632025889
-122,['C'],Tail Slap,20x,Flip 2 coins. This attack does 20 damage for each heads.,68af6bc0d14a00763202588f
-123,['C'],Return,30,You may draw cards until you have 6 cards in your hand.,68af6bc0d14a007632025898
+118,['C'],Do the Wave,20+,This attack does 20 more damage for each of your Benched Pokémon.,68af6bc0d14a007632025883
+119,['C'],Do the Wave,20+,This attack does 20 more damage for each of your Benched Pokémon.,68af6bc0d14a007632025886
+120,['C'],Tail Slap,20x,Flip 2 coins. This attack does 20 damage for each heads.,68af6bc0d14a007632025889
+121,['C'],Tail Slap,20x,Flip 2 coins. This attack does 20 damage for each heads.,68af6bc0d14a00763202588f
+122,['C'],Tail Slap,20x,Flip 2 coins. This attack does 20 damage for each heads.,68af6bc0d14a00763202588c
+123,['C'],Return,30,You may draw cards until you have 6 cards in your hand.,68af6bc0d14a007632025895
 124,['C'],Return,30,You may draw cards until you have 6 cards in your hand.,68af6bc0d14a007632025892
-125,['C'],Return,30,You may draw cards until you have 6 cards in your hand.,68af6bc0d14a007632025895
+125,['C'],Return,30,You may draw cards until you have 6 cards in your hand.,68af6bc0d14a007632025898
 126,"['C', 'C']",Swift Flight,120,"Flip a coin. If heads, during your opponent's next turn, prevent all damage from and effects of attacks done to this Pokémon.",68af6bc0d14a0076320258a1
-127,"['C', 'C']",Swift Flight,120,"Flip a coin. If heads, during your opponent's next turn, prevent all damage from and effects of attacks done to this Pokémon.",68af6bc0d14a00763202589e
-128,"['C', 'C']",Swift Flight,120,"Flip a coin. If heads, during your opponent's next turn, prevent all damage from and effects of attacks done to this Pokémon.",68af6bc0d14a00763202589b
+127,"['C', 'C']",Swift Flight,120,"Flip a coin. If heads, during your opponent's next turn, prevent all damage from and effects of attacks done to this Pokémon.",68af6bc0d14a00763202589b
+128,"['C', 'C']",Swift Flight,120,"Flip a coin. If heads, during your opponent's next turn, prevent all damage from and effects of attacks done to this Pokémon.",68af6bc0d14a00763202589e
 129,['C'],Fly,40,"Flip a coin. If tails, this attack does nothing. If heads, during your opponent's next turn, prevent all damage from and effects of attacks done to this Pokémon.",68af6bc0d14a0076320258a4
-130,['C'],Fly,40,"Flip a coin. If tails, this attack does nothing. If heads, during your opponent's next turn, prevent all damage from and effects of attacks done to this Pokémon.",68af6bc0d14a0076320258a7
-131,['C'],Fly,40,"Flip a coin. If tails, this attack does nothing. If heads, during your opponent's next turn, prevent all damage from and effects of attacks done to this Pokémon.",68af6bc0d14a0076320258aa
+130,['C'],Fly,40,"Flip a coin. If tails, this attack does nothing. If heads, during your opponent's next turn, prevent all damage from and effects of attacks done to this Pokémon.",68af6bc0d14a0076320258aa
+131,['C'],Fly,40,"Flip a coin. If tails, this attack does nothing. If heads, during your opponent's next turn, prevent all damage from and effects of attacks done to this Pokémon.",68af6bc0d14a0076320258a7
 132,['C'],Stampede,10,,68af6bc0d14a0076320258b0
-133,['C'],Stampede,10,,68af6bc0d14a0076320258ad
-134,['C'],Stampede,10,,68af6bc1d14a0076320258b3
-135,"['C', 'C']",Cross-Cut,80+,"If your opponent's Active Pokémon is an Evolution Pokémon, this attack does 80 more damage.",68af6bc1d14a0076320258b9
+133,['C'],Stampede,10,,68af6bc1d14a0076320258b3
+134,['C'],Stampede,10,,68af6bc0d14a0076320258ad
+135,"['C', 'C']",Cross-Cut,80+,"If your opponent's Active Pokémon is an Evolution Pokémon, this attack does 80 more damage.",68af6bc1d14a0076320258bc
 136,"['C', 'C']",Cross-Cut,80+,"If your opponent's Active Pokémon is an Evolution Pokémon, this attack does 80 more damage.",68af6bc1d14a0076320258b6
-137,"['C', 'C']",Cross-Cut,80+,"If your opponent's Active Pokémon is an Evolution Pokémon, this attack does 80 more damage.",68af6bc1d14a0076320258bc
-138,['C'],Bite,30,,68af6bc1d14a0076320258c2
-139,"['F', 'M']",Boundless Power,90,"During your next turn, this Pokémon can't attack.",68af6bc1d14a0076320258c2
+137,"['C', 'C']",Cross-Cut,80+,"If your opponent's Active Pokémon is an Evolution Pokémon, this attack does 80 more damage.",68af6bc1d14a0076320258b9
+138,['C'],Bite,30,,68af6bc1d14a0076320258bf
+139,"['F', 'M']",Boundless Power,90,"During your next turn, this Pokémon can't attack.",68af6bc1d14a0076320258bf
 140,['C'],Bite,30,,68af6bc1d14a0076320258c5
 141,"['F', 'M']",Boundless Power,90,"During your next turn, this Pokémon can't attack.",68af6bc1d14a0076320258c5
-142,['C'],Bite,30,,68af6bc1d14a0076320258bf
-143,"['F', 'M']",Boundless Power,90,"During your next turn, this Pokémon can't attack.",68af6bc1d14a0076320258bf
+142,['C'],Bite,30,,68af6bc1d14a0076320258c2
+143,"['F', 'M']",Boundless Power,90,"During your next turn, this Pokémon can't attack.",68af6bc1d14a0076320258c2
 144,"['M', 'M', 'C']",Protect Charge,150,"During your opponent's next turn, this Pokémon takes 30 less damage from attacks (after applying Weakness and Resistance).",68af6bc1d14a0076320258d1
-145,['M'],Righteous Edge,20,Discard a Special Energy from your opponent's Active Pokémon.,68af6bc1d14a0076320258da
-146,"['M', 'M', 'C']",Metal Arms,80+,"If this Pokémon has a Pokémon Tool attached, this attack does 40 more damage.",68af6bc1d14a0076320258da
-147,['M'],Righteous Edge,20,Discard a Special Energy from your opponent's Active Pokémon.,68af6bc1d14a0076320258d4
-148,"['M', 'M', 'C']",Metal Arms,80+,"If this Pokémon has a Pokémon Tool attached, this attack does 40 more damage.",68af6bc1d14a0076320258d4
+145,['M'],Righteous Edge,20,Discard a Special Energy from your opponent's Active Pokémon.,68af6bc1d14a0076320258d4
+146,"['M', 'M', 'C']",Metal Arms,80+,"If this Pokémon has a Pokémon Tool attached, this attack does 40 more damage.",68af6bc1d14a0076320258d4
+147,['M'],Righteous Edge,20,Discard a Special Energy from your opponent's Active Pokémon.,68af6bc1d14a0076320258da
+148,"['M', 'M', 'C']",Metal Arms,80+,"If this Pokémon has a Pokémon Tool attached, this attack does 40 more damage.",68af6bc1d14a0076320258da
 149,['M'],Righteous Edge,20,Discard a Special Energy from your opponent's Active Pokémon.,68af6bc1d14a0076320258d7
 150,"['M', 'M', 'C']",Metal Arms,80+,"If this Pokémon has a Pokémon Tool attached, this attack does 40 more damage.",68af6bc1d14a0076320258d7
-151,['M'],Cut Up,40,,68af6bc1d14a0076320258e3
-152,"['M', 'C']",Finishing Blow,60+,"If your opponent's Active Pokémon already has any damage counters on it, this attack does 60 more damage.",68af6bc1d14a0076320258e3
-153,['M'],Cut Up,40,,68af6bc1d14a0076320258dd
-154,"['M', 'C']",Finishing Blow,60+,"If your opponent's Active Pokémon already has any damage counters on it, this attack does 60 more damage.",68af6bc1d14a0076320258dd
-155,['M'],Cut Up,40,,68af6bc1d14a0076320258e0
-156,"['M', 'C']",Finishing Blow,60+,"If your opponent's Active Pokémon already has any damage counters on it, this attack does 60 more damage.",68af6bc1d14a0076320258e0
-157,['M'],Corner,10,"During your opponent's next turn, the Defending Pokémon can't retreat.",68af6bc1d14a0076320258e6
-158,['M'],Corner,10,"During your opponent's next turn, the Defending Pokémon can't retreat.",68af6bc1d14a0076320258e9
-159,['M'],Corner,10,"During your opponent's next turn, the Defending Pokémon can't retreat.",68af6bc1d14a0076320258ec
-160,"['M', 'C', 'C']",Hammer In,120,,68af6bc1d14a0076320258ef
-161,"['M', 'C', 'C']",Hammer In,120,,68af6bc1d14a0076320258f2
-162,"['2', 'M']",Hammer In,120,,68af6bc2d14a0076320258fb
-163,"['M', 'C', 'C']",Hammer In,120,,68af6bc1d14a0076320258f5
-164,"['2', 'M']",Hammer In,120,,68af6bc2d14a0076320258f8
-165,"['M', 'C']",Hard Gears,50,"During your opponent's next turn, this Pokémon takes 20 less damage from attacks (after applying Weakness and Resistance).",68af6bc2d14a0076320258fe
-166,"['M', 'C']",Hard Gears,50,"During your opponent's next turn, this Pokémon takes 20 less damage from attacks (after applying Weakness and Resistance).",68af6bc2d14a007632025904
+151,['M'],Cut Up,40,,68af6bc1d14a0076320258dd
+152,"['M', 'C']",Finishing Blow,60+,"If your opponent's Active Pokémon already has any damage counters on it, this attack does 60 more damage.",68af6bc1d14a0076320258dd
+153,['M'],Cut Up,40,,68af6bc1d14a0076320258e0
+154,"['M', 'C']",Finishing Blow,60+,"If your opponent's Active Pokémon already has any damage counters on it, this attack does 60 more damage.",68af6bc1d14a0076320258e0
+155,['M'],Cut Up,40,,68af6bc1d14a0076320258e3
+156,"['M', 'C']",Finishing Blow,60+,"If your opponent's Active Pokémon already has any damage counters on it, this attack does 60 more damage.",68af6bc1d14a0076320258e3
+157,['M'],Corner,10,"During your opponent's next turn, the Defending Pokémon can't retreat.",68af6bc1d14a0076320258ec
+158,['M'],Corner,10,"During your opponent's next turn, the Defending Pokémon can't retreat.",68af6bc1d14a0076320258e6
+159,['M'],Corner,10,"During your opponent's next turn, the Defending Pokémon can't retreat.",68af6bc1d14a0076320258e9
+160,"['M', 'C', 'C']",Hammer In,120,,68af6bc1d14a0076320258f5
+161,"['M', 'C', 'C']",Hammer In,120,,68af6bc1d14a0076320258ef
+162,"['M', 'C', 'C']",Hammer In,120,,68af6bc1d14a0076320258f2
+163,"['2', 'M']",Hammer In,120,,68af6bc2d14a0076320258f8
+164,"['2', 'M']",Hammer In,120,,68af6bc2d14a0076320258fb
+165,"['M', 'C']",Hard Gears,50,"During your opponent's next turn, this Pokémon takes 20 less damage from attacks (after applying Weakness and Resistance).",68af6bc2d14a007632025904
+166,"['M', 'C']",Hard Gears,50,"During your opponent's next turn, this Pokémon takes 20 less damage from attacks (after applying Weakness and Resistance).",68af6bc2d14a0076320258fe
 167,"['M', 'C']",Hard Gears,50,"During your opponent's next turn, this Pokémon takes 20 less damage from attacks (after applying Weakness and Resistance).",68af6bc2d14a007632025901
 168,['M'],Hard Gears,10,"During your opponent's next turn, this Pokémon takes 10 less damage from attacks (after applying Weakness and Resistance).",68af6bc2d14a00763202590d
 169,['M'],Hard Gears,10,"During your opponent's next turn, this Pokémon takes 10 less damage from attacks (after applying Weakness and Resistance).",68af6bc2d14a007632025907
 170,['M'],Hard Gears,10,"During your opponent's next turn, this Pokémon takes 10 less damage from attacks (after applying Weakness and Resistance).",68af6bc2d14a00763202590a
-171,['M'],Wild Lances,90,This Pokémon also does 30 damage to itself.,68af6bc2d14a007632025910
+171,['M'],Wild Lances,90,This Pokémon also does 30 damage to itself.,68af6bc2d14a007632025916
 172,['M'],Wild Lances,90,This Pokémon also does 30 damage to itself.,68af6bc2d14a007632025913
-173,['M'],Wild Lances,90,This Pokémon also does 30 damage to itself.,68af6bc2d14a007632025916
-174,"['D', 'C']",Tighten Up,60,Your opponent discards 2 cards from their hand.,68af6bc2d14a00763202591c
-175,"['D', 'D', 'C']",Cursed Slug,120+,"If your opponent has 3 or fewer cards in their hand, this attack does 120 more damage.",68af6bc2d14a00763202591c
+173,['M'],Wild Lances,90,This Pokémon also does 30 damage to itself.,68af6bc2d14a007632025910
+174,"['D', 'C']",Tighten Up,60,Your opponent discards 2 cards from their hand.,68af6bc2d14a00763202591f
+175,"['D', 'D', 'C']",Cursed Slug,120+,"If your opponent has 3 or fewer cards in their hand, this attack does 120 more damage.",68af6bc2d14a00763202591f
 176,"['D', 'C']",Tighten Up,60,Your opponent discards 2 cards from their hand.,68af6bc2d14a007632025919
 177,"['D', 'D', 'C']",Cursed Slug,120+,"If your opponent has 3 or fewer cards in their hand, this attack does 120 more damage.",68af6bc2d14a007632025919
-178,"['D', 'C']",Tighten Up,60,Your opponent discards 2 cards from their hand.,68af6bc2d14a00763202591f
-179,"['D', 'D', 'C']",Cursed Slug,120+,"If your opponent has 3 or fewer cards in their hand, this attack does 120 more damage.",68af6bc2d14a00763202591f
-180,"['D', 'C']",Tighten Up,40,Your opponent discards 2 cards from their hand.,68af6bc2d14a007632025922
-181,"['D', 'C']",Tighten Up,40,Your opponent discards 2 cards from their hand.,68af6bc2d14a007632025928
-182,"['D', 'C']",Tighten Up,40,Your opponent discards 2 cards from their hand.,68af6bc2d14a007632025925
-183,['D'],Tighten Up,10,Your opponent discards a card from their hand.,68af6bc2d14a00763202592b
-184,['D'],Tighten Up,10,Your opponent discards a card from their hand.,68af6bc2d14a00763202592e
-185,['D'],Tighten Up,10,Your opponent discards a card from their hand.,68af6bc2d14a007632025931
-186,"['D', 'C']",Venoshock,90+,"If your opponent's Active Pokémon is Poisoned, this attack does 90 more damage.",68af6bc2d14a007632025934
-187,"['D', 'C']",Venoshock,90+,"If your opponent's Active Pokémon is Poisoned, this attack does 90 more damage.",68af6bc2d14a00763202593a
-188,"['D', 'C']",Venoshock,90+,"If your opponent's Active Pokémon is Poisoned, this attack does 90 more damage.",68af6bc2d14a007632025937
-189,['C'],Venoshock,30+,"If your opponent's Active Pokémon is Poisoned, this attack does 60 more damage.",68af6bc2d14a007632025940
-190,['C'],Venoshock,30+,"If your opponent's Active Pokémon is Poisoned, this attack does 60 more damage.",68af6bc3d14a007632025943
-191,['C'],Venoshock,30+,"If your opponent's Active Pokémon is Poisoned, this attack does 60 more damage.",68af6bc2d14a00763202593d
+178,"['D', 'C']",Tighten Up,60,Your opponent discards 2 cards from their hand.,68af6bc2d14a00763202591c
+179,"['D', 'D', 'C']",Cursed Slug,120+,"If your opponent has 3 or fewer cards in their hand, this attack does 120 more damage.",68af6bc2d14a00763202591c
+180,"['D', 'C']",Tighten Up,40,Your opponent discards 2 cards from their hand.,68af6bc2d14a007632025928
+181,"['D', 'C']",Tighten Up,40,Your opponent discards 2 cards from their hand.,68af6bc2d14a007632025925
+182,"['D', 'C']",Tighten Up,40,Your opponent discards 2 cards from their hand.,68af6bc2d14a007632025922
+183,['D'],Tighten Up,10,Your opponent discards a card from their hand.,68af6bc2d14a007632025931
+184,['D'],Tighten Up,10,Your opponent discards a card from their hand.,68af6bc2d14a00763202592b
+185,['D'],Tighten Up,10,Your opponent discards a card from their hand.,68af6bc2d14a00763202592e
+186,"['D', 'C']",Venoshock,90+,"If your opponent's Active Pokémon is Poisoned, this attack does 90 more damage.",68af6bc2d14a007632025937
+187,"['D', 'C']",Venoshock,90+,"If your opponent's Active Pokémon is Poisoned, this attack does 90 more damage.",68af6bc2d14a007632025934
+188,"['D', 'C']",Venoshock,90+,"If your opponent's Active Pokémon is Poisoned, this attack does 90 more damage.",68af6bc2d14a00763202593a
+189,['C'],Venoshock,30+,"If your opponent's Active Pokémon is Poisoned, this attack does 60 more damage.",68af6bc2d14a00763202593d
+190,['C'],Venoshock,30+,"If your opponent's Active Pokémon is Poisoned, this attack does 60 more damage.",68af6bc2d14a007632025940
+191,['C'],Venoshock,30+,"If your opponent's Active Pokémon is Poisoned, this attack does 60 more damage.",68af6bc3d14a007632025943
 192,"['F', 'C', 'C']",Earthquake,110,This attack also does 10 damage to each of your Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.),68af6bc3d14a00763202594f
 193,"['F', 'C', 'C']",Earthquake,110,This attack also does 10 damage to each of your Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.),68af6bc3d14a007632025952
 194,"['F', 'C', 'C']",Earthquake,110,This attack also does 10 damage to each of your Benched Pokémon. (Don't apply Weakness and Resistance for Benched Pokémon.),68af6bc3d14a007632025955
 195,"['F', 'C', 'C']",Stone Edge,80+,"Flip a coin. If heads, this attack does 60 more damage.",68af6bc3d14a007632025958
-196,"['F', 'C', 'C']",Stone Edge,80+,"Flip a coin. If heads, this attack does 60 more damage.",68af6bc3d14a00763202595e
-197,"['F', 'C', 'C']",Stone Edge,80+,"Flip a coin. If heads, this attack does 60 more damage.",68af6bc3d14a00763202595b
-198,['C'],Flail,10x,This attack does 10 damage for each damage counter on this Pokémon.,68af6bc3d14a007632025967
-199,"['C', 'C']",Dig Claws,20,,68af6bc3d14a007632025967
-200,['C'],Flail,10x,This attack does 10 damage for each damage counter on this Pokémon.,68af6bc3d14a007632025964
-201,"['C', 'C']",Dig Claws,20,,68af6bc3d14a007632025964
-202,['C'],Flail,10x,This attack does 10 damage for each damage counter on this Pokémon.,68af6bc3d14a007632025961
-203,"['C', 'C']",Dig Claws,20,,68af6bc3d14a007632025961
-204,"['F', 'C']",Shoulder Throw,120-,This attack does 30 less damage for each Retreat Cost.,68af6bc3d14a00763202596d
+196,"['F', 'C', 'C']",Stone Edge,80+,"Flip a coin. If heads, this attack does 60 more damage.",68af6bc3d14a00763202595b
+197,"['F', 'C', 'C']",Stone Edge,80+,"Flip a coin. If heads, this attack does 60 more damage.",68af6bc3d14a00763202595e
+198,['C'],Flail,10x,This attack does 10 damage for each damage counter on this Pokémon.,68af6bc3d14a007632025964
+199,"['C', 'C']",Dig Claws,20,,68af6bc3d14a007632025964
+200,['C'],Flail,10x,This attack does 10 damage for each damage counter on this Pokémon.,68af6bc3d14a007632025961
+201,"['C', 'C']",Dig Claws,20,,68af6bc3d14a007632025961
+202,['C'],Flail,10x,This attack does 10 damage for each damage counter on this Pokémon.,68af6bc3d14a007632025967
+203,"['C', 'C']",Dig Claws,20,,68af6bc3d14a007632025967
+204,"['F', 'C']",Shoulder Throw,120-,This attack does 30 less damage for each Retreat Cost.,68af6bc3d14a007632025970
 205,"['F', 'C']",Shoulder Throw,120-,This attack does 30 less damage for each Retreat Cost.,68af6bc3d14a00763202596a
-206,"['F', 'C']",Shoulder Throw,120-,This attack does 30 less damage for each Retreat Cost.,68af6bc3d14a007632025970
+206,"['F', 'C']",Shoulder Throw,120-,This attack does 30 less damage for each Retreat Cost.,68af6bc3d14a00763202596d
 207,"['F', 'C', 'C', 'C']",Swing Around,100+,Flip 2 coins. This attack does 50 more damage for each heads.,68af6bc3d14a007632025973
-208,"['F', 'C', 'C', 'C']",Swing Around,100+,Flip 2 coins. This attack does 50 more damage for each heads.,68af6bc3d14a007632025979
-209,"['F', 'C', 'C', 'C']",Swing Around,100+,Flip 2 coins. This attack does 50 more damage for each heads.,68af6bc3d14a007632025976
+208,"['F', 'C', 'C', 'C']",Swing Around,100+,Flip 2 coins. This attack does 50 more damage for each heads.,68af6bc3d14a007632025976
+209,"['F', 'C', 'C', 'C']",Swing Around,100+,Flip 2 coins. This attack does 50 more damage for each heads.,68af6bc3d14a007632025979
 210,['F'],Low Kick,30,,68af6bc3d14a00763202597c
 211,"['F', 'C', 'C']",Hammer Arm,60,Discard the top card of your opponent's deck.,68af6bc3d14a00763202597c
-212,['F'],Low Kick,30,,68af6bc3d14a007632025982
-213,"['F', 'C', 'C']",Hammer Arm,60,Discard the top card of your opponent's deck.,68af6bc3d14a007632025982
-214,['F'],Low Kick,30,,68af6bc3d14a00763202597f
-215,"['F', 'C', 'C']",Hammer Arm,60,Discard the top card of your opponent's deck.,68af6bc3d14a00763202597f
+212,['F'],Low Kick,30,,68af6bc3d14a00763202597f
+213,"['F', 'C', 'C']",Hammer Arm,60,Discard the top card of your opponent's deck.,68af6bc3d14a00763202597f
+214,['F'],Low Kick,30,,68af6bc3d14a007632025982
+215,"['F', 'C', 'C']",Hammer Arm,60,Discard the top card of your opponent's deck.,68af6bc3d14a007632025982
 216,['F'],Low Kick,10,,68af6bc3d14a007632025988
 217,"['F', 'C', 'C']",Strength,50,,68af6bc3d14a007632025988
-218,['F'],Low Kick,10,,68af6bc3d14a007632025985
-219,"['F', 'C', 'C']",Strength,50,,68af6bc3d14a007632025985
-220,['F'],Low Kick,10,,68af6bc4d14a00763202598b
-221,"['F', 'C', 'C']",Strength,50,,68af6bc4d14a00763202598b
+218,['F'],Low Kick,10,,68af6bc4d14a00763202598b
+219,"['F', 'C', 'C']",Strength,50,,68af6bc4d14a00763202598b
+220,['F'],Low Kick,10,,68af6bc3d14a007632025985
+221,"['F', 'C', 'C']",Strength,50,,68af6bc3d14a007632025985
 222,"['F', 'F']",Piercing Drill,60,This attack also does 60 damage to 1 of your opponent's Benched Pokémon that has any damage counters on it. (Don't apply Weakness and Resistance for Benched Pokémon.),68af6bc4d14a00763202598e
 223,"['F', 'F', 'F']",Rock Tumble,200,This attack's damage isn't affected by Resistance.,68af6bc4d14a00763202598e
-224,['F'],Mud-Slap,10,,68af6bc4d14a007632025997
-225,"['F', 'F']",Corkscrew Punch,30,,68af6bc4d14a007632025997
+224,['F'],Mud-Slap,10,,68af6bc4d14a007632025994
+225,"['F', 'F']",Corkscrew Punch,30,,68af6bc4d14a007632025994
 226,['F'],Mud-Slap,10,,68af6bc4d14a007632025991
 227,"['F', 'F']",Corkscrew Punch,30,,68af6bc4d14a007632025991
-228,['F'],Mud-Slap,10,,68af6bc4d14a007632025994
-229,"['F', 'F']",Corkscrew Punch,30,,68af6bc4d14a007632025994
+228,['F'],Mud-Slap,10,,68af6bc4d14a007632025997
+229,"['F', 'F']",Corkscrew Punch,30,,68af6bc4d14a007632025997
 230,['P'],Echoed Voice,30,"During your next turn, this Pokémon's Echoed Voice attack does 80 more damage (before applying Weakness and Resistance).",68af6bc4d14a00763202599a
-231,"['C', 'C', 'C']",Double Smash,80x,Flip 2 coins. This attack does 80 damage for each heads.,68af6bc4d14a0076320259a3
-232,"['P', 'P', 'C', 'C', 'C']",Golurk Hammer,200,,68af6bc4d14a0076320259a3
-233,"['C', 'C', 'C']",Double Smash,80x,Flip 2 coins. This attack does 80 damage for each heads.,68af6bc4d14a0076320259a0
-234,"['P', 'P', 'C', 'C', 'C']",Golurk Hammer,200,,68af6bc4d14a0076320259a0
-235,"['C', 'C', 'C']",Double Smash,80x,Flip 2 coins. This attack does 80 damage for each heads.,68af6bc4d14a00763202599d
-236,"['P', 'P', 'C', 'C', 'C']",Golurk Hammer,200,,68af6bc4d14a00763202599d
-237,"['C', 'C']",Best Punch,60,"Flip a coin. If tails, this attack does nothing.",68af6bc4d14a0076320259ac
-238,"['C', 'C']",Best Punch,60,"Flip a coin. If tails, this attack does nothing.",68af6bc4d14a0076320259a6
-239,"['C', 'C']",Best Punch,60,"Flip a coin. If tails, this attack does nothing.",68af6bc4d14a0076320259a9
+231,"['C', 'C', 'C']",Double Smash,80x,Flip 2 coins. This attack does 80 damage for each heads.,68af6bc4d14a00763202599d
+232,"['P', 'P', 'C', 'C', 'C']",Golurk Hammer,200,,68af6bc4d14a00763202599d
+233,"['C', 'C', 'C']",Double Smash,80x,Flip 2 coins. This attack does 80 damage for each heads.,68af6bc4d14a0076320259a3
+234,"['P', 'P', 'C', 'C', 'C']",Golurk Hammer,200,,68af6bc4d14a0076320259a3
+235,"['C', 'C', 'C']",Double Smash,80x,Flip 2 coins. This attack does 80 damage for each heads.,68af6bc4d14a0076320259a0
+236,"['P', 'P', 'C', 'C', 'C']",Golurk Hammer,200,,68af6bc4d14a0076320259a0
+237,"['C', 'C']",Best Punch,60,"Flip a coin. If tails, this attack does nothing.",68af6bc4d14a0076320259a6
+238,"['C', 'C']",Best Punch,60,"Flip a coin. If tails, this attack does nothing.",68af6bc4d14a0076320259a9
+239,"['C', 'C']",Best Punch,60,"Flip a coin. If tails, this attack does nothing.",68af6bc4d14a0076320259ac
 240,"['C', 'C', 'C']",Psychic,80+,This attack does 30 more damage for each Energy attached to your opponent's Active Pokémon.,68af6bc4d14a0076320259b2
 241,"['C', 'C', 'C']",Psychic,80+,This attack does 30 more damage for each Energy attached to your opponent's Active Pokémon.,68af6bc4d14a0076320259b5
 242,"['C', 'C', 'C']",Psychic,80+,This attack does 30 more damage for each Energy attached to your opponent's Active Pokémon.,68af6bc4d14a0076320259af
-243,"['C', 'C', 'C']",Beam,40,,68af6bc4d14a0076320259be
+243,"['C', 'C', 'C']",Beam,40,,68af6bc4d14a0076320259b8
 244,"['C', 'C', 'C']",Beam,40,,68af6bc4d14a0076320259bb
-245,"['C', 'C', 'C']",Beam,40,,68af6bc4d14a0076320259b8
+245,"['C', 'C', 'C']",Beam,40,,68af6bc4d14a0076320259be
 246,['C'],Evo-Lariat,40+,This attack does 40 more damage for each of your Evolution Pokémon in play.,68af6bc4d14a0076320259c1
 247,['C'],Evo-Lariat,40+,This attack does 40 more damage for each of your Evolution Pokémon in play.,68af6bc4d14a0076320259c4
 248,['C'],Evo-Lariat,40+,This attack does 40 more damage for each of your Evolution Pokémon in play.,68af6bc4d14a0076320259c7
 249,['C'],Spray Fluid,30,,68af6bc4d14a0076320259ca
 250,['C'],Spray Fluid,30,,68af6bc4d14a0076320259cd
 251,['C'],Spray Fluid,30,,68af6bc4d14a0076320259d0
-252,['C'],Rollout,10,,68af6bc5d14a0076320259d3
-253,['C'],Rollout,10,,68af6bc5d14a0076320259d6
-254,['C'],Rollout,10,,68af6bc5d14a0076320259d9
-255,['P'],Sleep Pulse,50,Your opponent's Active Pokémon is now Asleep.,68af6bc5d14a0076320259df
-256,['P'],Sleep Pulse,50,Your opponent's Active Pokémon is now Asleep.,68af6bc5d14a0076320259e2
-257,['P'],Sleep Pulse,50,Your opponent's Active Pokémon is now Asleep.,68af6bc5d14a0076320259dc
+252,['C'],Rollout,10,,68af6bc5d14a0076320259d9
+253,['C'],Rollout,10,,68af6bc5d14a0076320259d3
+254,['C'],Rollout,10,,68af6bc5d14a0076320259d6
+255,['P'],Sleep Pulse,50,Your opponent's Active Pokémon is now Asleep.,68af6bc5d14a0076320259dc
+256,['P'],Sleep Pulse,50,Your opponent's Active Pokémon is now Asleep.,68af6bc5d14a0076320259df
+257,['P'],Sleep Pulse,50,Your opponent's Active Pokémon is now Asleep.,68af6bc5d14a0076320259e2
 258,['P'],Mumble,10,,68af6bc5d14a0076320259eb
-259,['P'],Mumble,10,,68af6bc5d14a0076320259e8
-260,['P'],Mumble,10,,68af6bc5d14a0076320259e5
+259,['P'],Mumble,10,,68af6bc5d14a0076320259e5
+260,['P'],Mumble,10,,68af6bc5d14a0076320259e8
 261,"['C', 'C']",Slash,50,,68af6bc5d14a0076320259ee
 262,"['L', 'L', 'C']",Voltage Burst,130+,This attack does 50 more damage for each Prize card your opponent has taken. This Pokémon also does 30 damage to itself.,68af6bc5d14a0076320259ee
-263,"['L', 'C', 'C']",Disaster Volt,110,Discard an Energy from this Pokémon.,68af6bc5d14a0076320259f1
-264,"['L', 'C', 'C']",Disaster Volt,110,Discard an Energy from this Pokémon.,68af6bc5d14a0076320259f4
+263,"['L', 'C', 'C']",Disaster Volt,110,Discard an Energy from this Pokémon.,68af6bc5d14a0076320259f4
+264,"['L', 'C', 'C']",Disaster Volt,110,Discard an Energy from this Pokémon.,68af6bc5d14a0076320259f1
 265,"['L', 'C', 'C']",Disaster Volt,110,Discard an Energy from this Pokémon.,68af6bc5d14a0076320259f7
-266,['L'],Thunder Fang,60,"Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed.",68af6bc5d14a0076320259fa
-267,"['L', 'L', 'L', 'C']",Buzz Flip,100x,Flip 4 coins. This attack does 100 damage for each heads.,68af6bc5d14a0076320259fa
-268,['L'],Thunder Fang,60,"Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed.",68af6bc5d14a0076320259fd
-269,"['L', 'L', 'L', 'C']",Buzz Flip,100x,Flip 4 coins. This attack does 100 damage for each heads.,68af6bc5d14a0076320259fd
+266,['L'],Thunder Fang,60,"Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed.",68af6bc5d14a0076320259fd
+267,"['L', 'L', 'L', 'C']",Buzz Flip,100x,Flip 4 coins. This attack does 100 damage for each heads.,68af6bc5d14a0076320259fd
+268,['L'],Thunder Fang,60,"Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed.",68af6bc5d14a0076320259fa
+269,"['L', 'L', 'L', 'C']",Buzz Flip,100x,Flip 4 coins. This attack does 100 damage for each heads.,68af6bc5d14a0076320259fa
 270,['L'],Thunder Fang,60,"Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed.",68af6bc5d14a007632025a00
 271,"['L', 'L', 'L', 'C']",Buzz Flip,100x,Flip 4 coins. This attack does 100 damage for each heads.,68af6bc5d14a007632025a00
 272,"['L', 'L', 'C']",Electric Ball,50,,68af6bc5d14a007632025a03
 273,"['L', 'L', 'C']",Electric Ball,50,,68af6bc5d14a007632025a09
 274,"['L', 'L', 'C']",Electric Ball,50,,68af6bc5d14a007632025a06
-275,['L'],Static Shock,20,,68af6bc5d14a007632025a18
-276,['L'],Static Shock,20,,68af6bc6d14a007632025a1b
-277,['L'],Static Shock,20,,68af6bc5d14a007632025a15
+275,['L'],Static Shock,20,,68af6bc6d14a007632025a1b
+276,['L'],Static Shock,20,,68af6bc5d14a007632025a15
+277,['L'],Static Shock,20,,68af6bc5d14a007632025a18
 278,"['C', 'C']",Slash,50,,68af6bc6d14a007632025a1e
 279,"['W', 'W', 'C']",Blizzard Burst,130,This attack also does 10 damage to each of your opponent's Benched Pokémon for each Prize card your opponent has taken. (Don't apply Weakness and Resistance for Benched Pokémon.),68af6bc6d14a007632025a1e
 280,['W'],Icicle,30,,68af6bc6d14a007632025a24
@@ -284,107 +284,107 @@
 282,['W'],Icicle,30,,68af6bc6d14a007632025a21
 283,['C'],Continuous Headbutt,50x,Flip a coin until you get tails. This attack does 50 damage for each heads.,68af6bc6d14a007632025a2d
 284,"['W', 'W', 'W', 'C']",Sheer Cold,150,"During your opponent's next turn, the Defending Pokémon can't use attacks.",68af6bc6d14a007632025a2d
-285,['C'],Continuous Headbutt,50x,Flip a coin until you get tails. This attack does 50 damage for each heads.,68af6bc6d14a007632025a30
-286,"['W', 'W', 'W', 'C']",Sheer Cold,150,"During your opponent's next turn, the Defending Pokémon can't use attacks.",68af6bc6d14a007632025a30
-287,['C'],Continuous Headbutt,50x,Flip a coin until you get tails. This attack does 50 damage for each heads.,68af6bc6d14a007632025a2a
-288,"['W', 'W', 'W', 'C']",Sheer Cold,150,"During your opponent's next turn, the Defending Pokémon can't use attacks.",68af6bc6d14a007632025a2a
-289,['W'],Snotted Up,10,"During your opponent's next turn, the Defending Pokémon can't use attacks.",68af6bc6d14a007632025a33
-290,['W'],Snotted Up,10,"During your opponent's next turn, the Defending Pokémon can't use attacks.",68af6bc6d14a007632025a39
+285,['C'],Continuous Headbutt,50x,Flip a coin until you get tails. This attack does 50 damage for each heads.,68af6bc6d14a007632025a2a
+286,"['W', 'W', 'W', 'C']",Sheer Cold,150,"During your opponent's next turn, the Defending Pokémon can't use attacks.",68af6bc6d14a007632025a2a
+287,['C'],Continuous Headbutt,50x,Flip a coin until you get tails. This attack does 50 damage for each heads.,68af6bc6d14a007632025a30
+288,"['W', 'W', 'W', 'C']",Sheer Cold,150,"During your opponent's next turn, the Defending Pokémon can't use attacks.",68af6bc6d14a007632025a30
+289,['W'],Snotted Up,10,"During your opponent's next turn, the Defending Pokémon can't use attacks.",68af6bc6d14a007632025a39
+290,['W'],Snotted Up,10,"During your opponent's next turn, the Defending Pokémon can't use attacks.",68af6bc6d14a007632025a33
 291,['W'],Snotted Up,10,"During your opponent's next turn, the Defending Pokémon can't use attacks.",68af6bc6d14a007632025a36
 292,"['W', 'C', 'C']",Waterfall,70,,68af6bc6d14a007632025a42
-293,"['W', 'C', 'C']",Waterfall,70,,68af6bc6d14a007632025a3f
-294,"['W', 'C', 'C']",Waterfall,70,,68af6bc6d14a007632025a3c
+293,"['W', 'C', 'C']",Waterfall,70,,68af6bc6d14a007632025a3c
+294,"['W', 'C', 'C']",Waterfall,70,,68af6bc6d14a007632025a3f
 295,"['W', 'C', 'C']",Big Bite,150,"During your opponent's next turn, the Defending Pokémon can't retreat.",68af6bc6d14a007632025a45
-296,"['W', 'C', 'C']",Big Bite,150,"During your opponent's next turn, the Defending Pokémon can't retreat.",68af6bc6d14a007632025a4b
-297,"['W', 'C', 'C']",Big Bite,150,"During your opponent's next turn, the Defending Pokémon can't retreat.",68af6bc6d14a007632025a48
-298,['W'],Ancient Seaweed,30x,This attack does 30 damage for each Item card in your opponent's discard pile.,68af6bc6d14a007632025a4e
-299,"['W', 'C', 'C']",Surf,80,,68af6bc6d14a007632025a4e
-300,['W'],Ancient Seaweed,30x,This attack does 30 damage for each Item card in your opponent's discard pile.,68af6bc6d14a007632025a54
-301,"['W', 'C', 'C']",Surf,80,,68af6bc6d14a007632025a54
-302,['W'],Ancient Seaweed,30x,This attack does 30 damage for each Item card in your opponent's discard pile.,68af6bc6d14a007632025a51
-303,"['W', 'C', 'C']",Surf,80,,68af6bc6d14a007632025a51
+296,"['W', 'C', 'C']",Big Bite,150,"During your opponent's next turn, the Defending Pokémon can't retreat.",68af6bc6d14a007632025a48
+297,"['W', 'C', 'C']",Big Bite,150,"During your opponent's next turn, the Defending Pokémon can't retreat.",68af6bc6d14a007632025a4b
+298,['W'],Ancient Seaweed,30x,This attack does 30 damage for each Item card in your opponent's discard pile.,68af6bc6d14a007632025a51
+299,"['W', 'C', 'C']",Surf,80,,68af6bc6d14a007632025a51
+300,['W'],Ancient Seaweed,30x,This attack does 30 damage for each Item card in your opponent's discard pile.,68af6bc6d14a007632025a4e
+301,"['W', 'C', 'C']",Surf,80,,68af6bc6d14a007632025a4e
+302,['W'],Ancient Seaweed,30x,This attack does 30 damage for each Item card in your opponent's discard pile.,68af6bc6d14a007632025a54
+303,"['W', 'C', 'C']",Surf,80,,68af6bc6d14a007632025a54
 304,"['C', 'C', 'C']",Round,70x,This attack does 70 damage for each of your Pokémon in play that has the Round attack.,68af6bc6d14a007632025a5d
 305,"['W', 'C', 'C', 'C']",Hyper Voice,160,,68af6bc6d14a007632025a5d
-306,"['C', 'C', 'C']",Round,70x,This attack does 70 damage for each of your Pokémon in play that has the Round attack.,68af6bc6d14a007632025a57
-307,"['W', 'C', 'C', 'C']",Hyper Voice,160,,68af6bc6d14a007632025a57
-308,"['C', 'C', 'C']",Round,70x,This attack does 70 damage for each of your Pokémon in play that has the Round attack.,68af6bc6d14a007632025a5a
-309,"['W', 'C', 'C', 'C']",Hyper Voice,160,,68af6bc6d14a007632025a5a
+306,"['C', 'C', 'C']",Round,70x,This attack does 70 damage for each of your Pokémon in play that has the Round attack.,68af6bc6d14a007632025a5a
+307,"['W', 'C', 'C', 'C']",Hyper Voice,160,,68af6bc6d14a007632025a5a
+308,"['C', 'C', 'C']",Round,70x,This attack does 70 damage for each of your Pokémon in play that has the Round attack.,68af6bc6d14a007632025a57
+309,"['W', 'C', 'C', 'C']",Hyper Voice,160,,68af6bc6d14a007632025a57
 310,"['C', 'C']",Round,40x,This attack does 40 damage for each of your Pokémon in play that has the Round attack.,68af6bc7d14a007632025a66
 311,"['W', 'C', 'C']",Wave Splash,60,,68af6bc7d14a007632025a66
 312,"['C', 'C']",Round,40x,This attack does 40 damage for each of your Pokémon in play that has the Round attack.,68af6bc6d14a007632025a60
 313,"['W', 'C', 'C']",Wave Splash,60,,68af6bc6d14a007632025a60
 314,"['C', 'C']",Round,40x,This attack does 40 damage for each of your Pokémon in play that has the Round attack.,68af6bc7d14a007632025a63
 315,"['W', 'C', 'C']",Wave Splash,60,,68af6bc7d14a007632025a63
-316,"['C', 'C']",Round,20x,This attack does 20 damage for each of your Pokémon in play that has the Round attack.,68af6bc7d14a007632025a69
-317,"['C', 'C']",Round,20x,This attack does 20 damage for each of your Pokémon in play that has the Round attack.,68af6bc7d14a007632025a6c
+316,"['C', 'C']",Round,20x,This attack does 20 damage for each of your Pokémon in play that has the Round attack.,68af6bc7d14a007632025a6c
+317,"['C', 'C']",Round,20x,This attack does 20 damage for each of your Pokémon in play that has the Round attack.,68af6bc7d14a007632025a69
 318,"['C', 'C']",Round,20x,This attack does 20 damage for each of your Pokémon in play that has the Round attack.,68af6bc7d14a007632025a6f
-319,"['C', 'C']",Gentle Slap,70,,68af6bc7d14a007632025a75
+319,"['C', 'C']",Gentle Slap,70,,68af6bc7d14a007632025a78
 320,"['C', 'C']",Gentle Slap,70,,68af6bc7d14a007632025a72
-321,"['C', 'C']",Gentle Slap,70,,68af6bc7d14a007632025a78
-322,"['C', 'C']",Scratch,30,,68af6bc7d14a007632025a7b
-323,"['C', 'C']",Scratch,30,,68af6bc7d14a007632025a7e
-324,"['C', 'C']",Scratch,30,,68af6bc7d14a007632025a81
-325,"['R', 'C', 'C']",Fire Wing,70,,68af6bc7d14a007632025a84
-326,"['R', 'C', 'C']",Fire Wing,70,,68af6bc7d14a007632025a87
-327,"['R', 'C', 'C']",Fire Wing,70,,68af6bc7d14a007632025a8a
-328,['C'],Peck Off,10,"Before doing damage, discard all Pokémon Tools from your opponent's Active Pokémon.",68af6bc7d14a007632025a93
-329,['C'],Peck Off,10,"Before doing damage, discard all Pokémon Tools from your opponent's Active Pokémon.",68af6bc7d14a007632025a8d
-330,['C'],Peck Off,10,"Before doing damage, discard all Pokémon Tools from your opponent's Active Pokémon.",68af6bc7d14a007632025a90
+321,"['C', 'C']",Gentle Slap,70,,68af6bc7d14a007632025a75
+322,"['C', 'C']",Scratch,30,,68af6bc7d14a007632025a81
+323,"['C', 'C']",Scratch,30,,68af6bc7d14a007632025a7b
+324,"['C', 'C']",Scratch,30,,68af6bc7d14a007632025a7e
+325,"['R', 'C', 'C']",Fire Wing,70,,68af6bc7d14a007632025a87
+326,"['R', 'C', 'C']",Fire Wing,70,,68af6bc7d14a007632025a8a
+327,"['R', 'C', 'C']",Fire Wing,70,,68af6bc7d14a007632025a84
+328,['C'],Peck Off,10,"Before doing damage, discard all Pokémon Tools from your opponent's Active Pokémon.",68af6bc7d14a007632025a8d
+329,['C'],Peck Off,10,"Before doing damage, discard all Pokémon Tools from your opponent's Active Pokémon.",68af6bc7d14a007632025a90
+330,['C'],Peck Off,10,"Before doing damage, discard all Pokémon Tools from your opponent's Active Pokémon.",68af6bc7d14a007632025a93
 331,"['R', 'C']",Searing Flame,50,Your opponent's Active Pokémon is now Burned.,68af6bc7d14a007632025a96
 332,"['R', 'C', 'C', 'C']",Smashing Headbutt,180,Discard 2 Energy from this Pokémon.,68af6bc7d14a007632025a96
-333,"['R', 'C']",Searing Flame,50,Your opponent's Active Pokémon is now Burned.,68af6bc7d14a007632025a99
-334,"['R', 'C', 'C', 'C']",Smashing Headbutt,180,Discard 2 Energy from this Pokémon.,68af6bc7d14a007632025a99
-335,"['R', 'C']",Searing Flame,50,Your opponent's Active Pokémon is now Burned.,68af6bc7d14a007632025a9c
-336,"['R', 'C', 'C', 'C']",Smashing Headbutt,180,Discard 2 Energy from this Pokémon.,68af6bc7d14a007632025a9c
+333,"['R', 'C']",Searing Flame,50,Your opponent's Active Pokémon is now Burned.,68af6bc7d14a007632025a9c
+334,"['R', 'C', 'C', 'C']",Smashing Headbutt,180,Discard 2 Energy from this Pokémon.,68af6bc7d14a007632025a9c
+335,"['R', 'C']",Searing Flame,50,Your opponent's Active Pokémon is now Burned.,68af6bc7d14a007632025a99
+336,"['R', 'C', 'C', 'C']",Smashing Headbutt,180,Discard 2 Energy from this Pokémon.,68af6bc7d14a007632025a99
 337,"['R', 'C']",Will-O-Wisp,30,,68af6bc7d14a007632025a9f
 338,"['R', 'C']",Will-O-Wisp,30,,68af6bc7d14a007632025aa2
 339,"['R', 'C']",Will-O-Wisp,30,,68af6bc7d14a007632025aa5
-340,"['R', 'R']",V-Force,120,"If you have 4 or fewer Benched Pokémon, this attack does nothing.",68af6bc8d14a007632025aae
+340,"['R', 'R']",V-Force,120,"If you have 4 or fewer Benched Pokémon, this attack does nothing.",68af6bc7d14a007632025aa8
 341,"['R', 'R']",V-Force,120,"If you have 4 or fewer Benched Pokémon, this attack does nothing.",68af6bc8d14a007632025aab
-342,"['R', 'R']",V-Force,120,"If you have 4 or fewer Benched Pokémon, this attack does nothing.",68af6bc7d14a007632025aa8
-343,['C'],Dangerous Reaction,30+,"If your opponent's Active Pokémon is affected by a Special Condition, this attack does 120 more damage.",68af6bc8d14a007632025ab1
-344,"['G', 'C']",Seed Bomb,60,,68af6bc8d14a007632025ab1
-345,['C'],Dangerous Reaction,30+,"If your opponent's Active Pokémon is affected by a Special Condition, this attack does 120 more damage.",68af6bc8d14a007632025ab7
-346,"['G', 'C']",Seed Bomb,60,,68af6bc8d14a007632025ab7
-347,['C'],Dangerous Reaction,30+,"If your opponent's Active Pokémon is affected by a Special Condition, this attack does 120 more damage.",68af6bc8d14a007632025ab4
-348,"['G', 'C']",Seed Bomb,60,,68af6bc8d14a007632025ab4
-349,['C'],Horn Attack,10,,68af6bc8d14a007632025ac9
-350,['C'],Horn Attack,10,,68af6bc8d14a007632025ac3
-351,['C'],Horn Attack,10,,68af6bc8d14a007632025ac6
-352,['G'],Lively Needles,20+,"If this Pokémon was healed during this turn, this attack does 100 more damage.",68af6bc8d14a007632025acc
-353,"['G', 'C']",Pierce,50,,68af6bc8d14a007632025acc
-354,['G'],Lively Needles,20+,"If this Pokémon was healed during this turn, this attack does 100 more damage.",68af6bc8d14a007632025acf
-355,"['G', 'C']",Pierce,50,,68af6bc8d14a007632025acf
-356,['G'],Lively Needles,20+,"If this Pokémon was healed during this turn, this attack does 100 more damage.",68af6bc8d14a007632025ad2
-357,"['G', 'C']",Pierce,50,,68af6bc8d14a007632025ad2
-358,['G'],Bemusing Aroma,30,"Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed and Poisoned. If tails, your opponent's Active Pokémon is now Confused.",68af6bc8d14a007632025ad8
-359,"['G', 'C', 'C']",Cut,70,,68af6bc8d14a007632025ad8
-360,['G'],Bemusing Aroma,30,"Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed and Poisoned. If tails, your opponent's Active Pokémon is now Confused.",68af6bc8d14a007632025ad5
-361,"['G', 'C', 'C']",Cut,70,,68af6bc8d14a007632025ad5
+342,"['R', 'R']",V-Force,120,"If you have 4 or fewer Benched Pokémon, this attack does nothing.",68af6bc8d14a007632025aae
+343,['C'],Dangerous Reaction,30+,"If your opponent's Active Pokémon is affected by a Special Condition, this attack does 120 more damage.",68af6bc8d14a007632025ab7
+344,"['G', 'C']",Seed Bomb,60,,68af6bc8d14a007632025ab7
+345,['C'],Dangerous Reaction,30+,"If your opponent's Active Pokémon is affected by a Special Condition, this attack does 120 more damage.",68af6bc8d14a007632025ab4
+346,"['G', 'C']",Seed Bomb,60,,68af6bc8d14a007632025ab4
+347,['C'],Dangerous Reaction,30+,"If your opponent's Active Pokémon is affected by a Special Condition, this attack does 120 more damage.",68af6bc8d14a007632025ab1
+348,"['G', 'C']",Seed Bomb,60,,68af6bc8d14a007632025ab1
+349,['C'],Horn Attack,10,,68af6bc8d14a007632025ac6
+350,['C'],Horn Attack,10,,68af6bc8d14a007632025ac9
+351,['C'],Horn Attack,10,,68af6bc8d14a007632025ac3
+352,['G'],Lively Needles,20+,"If this Pokémon was healed during this turn, this attack does 100 more damage.",68af6bc8d14a007632025ad2
+353,"['G', 'C']",Pierce,50,,68af6bc8d14a007632025ad2
+354,['G'],Lively Needles,20+,"If this Pokémon was healed during this turn, this attack does 100 more damage.",68af6bc8d14a007632025acc
+355,"['G', 'C']",Pierce,50,,68af6bc8d14a007632025acc
+356,['G'],Lively Needles,20+,"If this Pokémon was healed during this turn, this attack does 100 more damage.",68af6bc8d14a007632025acf
+357,"['G', 'C']",Pierce,50,,68af6bc8d14a007632025acf
+358,['G'],Bemusing Aroma,30,"Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed and Poisoned. If tails, your opponent's Active Pokémon is now Confused.",68af6bc8d14a007632025ad5
+359,"['G', 'C', 'C']",Cut,70,,68af6bc8d14a007632025ad5
+360,['G'],Bemusing Aroma,30,"Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed and Poisoned. If tails, your opponent's Active Pokémon is now Confused.",68af6bc8d14a007632025ad8
+361,"['G', 'C', 'C']",Cut,70,,68af6bc8d14a007632025ad8
 362,['G'],Bemusing Aroma,30,"Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed and Poisoned. If tails, your opponent's Active Pokémon is now Confused.",68af6bc8d14a007632025adb
 363,"['G', 'C', 'C']",Cut,70,,68af6bc8d14a007632025adb
-364,['G'],Leafage,10,,68af6bc8d14a007632025ae1
-365,['G'],Leafage,10,,68af6bc8d14a007632025ae4
-366,['G'],Leafage,10,,68af6bc8d14a007632025ade
-367,"['C', 'C']",Gentle Slap,70,,68af6bc8d14a007632025ae7
-368,"['C', 'C']",Gentle Slap,70,,68af6bc8d14a007632025aea
-369,"['C', 'C']",Gentle Slap,70,,68af6bc8d14a007632025aed
-370,"['C', 'C']",Scratch,30,,68af6bc9d14a007632025af6
-371,"['C', 'C']",Scratch,30,,68af6bc9d14a007632025af0
+364,['G'],Leafage,10,,68af6bc8d14a007632025ade
+365,['G'],Leafage,10,,68af6bc8d14a007632025ae1
+366,['G'],Leafage,10,,68af6bc8d14a007632025ae4
+367,"['C', 'C']",Gentle Slap,70,,68af6bc8d14a007632025aea
+368,"['C', 'C']",Gentle Slap,70,,68af6bc8d14a007632025aed
+369,"['C', 'C']",Gentle Slap,70,,68af6bc8d14a007632025ae7
+370,"['C', 'C']",Scratch,30,,68af6bc9d14a007632025af0
+371,"['C', 'C']",Scratch,30,,68af6bc9d14a007632025af6
 372,"['C', 'C']",Scratch,30,,68af6bc9d14a007632025af3
 373,"['G', 'C', 'C', 'C']",Command the Grass,150,"You may search your deck for up to 3 cards and put them into your hand. Then, shuffle your deck.",68af6bc9d14a007632025af9
 374,['G'],Wrap,20,"Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed.",68af6bc9d14a007632025afc
 375,"['G', 'C', 'C']",Vine Whip,60,,68af6bc9d14a007632025afc
-376,['G'],Wrap,20,"Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed.",68af6bc9d14a007632025b02
-377,"['G', 'C', 'C']",Vine Whip,60,,68af6bc9d14a007632025b02
-378,['G'],Wrap,20,"Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed.",68af6bc9d14a007632025aff
-379,"['G', 'C', 'C']",Vine Whip,60,,68af6bc9d14a007632025aff
+376,['G'],Wrap,20,"Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed.",68af6bc9d14a007632025aff
+377,"['G', 'C', 'C']",Vine Whip,60,,68af6bc9d14a007632025aff
+378,['G'],Wrap,20,"Flip a coin. If heads, your opponent's Active Pokémon is now Paralyzed.",68af6bc9d14a007632025b02
+379,"['G', 'C', 'C']",Vine Whip,60,,68af6bc9d14a007632025b02
 380,['G'],Tackle,10,,68af6bc9d14a007632025b05
 381,"['G', 'G']",Vine Whip,30,,68af6bc9d14a007632025b05
-382,['G'],Tackle,10,,68af6bc9d14a007632025b0b
-383,"['G', 'G']",Vine Whip,30,,68af6bc9d14a007632025b0b
-384,['G'],Tackle,10,,68af6bc9d14a007632025b08
-385,"['G', 'G']",Vine Whip,30,,68af6bc9d14a007632025b08
+382,['G'],Tackle,10,,68af6bc9d14a007632025b08
+383,"['G', 'G']",Vine Whip,30,,68af6bc9d14a007632025b08
+384,['G'],Tackle,10,,68af6bc9d14a007632025b0b
+385,"['G', 'G']",Vine Whip,30,,68af6bc9d14a007632025b0b
 386,"['1', 'L', 'L', 'L']",Thunderous Bolt,230,"During your next turn, this Pokémon can’t attack.",68b2e9acb594c9577ba43092
 387,"['2', 'R']","Wide Blast
  This attack does 50 damage to each of your opponent’s Benched Pokémon.",Don’t apply Weakness and Resistance for Benched Pokémon.,,68b2e9adb594c9577ba43095
@@ -652,77 +652,77 @@ Discard all Energy from this Pokémon, and this attack does 120 damage to 1 of y
 645,['C'],Strafe,50,You may switch this Pokemon with 1 of your Benched Pokemon.,68af81dbc4f780b5153e5b89
 646,"['C', 'C', 'C']",Sonic Blast,220,This Pokemon also does 30 damage to itself.,68af81dbc4f780b5153e5b89
 647,['C'],Flap,20,,68af81dbc4f780b5153e5b83
-648,['C'],Flap,20,,68af81dbc4f780b5153e5b80
-649,['C'],Flap,20,,68af81dbc4f780b5153e5b86
+648,['C'],Flap,20,,68af81dbc4f780b5153e5b86
+649,['C'],Flap,20,,68af81dbc4f780b5153e5b80
 650,['C'],Rising Tackle,10+,"If your opponent's Active Pokemon is a Pokemon ex, this attack does 50 more damage.",68af81dbc4f780b5153e5b7d
 651,['C'],Rising Tackle,10+,"If your opponent's Active Pokemon is a Pokemon ex, this attack does 50 more damage.",68af81dbc4f780b5153e5b77
 652,['C'],Rising Tackle,10+,"If your opponent's Active Pokemon is a Pokemon ex, this attack does 50 more damage.",68af81dbc4f780b5153e5b7a
-653,"['C', 'C', 'C']",Bite,80,,68af81dbc4f780b5153e5b6e
-654,"['C', 'C', 'C']",Bite,80,,68af81dbc4f780b5153e5b71
+653,"['C', 'C', 'C']",Bite,80,,68af81dbc4f780b5153e5b71
+654,"['C', 'C', 'C']",Bite,80,,68af81dbc4f780b5153e5b6e
 655,"['C', 'C', 'C']",Bite,80,,68af81dbc4f780b5153e5b74
-656,"['C', 'C']",Reflect Energy,60,Move an Energy from this Pokemon to 1 of your Benched Pokemon.,68af81dbc4f780b5153e5b68
-657,"['C', 'C']",Reflect Energy,60,Move an Energy from this Pokemon to 1 of your Benched Pokemon.,68af81dbc4f780b5153e5b65
-658,"['C', 'C']",Reflect Energy,60,Move an Energy from this Pokemon to 1 of your Benched Pokemon.,68af81dbc4f780b5153e5b6b
+656,"['C', 'C']",Reflect Energy,60,Move an Energy from this Pokemon to 1 of your Benched Pokemon.,68af81dbc4f780b5153e5b65
+657,"['C', 'C']",Reflect Energy,60,Move an Energy from this Pokemon to 1 of your Benched Pokemon.,68af81dbc4f780b5153e5b6b
+658,"['C', 'C']",Reflect Energy,60,Move an Energy from this Pokemon to 1 of your Benched Pokemon.,68af81dbc4f780b5153e5b68
 659,"['C', 'C', 'C', 'C']",Jewel Breaker,100+,"If your opponent's Active Pokemon is a Tera Pokemon, this attack does 230 more damage.",68af81dbc4f780b5153e5b5c
-660,"['C', 'C', 'C', 'C']",Jewel Breaker,100+,"If your opponent's Active Pokemon is a Tera Pokemon, this attack does 230 more damage.",68af81dbc4f780b5153e5b5f
-661,"['C', 'C', 'C', 'C']",Jewel Breaker,100+,"If your opponent's Active Pokemon is a Tera Pokemon, this attack does 230 more damage.",68af81dbc4f780b5153e5b62
+660,"['C', 'C', 'C', 'C']",Jewel Breaker,100+,"If your opponent's Active Pokemon is a Tera Pokemon, this attack does 230 more damage.",68af81dbc4f780b5153e5b62
+661,"['C', 'C', 'C', 'C']",Jewel Breaker,100+,"If your opponent's Active Pokemon is a Tera Pokemon, this attack does 230 more damage.",68af81dbc4f780b5153e5b5f
 662,['C'],Assault Landing,70,"If there is no Stadium in play, this attack does nothing.",68af81dbc4f780b5153e5b56
 663,['C'],Assault Landing,70,"If there is no Stadium in play, this attack does nothing.",68af81dbc4f780b5153e5b53
 664,['C'],Assault Landing,70,"If there is no Stadium in play, this attack does nothing.",68af81dbc4f780b5153e5b59
 665,"['C', 'C']",Rear Kick,90,,68af81dbc4f780b5153e5b4d
-666,"['C', 'C']",Rear Kick,90,,68af81dac4f780b5153e5b4a
-667,"['C', 'C']",Rear Kick,90,,68af81dbc4f780b5153e5b50
-668,['C'],Smash Kick,20,,68af81dac4f780b5153e5b44
-669,['C'],Smash Kick,20,,68af81dac4f780b5153e5b47
-670,['C'],Smash Kick,20,,68af81dac4f780b5153e5b41
+666,"['C', 'C']",Rear Kick,90,,68af81dbc4f780b5153e5b50
+667,"['C', 'C']",Rear Kick,90,,68af81dac4f780b5153e5b4a
+668,['C'],Smash Kick,20,,68af81dac4f780b5153e5b47
+669,['C'],Smash Kick,20,,68af81dac4f780b5153e5b41
+670,['C'],Smash Kick,20,,68af81dac4f780b5153e5b44
 671,"['C', 'C', 'C']",Hyper Whirlpool,140,"Flip a coin until you get tails. For each heads, discard an Energy from your opponent's Active Pokemon.",68af81dac4f780b5153e5b3e
-672,['C'],Rollout,20,,68af81dac4f780b5153e5b38
-673,"['C', 'C']",Moomoo Rolling,100,You can use this attack only if this Pokemon used Rollout during your last turn.,68af81dac4f780b5153e5b38
-674,['C'],Rollout,20,,68af81dac4f780b5153e5b35
-675,"['C', 'C']",Moomoo Rolling,100,You can use this attack only if this Pokemon used Rollout during your last turn.,68af81dac4f780b5153e5b35
+672,['C'],Rollout,20,,68af81dac4f780b5153e5b35
+673,"['C', 'C']",Moomoo Rolling,100,You can use this attack only if this Pokemon used Rollout during your last turn.,68af81dac4f780b5153e5b35
+674,['C'],Rollout,20,,68af81dac4f780b5153e5b38
+675,"['C', 'C']",Moomoo Rolling,100,You can use this attack only if this Pokemon used Rollout during your last turn.,68af81dac4f780b5153e5b38
 676,['C'],Rollout,20,,68af81dac4f780b5153e5b3b
 677,"['C', 'C']",Moomoo Rolling,100,You can use this attack only if this Pokemon used Rollout during your last turn.,68af81dac4f780b5153e5b3b
-678,"['C', 'C', 'C']",Land Crush,90,,68af81dac4f780b5153e5b32
-679,"['C', 'C', 'C']",Land Crush,90,,68af81dac4f780b5153e5b2c
-680,"['C', 'C', 'C']",Land Crush,90,,68af81dac4f780b5153e5b2f
-681,['C'],Gnaw,10,,68af81dac4f780b5153e5b29
-682,"['C', 'C']",Dig,30,"Flip a coin. If heads, during your opponent's next turn, prevent all damage from and effects of attacks done to this Pokemon.",68af81dac4f780b5153e5b29
-683,['C'],Gnaw,10,,68af81dac4f780b5153e5b26
-684,"['C', 'C']",Dig,30,"Flip a coin. If heads, during your opponent's next turn, prevent all damage from and effects of attacks done to this Pokemon.",68af81dac4f780b5153e5b26
+678,"['C', 'C', 'C']",Land Crush,90,,68af81dac4f780b5153e5b2c
+679,"['C', 'C', 'C']",Land Crush,90,,68af81dac4f780b5153e5b2f
+680,"['C', 'C', 'C']",Land Crush,90,,68af81dac4f780b5153e5b32
+681,['C'],Gnaw,10,,68af81dac4f780b5153e5b26
+682,"['C', 'C']",Dig,30,"Flip a coin. If heads, during your opponent's next turn, prevent all damage from and effects of attacks done to this Pokemon.",68af81dac4f780b5153e5b26
+683,['C'],Gnaw,10,,68af81dac4f780b5153e5b29
+684,"['C', 'C']",Dig,30,"Flip a coin. If heads, during your opponent's next turn, prevent all damage from and effects of attacks done to this Pokemon.",68af81dac4f780b5153e5b29
 685,['C'],Gnaw,10,,68af81dac4f780b5153e5b23
 686,"['C', 'C']",Dig,30,"Flip a coin. If heads, during your opponent's next turn, prevent all damage from and effects of attacks done to this Pokemon.",68af81dac4f780b5153e5b23
-687,"['C', 'C']",Speed Wing,60,,68af81dac4f780b5153e5b1d
+687,"['C', 'C']",Speed Wing,60,,68af81dac4f780b5153e5b20
 688,"['C', 'C']",Speed Wing,60,,68af81dac4f780b5153e5b1a
-689,"['C', 'C']",Speed Wing,60,,68af81dac4f780b5153e5b20
-690,"['C', 'C']",Tackle,20,,68af81dac4f780b5153e5b11
-691,"['C', 'C']",Tackle,20,,68af81dac4f780b5153e5b17
-692,"['C', 'C']",Tackle,20,,68af81dac4f780b5153e5b14
+689,"['C', 'C']",Speed Wing,60,,68af81dac4f780b5153e5b1d
+690,"['C', 'C']",Tackle,20,,68af81dac4f780b5153e5b14
+691,"['C', 'C']",Tackle,20,,68af81dac4f780b5153e5b11
+692,"['C', 'C']",Tackle,20,,68af81dac4f780b5153e5b17
 693,"['C', 'C', 'C']",Strength,80,,68af81dac4f780b5153e5b0e
 694,"['C', 'C', 'C', 'C']",Toss-Turn Press,120x,Flip 3 coins. This attack does 120 damage for each heads.,68af81dac4f780b5153e5b0e
 695,"['R', 'W', 'L']",Coruscating Quartz,200,,68af81dac4f780b5153e5b0b
-696,"['C', 'C']",Reckless Charge,30,This Pokemon also does 10 damage to itself.,68af81dac4f780b5153e5b02
-697,"['C', 'C']",Reckless Charge,30,This Pokemon also does 10 damage to itself.,68af81dac4f780b5153e5b05
-698,"['C', 'C']",Reckless Charge,30,This Pokemon also does 10 damage to itself.,68af81dac4f780b5153e5b08
+696,"['C', 'C']",Reckless Charge,30,This Pokemon also does 10 damage to itself.,68af81dac4f780b5153e5b05
+697,"['C', 'C']",Reckless Charge,30,This Pokemon also does 10 damage to itself.,68af81dac4f780b5153e5b08
+698,"['C', 'C']",Reckless Charge,30,This Pokemon also does 10 damage to itself.,68af81dac4f780b5153e5b02
 699,['C'],Jet Headbutt,70,,68af81d9c4f780b5153e5aff
 700,"['R', 'P']",Phantom Dive,200,Put 6 damage counters on your opponent's Benched Pokemon in any way you like.,68af81d9c4f780b5153e5aff
-701,"['R', 'P']",Dragon Headbutt,70,,68af81d9c4f780b5153e5af9
-702,"['R', 'P']",Dragon Headbutt,70,,68af81d9c4f780b5153e5af6
-703,"['R', 'P']",Dragon Headbutt,70,,68af81d9c4f780b5153e5afc
-704,['P'],Petty Grudge,10,,68af81d9c4f780b5153e5aed
-705,"['R', 'P']",Bite,40,,68af81d9c4f780b5153e5aed
-706,['P'],Petty Grudge,10,,68af81d9c4f780b5153e5af0
-707,"['R', 'P']",Bite,40,,68af81d9c4f780b5153e5af0
+701,"['R', 'P']",Dragon Headbutt,70,,68af81d9c4f780b5153e5af6
+702,"['R', 'P']",Dragon Headbutt,70,,68af81d9c4f780b5153e5afc
+703,"['R', 'P']",Dragon Headbutt,70,,68af81d9c4f780b5153e5af9
+704,['P'],Petty Grudge,10,,68af81d9c4f780b5153e5af0
+705,"['R', 'P']",Bite,40,,68af81d9c4f780b5153e5af0
+706,['P'],Petty Grudge,10,,68af81d9c4f780b5153e5aed
+707,"['R', 'P']",Bite,40,,68af81d9c4f780b5153e5aed
 708,['P'],Petty Grudge,10,,68af81d9c4f780b5153e5af3
 709,"['R', 'P']",Bite,40,,68af81d9c4f780b5153e5af3
-710,"['M', 'M', 'C']",Iron Blaster,160,"During your next turn, this Pokemon can't attack.",68af81d9c4f780b5153e5ae4
-711,"['M', 'M', 'C']",Iron Blaster,160,"During your next turn, this Pokemon can't attack.",68af81d9c4f780b5153e5ae7
+710,"['M', 'M', 'C']",Iron Blaster,160,"During your next turn, this Pokemon can't attack.",68af81d9c4f780b5153e5ae7
+711,"['M', 'M', 'C']",Iron Blaster,160,"During your next turn, this Pokemon can't attack.",68af81d9c4f780b5153e5ae4
 712,"['M', 'M', 'C']",Iron Blaster,160,"During your next turn, this Pokemon can't attack.",68af81d9c4f780b5153e5aea
-713,['M'],Hammer In,30,,68af81d9c4f780b5153e5adb
-714,"['M', 'M', 'C']",Raging Hammer,80+,This attack does 10 more damage for each damage counter on this Pokemon.,68af81d9c4f780b5153e5adb
+713,['M'],Hammer In,30,,68af81d9c4f780b5153e5ae1
+714,"['M', 'M', 'C']",Raging Hammer,80+,This attack does 10 more damage for each damage counter on this Pokemon.,68af81d9c4f780b5153e5ae1
 715,['M'],Hammer In,30,,68af81d9c4f780b5153e5ade
 716,"['M', 'M', 'C']",Raging Hammer,80+,This attack does 10 more damage for each damage counter on this Pokemon.,68af81d9c4f780b5153e5ade
-717,['M'],Hammer In,30,,68af81d9c4f780b5153e5ae1
-718,"['M', 'M', 'C']",Raging Hammer,80+,This attack does 10 more damage for each damage counter on this Pokemon.,68af81d9c4f780b5153e5ae1
+717,['M'],Hammer In,30,,68af81d9c4f780b5153e5adb
+718,"['M', 'M', 'C']",Raging Hammer,80+,This attack does 10 more damage for each damage counter on this Pokemon.,68af81d9c4f780b5153e5adb
 719,"['M', 'C']",Wrack Down,40,,68af81d9c4f780b5153e5ad8
 720,"['M', 'M', 'C']",Iron Buster,130,"During your next turn, this Pokemon can't attack.",68af81d9c4f780b5153e5ad8
 721,"['M', 'C']",Wrack Down,40,,68af81d9c4f780b5153e5ad2
@@ -733,12 +733,12 @@ Discard all Energy from this Pokémon, and this attack does 120 damage to 1 of y
 726,"['M', 'C']",Heavy Impact,50,,68af81d9c4f780b5153e5acf
 727,"['M', 'C']",Heavy Impact,50,,68af81d9c4f780b5153e5ac9
 728,"['M', 'C']",Hammer In,20,,68af81d9c4f780b5153e5ac0
-729,"['M', 'C']",Hammer In,20,,68af81d9c4f780b5153e5ac3
-730,"['M', 'C']",Hammer In,20,,68af81d9c4f780b5153e5ac6
-731,"['D', 'D']",Vengeance Fletching,70+,This attack does 10 more damage for each Ancient card in your discard pile.,68af81d9c4f780b5153e5ab7
-732,"['D', 'C', 'C', 'C']",Speed Wing,120,,68af81d9c4f780b5153e5ab7
-733,"['D', 'D']",Vengeance Fletching,70+,This attack does 10 more damage for each Ancient card in your discard pile.,68af81d9c4f780b5153e5aba
-734,"['D', 'C', 'C', 'C']",Speed Wing,120,,68af81d9c4f780b5153e5aba
+729,"['M', 'C']",Hammer In,20,,68af81d9c4f780b5153e5ac6
+730,"['M', 'C']",Hammer In,20,,68af81d9c4f780b5153e5ac3
+731,"['D', 'D']",Vengeance Fletching,70+,This attack does 10 more damage for each Ancient card in your discard pile.,68af81d9c4f780b5153e5aba
+732,"['D', 'C', 'C', 'C']",Speed Wing,120,,68af81d9c4f780b5153e5aba
+733,"['D', 'D']",Vengeance Fletching,70+,This attack does 10 more damage for each Ancient card in your discard pile.,68af81d9c4f780b5153e5ab7
+734,"['D', 'C', 'C', 'C']",Speed Wing,120,,68af81d9c4f780b5153e5ab7
 735,"['D', 'D']",Vengeance Fletching,70+,This attack does 10 more damage for each Ancient card in your discard pile.,68af81d9c4f780b5153e5abd
 736,"['D', 'C', 'C', 'C']",Speed Wing,120,,68af81d9c4f780b5153e5abd
 737,['C'],Grind,50x,This attack does 50 damage for each Energy attached to this Pokemon.,68af81d9c4f780b5153e5ab4
@@ -746,108 +746,108 @@ Discard all Energy from this Pokémon, and this attack does 120 damage to 1 of y
 739,"['D', 'C', 'C']",Pitch-Black Fangs,100,,68af81d8c4f780b5153e5aab
 740,"['D', 'C', 'C']",Pitch-Black Fangs,100,,68af81d8c4f780b5153e5ab1
 741,"['D', 'C', 'C']",Pitch-Black Fangs,100,,68af81d8c4f780b5153e5aae
-742,['D'],Playful Kick,20,,68af81d8c4f780b5153e5aa8
+742,['D'],Playful Kick,20,,68af81d8c4f780b5153e5aa5
 743,['D'],Playful Kick,20,,68af81d8c4f780b5153e5aa2
-744,['D'],Playful Kick,20,,68af81d8c4f780b5153e5aa5
-745,['D'],Claw Slash,20,,68af81d8c4f780b5153e5a99
-746,['D'],Claw Slash,20,,68af81d8c4f780b5153e5a9c
-747,['D'],Claw Slash,20,,68af81d8c4f780b5153e5a9f
+744,['D'],Playful Kick,20,,68af81d8c4f780b5153e5aa8
+745,['D'],Claw Slash,20,,68af81d8c4f780b5153e5a9c
+746,['D'],Claw Slash,20,,68af81d8c4f780b5153e5a9f
+747,['D'],Claw Slash,20,,68af81d8c4f780b5153e5a99
 748,"['D', 'C', 'C']",Moon Mirage,160,Your opponent's Active Pokemon is now Confused.,68af81d8c4f780b5153e5a96
-749,"['D', 'C', 'C']",Pitch-Black Blade,140,"During your next turn, this Pokemon can't attack.",68af81d8c4f780b5153e5a90
-750,"['D', 'C', 'C']",Pitch-Black Blade,140,"During your next turn, this Pokemon can't attack.",68af81d8c4f780b5153e5a8d
+749,"['D', 'C', 'C']",Pitch-Black Blade,140,"During your next turn, this Pokemon can't attack.",68af81d8c4f780b5153e5a8d
+750,"['D', 'C', 'C']",Pitch-Black Blade,140,"During your next turn, this Pokemon can't attack.",68af81d8c4f780b5153e5a90
 751,"['D', 'C', 'C']",Pitch-Black Blade,140,"During your next turn, this Pokemon can't attack.",68af81d8c4f780b5153e5a93
 752,"['F', 'C', 'C']",Demolish,140,"This attack's damage isn't affected by Weakness or Resistance, or by any effects on your opponent's Active Pokemon.",68af81d8c4f780b5153e5a8a
-753,"['F', 'F']",Good Punch,70,,68af81d8c4f780b5153e5a81
+753,"['F', 'F']",Good Punch,70,,68af81d8c4f780b5153e5a84
 754,"['F', 'F']",Good Punch,70,,68af81d8c4f780b5153e5a87
-755,"['F', 'F']",Good Punch,70,,68af81d8c4f780b5153e5a84
+755,"['F', 'F']",Good Punch,70,,68af81d8c4f780b5153e5a81
 756,"['F', 'F', 'C']",Earthen Spike,200,"During your next turn, this Pokemon can't attack.",68af81d8c4f780b5153e5a7e
 757,"['F', 'F', 'C', 'C']",Giant Tusk,160,,68af81d8c4f780b5153e5a7b
 758,"['F', 'F', 'C', 'C']",Giant Tusk,160,,68af81d8c4f780b5153e5a75
 759,"['F', 'F', 'C', 'C']",Giant Tusk,160,,68af81d8c4f780b5153e5a78
-760,"['F', 'F', 'C']",Mad Bite,100+,This attack does 30 more damage for each damage counter on your opponent's Active Pokemon.,68af81d8c4f780b5153e5a6f
-761,"['F', 'F', 'C']",Mad Bite,100+,This attack does 30 more damage for each damage counter on your opponent's Active Pokemon.,68af81d8c4f780b5153e5a6c
+760,"['F', 'F', 'C']",Mad Bite,100+,This attack does 30 more damage for each damage counter on your opponent's Active Pokemon.,68af81d8c4f780b5153e5a6c
+761,"['F', 'F', 'C']",Mad Bite,100+,This attack does 30 more damage for each damage counter on your opponent's Active Pokemon.,68af81d8c4f780b5153e5a6f
 762,"['F', 'F', 'C']",Mad Bite,100+,This attack does 30 more damage for each damage counter on your opponent's Active Pokemon.,68af81d8c4f780b5153e5a72
-763,"['C', 'C', 'C']",Sand Spray,90,,68af81d8c4f780b5153e5a63
-764,"['F', 'C', 'C', 'C']",Land Crush,140,,68af81d8c4f780b5153e5a63
-765,"['C', 'C', 'C']",Sand Spray,90,,68af81d8c4f780b5153e5a69
-766,"['F', 'C', 'C', 'C']",Land Crush,140,,68af81d8c4f780b5153e5a69
+763,"['C', 'C', 'C']",Sand Spray,90,,68af81d8c4f780b5153e5a69
+764,"['F', 'C', 'C', 'C']",Land Crush,140,,68af81d8c4f780b5153e5a69
+765,"['C', 'C', 'C']",Sand Spray,90,,68af81d8c4f780b5153e5a63
+766,"['F', 'C', 'C', 'C']",Land Crush,140,,68af81d8c4f780b5153e5a63
 767,"['C', 'C', 'C']",Sand Spray,90,,68af81d8c4f780b5153e5a66
 768,"['F', 'C', 'C', 'C']",Land Crush,140,,68af81d8c4f780b5153e5a66
 769,"['C', 'C', 'C']",Tackle,70,,68af81d7c4f780b5153e5a5d
-770,"['C', 'C', 'C']",Tackle,70,,68af81d7c4f780b5153e5a5a
-771,"['C', 'C', 'C']",Tackle,70,,68af81d7c4f780b5153e5a60
+770,"['C', 'C', 'C']",Tackle,70,,68af81d7c4f780b5153e5a60
+771,"['C', 'C', 'C']",Tackle,70,,68af81d7c4f780b5153e5a5a
 772,['F'],Aura Uppercut,50,,68af81d7c4f780b5153e5a57
 773,"['F', 'C']",Tornado Rush,100,"During your next turn, this Pokemon's Tornado Rush attack does 100 more damage (before applying Weakness and Resistance).",68af81d7c4f780b5153e5a57
-774,['F'],Quick Attack,10+,"Flip a coin. If heads, this attack does 20 more damage.",68af81d7c4f780b5153e5a54
-775,['F'],Quick Attack,10+,"Flip a coin. If heads, this attack does 20 more damage.",68af81d7c4f780b5153e5a4e
+774,['F'],Quick Attack,10+,"Flip a coin. If heads, this attack does 20 more damage.",68af81d7c4f780b5153e5a4e
+775,['F'],Quick Attack,10+,"Flip a coin. If heads, this attack does 20 more damage.",68af81d7c4f780b5153e5a54
 776,['F'],Quick Attack,10+,"Flip a coin. If heads, this attack does 20 more damage.",68af81d7c4f780b5153e5a51
 777,"['F', 'F', 'C']",Magma Purge,60x,Discard up to 4 Energy from your Pokemon. This attack does 60 damage for each card you discarded in this way.,68af81d7c4f780b5153e5a48
 778,"['F', 'F', 'C']",Magma Purge,60x,Discard up to 4 Energy from your Pokemon. This attack does 60 damage for each card you discarded in this way.,68af81d7c4f780b5153e5a4b
 779,"['F', 'F', 'C']",Magma Purge,60x,Discard up to 4 Energy from your Pokemon. This attack does 60 damage for each card you discarded in this way.,68af81d7c4f780b5153e5a45
-780,['C'],Sand Spray,20,,68af81d7c4f780b5153e5a3f
-781,"['C', 'C', 'C']",Hammer In,60,,68af81d7c4f780b5153e5a3f
-782,['C'],Sand Spray,20,,68af81d7c4f780b5153e5a42
-783,"['C', 'C', 'C']",Hammer In,60,,68af81d7c4f780b5153e5a42
-784,['C'],Sand Spray,20,,68af81d7c4f780b5153e5a3c
-785,"['C', 'C', 'C']",Hammer In,60,,68af81d7c4f780b5153e5a3c
-786,['C'],Headbutt,10,,68af81d7c4f780b5153e5a39
+780,['C'],Sand Spray,20,,68af81d7c4f780b5153e5a3c
+781,"['C', 'C', 'C']",Hammer In,60,,68af81d7c4f780b5153e5a3c
+782,['C'],Sand Spray,20,,68af81d7c4f780b5153e5a3f
+783,"['C', 'C', 'C']",Hammer In,60,,68af81d7c4f780b5153e5a3f
+784,['C'],Sand Spray,20,,68af81d7c4f780b5153e5a42
+785,"['C', 'C', 'C']",Hammer In,60,,68af81d7c4f780b5153e5a42
+786,['C'],Headbutt,10,,68af81d7c4f780b5153e5a36
 787,['C'],Headbutt,10,,68af81d7c4f780b5153e5a33
-788,['C'],Headbutt,10,,68af81d7c4f780b5153e5a36
-789,"['P', 'C']",Adjusted Horn,170,"If you don't have the same number of cards in your hand as your opponent, this attack does nothing.",68af81d7c4f780b5153e5a2a
-790,"['P', 'C']",Adjusted Horn,170,"If you don't have the same number of cards in your hand as your opponent, this attack does nothing.",68af81d7c4f780b5153e5a2d
-791,"['P', 'C']",Adjusted Horn,170,"If you don't have the same number of cards in your hand as your opponent, this attack does nothing.",68af81d7c4f780b5153e5a30
+788,['C'],Headbutt,10,,68af81d7c4f780b5153e5a39
+789,"['P', 'C']",Adjusted Horn,170,"If you don't have the same number of cards in your hand as your opponent, this attack does nothing.",68af81d7c4f780b5153e5a30
+790,"['P', 'C']",Adjusted Horn,170,"If you don't have the same number of cards in your hand as your opponent, this attack does nothing.",68af81d7c4f780b5153e5a2a
+791,"['P', 'C']",Adjusted Horn,170,"If you don't have the same number of cards in your hand as your opponent, this attack does nothing.",68af81d7c4f780b5153e5a2d
 792,['P'],Energy Feather,30x,This attack does 30 damage for each Energy attached to this Pokemon.,68af81d7c4f780b5153e5a21
 793,['P'],Energy Feather,30x,This attack does 30 damage for each Energy attached to this Pokemon.,68af81d7c4f780b5153e5a24
 794,['P'],Energy Feather,30x,This attack does 30 damage for each Energy attached to this Pokemon.,68af81d7c4f780b5153e5a27
-795,"['P', 'C']",Mind Bend,60,Your opponent's Active Pokemon is now Confused.,68af81d7c4f780b5153e5a18
-796,"['P', 'C']",Mind Bend,60,Your opponent's Active Pokemon is now Confused.,68af81d7c4f780b5153e5a1b
+795,"['P', 'C']",Mind Bend,60,Your opponent's Active Pokemon is now Confused.,68af81d7c4f780b5153e5a1b
+796,"['P', 'C']",Mind Bend,60,Your opponent's Active Pokemon is now Confused.,68af81d7c4f780b5153e5a18
 797,"['P', 'C']",Mind Bend,60,Your opponent's Active Pokemon is now Confused.,68af81d7c4f780b5153e5a1e
 798,"['C', 'C', 'C']",Hex Hurl,90,Put 2 damage counters on your opponent's Benched Pokemon in any way you like.,68af81d7c4f780b5153e5a12
 799,"['C', 'C', 'C']",Hex Hurl,90,Put 2 damage counters on your opponent's Benched Pokemon in any way you like.,68af81d7c4f780b5153e5a15
 800,"['C', 'C', 'C']",Hex Hurl,90,Put 2 damage counters on your opponent's Benched Pokemon in any way you like.,68af81d6c4f780b5153e5a0f
-801,['P'],Slap,30,,68af81d6c4f780b5153e5a09
-802,"['P', 'C']",Roaring Scream This attack does 20 damage to 1 of your opponent's Pokemon for each damage counter on this Pokemon.,Don't apply Weakness and Resistance for Benched Pokemon.,,68af81d6c4f780b5153e5a09
+801,['P'],Slap,30,,68af81d6c4f780b5153e5a0c
+802,"['P', 'C']",Roaring Scream This attack does 20 damage to 1 of your opponent's Pokemon for each damage counter on this Pokemon.,Don't apply Weakness and Resistance for Benched Pokemon.,,68af81d6c4f780b5153e5a0c
 803,['P'],Slap,30,,68af81d6c4f780b5153e5a06
 804,"['P', 'C']",Roaring Scream This attack does 20 damage to 1 of your opponent's Pokemon for each damage counter on this Pokemon.,Don't apply Weakness and Resistance for Benched Pokemon.,,68af81d6c4f780b5153e5a06
-805,['P'],Slap,30,,68af81d6c4f780b5153e5a0c
-806,"['P', 'C']",Roaring Scream This attack does 20 damage to 1 of your opponent's Pokemon for each damage counter on this Pokemon.,Don't apply Weakness and Resistance for Benched Pokemon.,,68af81d6c4f780b5153e5a0c
+805,['P'],Slap,30,,68af81d6c4f780b5153e5a09
+806,"['P', 'C']",Roaring Scream This attack does 20 damage to 1 of your opponent's Pokemon for each damage counter on this Pokemon.,Don't apply Weakness and Resistance for Benched Pokemon.,,68af81d6c4f780b5153e5a09
 807,"['P', 'C', 'C']",Magical Charm,160,"During your opponent's next turn, attacks used by the Defending Pokemon do 100 less damage (before applying Weakness and Resistance).",68af81d6c4f780b5153e5a03
-808,"['P', 'C', 'C']",Magical Shot,100,,68af81d6c4f780b5153e5a00
+808,"['P', 'C', 'C']",Magical Shot,100,,68af81d6c4f780b5153e59fa
 809,"['P', 'C', 'C']",Magical Shot,100,,68af81d6c4f780b5153e59fd
-810,"['P', 'C', 'C']",Magical Shot,100,,68af81d6c4f780b5153e59fa
-811,"['P', 'C']",Perfume Press,60,Your opponent's Active Pokemon is now Confused.,68af81d6c4f780b5153e59f1
-812,"['P', 'C']",Perfume Press,60,Your opponent's Active Pokemon is now Confused.,68af81d6c4f780b5153e59f4
-813,"['P', 'C']",Perfume Press,60,Your opponent's Active Pokemon is now Confused.,68af81d6c4f780b5153e59f7
+810,"['P', 'C', 'C']",Magical Shot,100,,68af81d6c4f780b5153e5a00
+811,"['P', 'C']",Perfume Press,60,Your opponent's Active Pokemon is now Confused.,68af81d6c4f780b5153e59f4
+812,"['P', 'C']",Perfume Press,60,Your opponent's Active Pokemon is now Confused.,68af81d6c4f780b5153e59f7
+813,"['P', 'C']",Perfume Press,60,Your opponent's Active Pokemon is now Confused.,68af81d6c4f780b5153e59f1
 814,['P'],Fairy Wind,20,,68af81d6c4f780b5153e59e8
-815,['P'],Fairy Wind,20,,68af81d6c4f780b5153e59eb
-816,['P'],Fairy Wind,20,,68af81d6c4f780b5153e59ee
-817,"['P', 'P', 'C']",Shadow Bind,150,"During your opponent's next turn, the Defending Pokemon can't retreat.",68af81d6c4f780b5153e59df
-818,"['P', 'P', 'C']",Shadow Bind,150,"During your opponent's next turn, the Defending Pokemon can't retreat.",68af81d6c4f780b5153e59e2
-819,"['P', 'P', 'C']",Shadow Bind,150,"During your opponent's next turn, the Defending Pokemon can't retreat.",68af81d6c4f780b5153e59e5
-820,"['P', 'P']",Will-O-Wisp,50,,68af81d6c4f780b5153e59dc
-821,"['P', 'P']",Will-O-Wisp,50,,68af81d6c4f780b5153e59d6
-822,"['P', 'P']",Will-O-Wisp,50,,68af81d6c4f780b5153e59d9
-823,"['P', 'P']",Mumble,30,,68af81d6c4f780b5153e59d0
+815,['P'],Fairy Wind,20,,68af81d6c4f780b5153e59ee
+816,['P'],Fairy Wind,20,,68af81d6c4f780b5153e59eb
+817,"['P', 'P', 'C']",Shadow Bind,150,"During your opponent's next turn, the Defending Pokemon can't retreat.",68af81d6c4f780b5153e59e2
+818,"['P', 'P', 'C']",Shadow Bind,150,"During your opponent's next turn, the Defending Pokemon can't retreat.",68af81d6c4f780b5153e59e5
+819,"['P', 'P', 'C']",Shadow Bind,150,"During your opponent's next turn, the Defending Pokemon can't retreat.",68af81d6c4f780b5153e59df
+820,"['P', 'P']",Will-O-Wisp,50,,68af81d6c4f780b5153e59d6
+821,"['P', 'P']",Will-O-Wisp,50,,68af81d6c4f780b5153e59d9
+822,"['P', 'P']",Will-O-Wisp,50,,68af81d6c4f780b5153e59dc
+823,"['P', 'P']",Mumble,30,,68af81d6c4f780b5153e59d3
 824,"['P', 'P']",Mumble,30,,68af81d6c4f780b5153e59cd
-825,"['P', 'P']",Mumble,30,,68af81d6c4f780b5153e59d3
+825,"['P', 'P']",Mumble,30,,68af81d6c4f780b5153e59d0
 826,"['P', 'C', 'C']",Psych Out,160,Discard a random card from your opponent's hand.,68af81d6c4f780b5153e59ca
-827,['P'],Psychic Assault,30+,This attack does 10 more damage for each damage counter on your opponent's Active Pokemon.,68af81d6c4f780b5153e59c1
-828,"['P', 'C']",Psy Bolt,60,"Flip a coin. If heads, your opponent's Active Pokemon is now Paralyzed.",68af81d6c4f780b5153e59c1
-829,['P'],Psychic Assault,30+,This attack does 10 more damage for each damage counter on your opponent's Active Pokemon.,68af81d6c4f780b5153e59c7
-830,"['P', 'C']",Psy Bolt,60,"Flip a coin. If heads, your opponent's Active Pokemon is now Paralyzed.",68af81d6c4f780b5153e59c7
-831,['P'],Psychic Assault,30+,This attack does 10 more damage for each damage counter on your opponent's Active Pokemon.,68af81d6c4f780b5153e59c4
-832,"['P', 'C']",Psy Bolt,60,"Flip a coin. If heads, your opponent's Active Pokemon is now Paralyzed.",68af81d6c4f780b5153e59c4
+827,['P'],Psychic Assault,30+,This attack does 10 more damage for each damage counter on your opponent's Active Pokemon.,68af81d6c4f780b5153e59c4
+828,"['P', 'C']",Psy Bolt,60,"Flip a coin. If heads, your opponent's Active Pokemon is now Paralyzed.",68af81d6c4f780b5153e59c4
+829,['P'],Psychic Assault,30+,This attack does 10 more damage for each damage counter on your opponent's Active Pokemon.,68af81d6c4f780b5153e59c1
+830,"['P', 'C']",Psy Bolt,60,"Flip a coin. If heads, your opponent's Active Pokemon is now Paralyzed.",68af81d6c4f780b5153e59c1
+831,['P'],Psychic Assault,30+,This attack does 10 more damage for each damage counter on your opponent's Active Pokemon.,68af81d6c4f780b5153e59c7
+832,"['P', 'C']",Psy Bolt,60,"Flip a coin. If heads, your opponent's Active Pokemon is now Paralyzed.",68af81d6c4f780b5153e59c7
 833,"['L', 'C', 'C']",Volt Cyclone,140,Move an Energy from this Pokemon to 1 of your Benched Pokemon.,68af81d5c4f780b5153e59be
 834,"['L', 'L', 'C']",Arm Press,160,,68af81d5c4f780b5153e59bb
 835,"['L', 'C', 'C', 'C']",Amp You Very Much,120,"If your opponent's Pokemon is Knocked Out by damage from this attack, take 1 more Prize card.",68af81d5c4f780b5153e59bb
 836,"['L', 'C']",Flashing Spear,60+,You may discard up to 2 Basic Energy from your Benched Pokemon. This attack does 90 more damage for each card you discarded in this way.,68af81d5c4f780b5153e59b8
 837,"['R', 'W', 'L']",Dravite,280,"During your next turn, this Pokemon can't attack.",68af81d5c4f780b5153e59b8
-838,['L'],Linear Attack This attack does 30 damage to 1 of your opponent's Pokemon.,Don't apply Weakness and Resistance for Benched Pokemon.,,68af81d5c4f780b5153e59af
-839,"['L', 'C', 'C']",Fighting Lightning,90+,"If your opponent's Active Pokemon is a Pokemon ex or Pokemon V, this attack does 90 more damage.",68af81d5c4f780b5153e59af
-840,['L'],Linear Attack This attack does 30 damage to 1 of your opponent's Pokemon.,Don't apply Weakness and Resistance for Benched Pokemon.,,68af81d5c4f780b5153e59b2
-841,"['L', 'C', 'C']",Fighting Lightning,90+,"If your opponent's Active Pokemon is a Pokemon ex or Pokemon V, this attack does 90 more damage.",68af81d5c4f780b5153e59b2
-842,['L'],Linear Attack This attack does 30 damage to 1 of your opponent's Pokemon.,Don't apply Weakness and Resistance for Benched Pokemon.,,68af81d5c4f780b5153e59b5
-843,"['L', 'C', 'C']",Fighting Lightning,90+,"If your opponent's Active Pokemon is a Pokemon ex or Pokemon V, this attack does 90 more damage.",68af81d5c4f780b5153e59b5
+838,['L'],Linear Attack This attack does 30 damage to 1 of your opponent's Pokemon.,Don't apply Weakness and Resistance for Benched Pokemon.,,68af81d5c4f780b5153e59b5
+839,"['L', 'C', 'C']",Fighting Lightning,90+,"If your opponent's Active Pokemon is a Pokemon ex or Pokemon V, this attack does 90 more damage.",68af81d5c4f780b5153e59b5
+840,['L'],Linear Attack This attack does 30 damage to 1 of your opponent's Pokemon.,Don't apply Weakness and Resistance for Benched Pokemon.,,68af81d5c4f780b5153e59af
+841,"['L', 'C', 'C']",Fighting Lightning,90+,"If your opponent's Active Pokemon is a Pokemon ex or Pokemon V, this attack does 90 more damage.",68af81d5c4f780b5153e59af
+842,['L'],Linear Attack This attack does 30 damage to 1 of your opponent's Pokemon.,Don't apply Weakness and Resistance for Benched Pokemon.,,68af81d5c4f780b5153e59b2
+843,"['L', 'C', 'C']",Fighting Lightning,90+,"If your opponent's Active Pokemon is a Pokemon ex or Pokemon V, this attack does 90 more damage.",68af81d5c4f780b5153e59b2
 844,['C'],Tail Whap,30,,68af81d5c4f780b5153e59ac
 845,"['L', 'L', 'C']",Thunder,220,This Pokemon also does 30 damage to itself.,68af81d5c4f780b5153e59ac
 846,['C'],Sob,20,"During your opponent's next turn, the Defending Pokemon can't retreat.",68af81d5c4f780b5153e59a9
@@ -860,34 +860,34 @@ Discard all Energy from this Pokémon, and this attack does 120 damage to 1 of y
 853,"['W', 'C']",Icicle Missile,70,,68af81d5c4f780b5153e59a0
 854,['W'],Permeating Chill,30,"At the end of your opponent's next turn, put 9 damage counters on the Defending Pokemon.",68af81d5c4f780b5153e599d
 855,"['W', 'C']",Icicle Missile,70,,68af81d5c4f780b5153e599d
-856,"['C', 'C']",Overrun,30,This attack also does 30 damage to 1 of your opponent's Benched Pokemon. (Don't apply Weakness and Resistance for Benched Pokemon.),68af81d5c4f780b5153e5994
-857,"['W', 'W', 'C']",Aurora Beam,100,,68af81d5c4f780b5153e5994
+856,"['C', 'C']",Overrun,30,This attack also does 30 damage to 1 of your opponent's Benched Pokemon. (Don't apply Weakness and Resistance for Benched Pokemon.),68af81d5c4f780b5153e5991
+857,"['W', 'W', 'C']",Aurora Beam,100,,68af81d5c4f780b5153e5991
 858,"['C', 'C']",Overrun,30,This attack also does 30 damage to 1 of your opponent's Benched Pokemon. (Don't apply Weakness and Resistance for Benched Pokemon.),68af81d5c4f780b5153e5997
 859,"['W', 'W', 'C']",Aurora Beam,100,,68af81d5c4f780b5153e5997
-860,"['C', 'C']",Overrun,30,This attack also does 30 damage to 1 of your opponent's Benched Pokemon. (Don't apply Weakness and Resistance for Benched Pokemon.),68af81d5c4f780b5153e5991
-861,"['W', 'W', 'C']",Aurora Beam,100,,68af81d5c4f780b5153e5991
+860,"['C', 'C']",Overrun,30,This attack also does 30 damage to 1 of your opponent's Benched Pokemon. (Don't apply Weakness and Resistance for Benched Pokemon.),68af81d5c4f780b5153e5994
+861,"['W', 'W', 'C']",Aurora Beam,100,,68af81d5c4f780b5153e5994
 862,"['R', 'W', 'L']",Aquamarine,280,"During your next turn, this Pokemon can't attack.",68af81d5c4f780b5153e598e
-863,['W'],Spiral Drain,30,Heal 30 damage from this Pokemon.,68af81d5c4f780b5153e5985
-864,"['W', 'C', 'C']",Fighting Whirlpool,90+,"If your opponent's Active Pokemon is a Pokemon ex or Pokemon V, this attack does 90 more damage.",68af81d5c4f780b5153e5985
-865,['W'],Spiral Drain,30,Heal 30 damage from this Pokemon.,68af81d5c4f780b5153e598b
-866,"['W', 'C', 'C']",Fighting Whirlpool,90+,"If your opponent's Active Pokemon is a Pokemon ex or Pokemon V, this attack does 90 more damage.",68af81d5c4f780b5153e598b
-867,['W'],Spiral Drain,30,Heal 30 damage from this Pokemon.,68af81d5c4f780b5153e5988
-868,"['W', 'C', 'C']",Fighting Whirlpool,90+,"If your opponent's Active Pokemon is a Pokemon ex or Pokemon V, this attack does 90 more damage.",68af81d5c4f780b5153e5988
-869,['C'],Rapid Draw,60,Draw 2 cards.,68af81d5c4f780b5153e597c
-870,['C'],Rapid Draw,60,Draw 2 cards.,68af81d5c4f780b5153e597f
-871,['C'],Rapid Draw,60,Draw 2 cards.,68af81d5c4f780b5153e5982
+863,['W'],Spiral Drain,30,Heal 30 damage from this Pokemon.,68af81d5c4f780b5153e5988
+864,"['W', 'C', 'C']",Fighting Whirlpool,90+,"If your opponent's Active Pokemon is a Pokemon ex or Pokemon V, this attack does 90 more damage.",68af81d5c4f780b5153e5988
+865,['W'],Spiral Drain,30,Heal 30 damage from this Pokemon.,68af81d5c4f780b5153e5985
+866,"['W', 'C', 'C']",Fighting Whirlpool,90+,"If your opponent's Active Pokemon is a Pokemon ex or Pokemon V, this attack does 90 more damage.",68af81d5c4f780b5153e5985
+867,['W'],Spiral Drain,30,Heal 30 damage from this Pokemon.,68af81d5c4f780b5153e598b
+868,"['W', 'C', 'C']",Fighting Whirlpool,90+,"If your opponent's Active Pokemon is a Pokemon ex or Pokemon V, this attack does 90 more damage.",68af81d5c4f780b5153e598b
+869,['C'],Rapid Draw,60,Draw 2 cards.,68af81d5c4f780b5153e5982
+870,['C'],Rapid Draw,60,Draw 2 cards.,68af81d5c4f780b5153e597c
+871,['C'],Rapid Draw,60,Draw 2 cards.,68af81d5c4f780b5153e597f
 872,"['C', 'C']",Whirlpool,10,"Flip a coin. If heads, discard an Energy from your opponent's Active Pokemon.",68af81d4c4f780b5153e5973
-873,"['C', 'C']",Whirlpool,10,"Flip a coin. If heads, discard an Energy from your opponent's Active Pokemon.",68af81d5c4f780b5153e5979
-874,"['C', 'C']",Whirlpool,10,"Flip a coin. If heads, discard an Energy from your opponent's Active Pokemon.",68af81d5c4f780b5153e5976
-875,"['W', 'C', 'C']",Wash the Slate Clean,70,You may put 2 Energy attached to your opponent's Active Pokemon into their hand.,68af81d4c4f780b5153e596a
-876,"['W', 'C', 'C']",Wash the Slate Clean,70,You may put 2 Energy attached to your opponent's Active Pokemon into their hand.,68af81d4c4f780b5153e596d
-877,"['W', 'C', 'C']",Wash the Slate Clean,70,You may put 2 Energy attached to your opponent's Active Pokemon into their hand.,68af81d4c4f780b5153e5970
-878,['W'],Water Gun,10,,68af81d4c4f780b5153e5964
-879,"['W', 'C']",Tail Whap,30,,68af81d4c4f780b5153e5964
+873,"['C', 'C']",Whirlpool,10,"Flip a coin. If heads, discard an Energy from your opponent's Active Pokemon.",68af81d5c4f780b5153e5976
+874,"['C', 'C']",Whirlpool,10,"Flip a coin. If heads, discard an Energy from your opponent's Active Pokemon.",68af81d5c4f780b5153e5979
+875,"['W', 'C', 'C']",Wash the Slate Clean,70,You may put 2 Energy attached to your opponent's Active Pokemon into their hand.,68af81d4c4f780b5153e596d
+876,"['W', 'C', 'C']",Wash the Slate Clean,70,You may put 2 Energy attached to your opponent's Active Pokemon into their hand.,68af81d4c4f780b5153e5970
+877,"['W', 'C', 'C']",Wash the Slate Clean,70,You may put 2 Energy attached to your opponent's Active Pokemon into their hand.,68af81d4c4f780b5153e596a
+878,['W'],Water Gun,10,,68af81d4c4f780b5153e5967
+879,"['W', 'C']",Tail Whap,30,,68af81d4c4f780b5153e5967
 880,['W'],Water Gun,10,,68af81d4c4f780b5153e5961
 881,"['W', 'C']",Tail Whap,30,,68af81d4c4f780b5153e5961
-882,['W'],Water Gun,10,,68af81d4c4f780b5153e5967
-883,"['W', 'C']",Tail Whap,30,,68af81d4c4f780b5153e5967
+882,['W'],Water Gun,10,,68af81d4c4f780b5153e5964
+883,"['W', 'C']",Tail Whap,30,,68af81d4c4f780b5153e5964
 884,"['R', 'C', 'C']",Wrathful Hearth,20x,This attack does 20 damage for each damage counter on this Pokemon.,68af81d4c4f780b5153e595e
 885,"['R', 'R', 'R']",Dynamic Blaze,140+,"If your opponent's Active Pokemon is an Evolution Pokemon, this attack does 140 more damage, and discard all Energy from this Pokemon.",68af81d4c4f780b5153e595e
 886,"['R', 'C']",Fire Mane,50,,68af81d4c4f780b5153e595b
@@ -915,25 +915,25 @@ Discard all Energy from this Pokémon, and this attack does 120 damage to 1 of y
 908,['G'],Do the Wave,20x,This attack does 20 damage for each of your Benched Pokemon.,68af81d3c4f780b5153e5931
 909,['G'],Do the Wave,20x,This attack does 20 damage for each of your Benched Pokemon.,68af81d3c4f780b5153e5934
 910,['G'],Do the Wave,20x,This attack does 20 damage for each of your Benched Pokemon.,68af81d3c4f780b5153e5937
-911,['G'],Spray Fluid,20,,68af81d3c4f780b5153e592b
-912,['G'],Spray Fluid,20,,68af81d3c4f780b5153e592e
-913,['G'],Spray Fluid,20,,68af81d3c4f780b5153e5928
+911,['G'],Spray Fluid,20,,68af81d3c4f780b5153e5928
+912,['G'],Spray Fluid,20,,68af81d3c4f780b5153e592b
+913,['G'],Spray Fluid,20,,68af81d3c4f780b5153e592e
 914,['G'],Seed Bomb,40,,68af81d3c4f780b5153e591f
 915,['G'],Seed Bomb,40,,68af81d3c4f780b5153e5922
 916,['G'],Seed Bomb,40,,68af81d3c4f780b5153e5925
-917,['G'],Triple Spin,10x,Flip 3 coins. This attack does 10 damage for each heads.,68af81d3c4f780b5153e591c
-918,['G'],Triple Spin,10x,Flip 3 coins. This attack does 10 damage for each heads.,68af81d3c4f780b5153e5916
-919,['G'],Triple Spin,10x,Flip 3 coins. This attack does 10 damage for each heads.,68af81d3c4f780b5153e5919
+917,['G'],Triple Spin,10x,Flip 3 coins. This attack does 10 damage for each heads.,68af81d3c4f780b5153e5916
+918,['G'],Triple Spin,10x,Flip 3 coins. This attack does 10 damage for each heads.,68af81d3c4f780b5153e5919
+919,['G'],Triple Spin,10x,Flip 3 coins. This attack does 10 damage for each heads.,68af81d3c4f780b5153e591c
 920,"['G', 'C']",Verdant Storm,60x,This attack does 60 damage for each Energy attached to all of your opponent's Pokemon.,68af81d3c4f780b5153e5913
 921,"['G', 'R', 'W']",Moss Agate,230,Heal 100 damage from each of your Benched Pokemon.,68af81d3c4f780b5153e5913
-922,"['G', 'C']",Solar Beam,70,,68af81d3c4f780b5153e590a
-923,"['G', 'C']",Solar Beam,70,,68af81d3c4f780b5153e5910
+922,"['G', 'C']",Solar Beam,70,,68af81d3c4f780b5153e5910
+923,"['G', 'C']",Solar Beam,70,,68af81d3c4f780b5153e590a
 924,"['G', 'C']",Solar Beam,70,,68af81d3c4f780b5153e590d
 925,['0'],Itchy Pollen,10,"During your opponent's next turn, they can't play any Item cards from their hand.",68af81d3c4f780b5153e5904
 926,['0'],Itchy Pollen,10,"During your opponent's next turn, they can't play any Item cards from their hand.",68af81d3c4f780b5153e5907
 927,['0'],Itchy Pollen,10,"During your opponent's next turn, they can't play any Item cards from their hand.",68af81d3c4f780b5153e5901
-928,"['G', 'C']",Slash,60,,68af81d3c4f780b5153e58fe
-929,"['G', 'C']",Slash,60,,68af81d3c4f780b5153e58fb
+928,"['G', 'C']",Slash,60,,68af81d3c4f780b5153e58fb
+929,"['G', 'C']",Slash,60,,68af81d3c4f780b5153e58fe
 930,"['G', 'C']",Slash,60,,68af81d3c4f780b5153e58f8
 931,"['G', 'C']",Mega Drain,50,Heal 30 damage from this Pokemon.,68af81d3c4f780b5153e58f5
 932,"['G', 'G', 'C']",Solar Beam,130,,68af81d3c4f780b5153e58f5
@@ -941,9 +941,9 @@ Discard all Energy from this Pokémon, and this attack does 120 damage to 1 of y
 934,"['G', 'G', 'C']",Solar Beam,130,,68af81d3c4f780b5153e58f2
 935,"['G', 'C']",Mega Drain,50,Heal 30 damage from this Pokemon.,68af81d2c4f780b5153e58ef
 936,"['G', 'G', 'C']",Solar Beam,130,,68af81d2c4f780b5153e58ef
-937,"['G', 'C']",Ram,30,,68af81d2c4f780b5153e58ec
-938,"['G', 'C']",Ram,30,,68af81d2c4f780b5153e58e6
-939,"['G', 'C']",Ram,30,,68af81d2c4f780b5153e58e9
+937,"['G', 'C']",Ram,30,,68af81d2c4f780b5153e58e9
+938,"['G', 'C']",Ram,30,,68af81d2c4f780b5153e58ec
+939,"['G', 'C']",Ram,30,,68af81d2c4f780b5153e58e6
 940,"['G', 'W']",Tropical Frenzy,150,You may attach any number of Basic Energy cards from your hand to your Pokemon in any way you like.,68af81ecc4f780b5153e5d0a
 941,"['G', 'L', 'M']",Topaz Bolt,300,Discard 3 Energy from this Pokemon.,68af81edc4f780b5153e5d0d
 942,"['G', 'W']",Tropical Frenzy,150,You may attach any number of Basic Energy cards from your hand to your Pokemon in any way you like.,68af81edc4f780b5153e5d1c
