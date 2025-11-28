@@ -49,7 +49,7 @@ logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
 
 from global_variables import PRICE_HISTORY_DF, CARD_METADATA_DF, EBAY_METADATA_DF, SET_PRICE_HISTORY_DFS
-from utils import calculate_roi
+from utils import calculate_cat_vol_price
 # ----------------------------- Call data -------------------------------------
 ebay_df = EBAY_METADATA_DF.set_index('date')
 metadata_df = CARD_METADATA_DF
@@ -687,7 +687,7 @@ def card_view_card_grade_price_comparison(price_history_df, ebay_history_df, car
         "PSA 10": "#2ecc71"
     }
 
-    result = calculate_roi(price_history_df, ebay_history_df, card_id, grading_cost)
+    result = calculate_cat_vol_price(price_history_df, ebay_history_df, card_id)
 
     if result is None:
         fig = go.Figure()

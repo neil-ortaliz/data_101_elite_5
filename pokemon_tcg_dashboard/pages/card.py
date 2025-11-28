@@ -7,13 +7,18 @@ from components.charts import card_view_price_history_line_chart, card_view_card
 from components import graph_container, tab_card_container
 from global_variables import CARD_DATA_FETCHER, PRICE_HISTORY_DF, EBAY_METADATA_DF
 from utils.grade_analysis import create_grade_distribution_chart
-from utils import calculate_roi
+from utils import calculate_cat_vol_price, calculate_roi
+
+import logging
+logger = logging.getLogger(__name__)
+
 
 # ---------------- Register page ----------------
 dash.register_page(
     __name__,
     path_template="/card/<card_id>",
 )
+
 
 # ---------------- Layout ----------------
 def layout(card_id=None, **kwargs):
@@ -115,7 +120,7 @@ def layout(card_id=None, **kwargs):
         # --- GRADE COMPARISON ---
         dbc.Row([
             dbc.Col(id='grade-comparison-container', width=8),
-            dbc.Col([tab_card_container()],id="roi", width="auto")
+            dbc.Col([tab_card_container()],id="roi", width=4)
         ])
         #html.Div(id='grade-comparison-container', style={"marginTop": "20px"})
     ])
@@ -234,7 +239,7 @@ def update_grade_chart(pathname):
     if card_metadata is None:
         return html.Div("Card Not Found")
 
-    print(card_metadata["name"])
+    #print(card_metadata["name"])
 
     grade_df = EBAY_METADATA_DF
     
@@ -261,7 +266,7 @@ def update_grade_comparison_chart(pathname):
     if card_metadata is None:
         return html.Div("Card Not Found")
 
-    print(card_metadata["name"])
+    #print(card_metadata["name"])
     
     fig = card_view_card_grade_price_comparison(
         price_history_df = PRICE_HISTORY_DF,
@@ -275,7 +280,8 @@ def update_grade_comparison_chart(pathname):
     Output("roi", "children"),
     Input("url", "pathname")
 )
-def update_grade_comparison_chart(pathname):
+def update_roi_annotations(pathname):
+    logger.debug("update_roi_annotations called")
     card_number = pathname.split("/")[-1]
     try:
         card_id = int(card_number)
@@ -286,18 +292,83 @@ def update_grade_comparison_chart(pathname):
     if card_metadata is None:
         return html.Div("Card Not Found")
 
-    print(card_metadata["name"])
+    #print(card_metadata["name"])
     
     results = calculate_roi(
         price_history_df = PRICE_HISTORY_DF,
         ebay_history_df = EBAY_METADATA_DF,
         card_id=card_id,
-        card_name=card_metadata["name"]
+        #card_name=card_metadata["name"],
     )
+    logger.debug("==============================================================")
+    logger.debug(f"ROI Results: {results}")
+
+    cards = []
 
     if results is None:
-        pass
-    
-    (categories_volume, counts), (categories_price, prices) = results
+        results = [None for i in range(3)]
 
-    return #(fig=fig, title = 'Ungraded vs Graded Comparison')
+    for res in results:
+        logger.debug(f"Results: {res}")
+        if res is not None:
+            content_text = res['content']
+
+        if res is None:
+            # Fallback card (no ROI data)
+            card_body = dbc.CardBody(
+                [
+                    html.H4(f"PSA {res['grade']} Return on Investment:", className="mb-3"),
+                    html.P("No graded sales exist in the market.", className="text-secondary")
+                ],
+                className="h-100 d-flex flex-column justify-content-start"
+            )
+
+        elif "No graded sales exist" in content_text:
+            card_body = dbc.CardBody(
+                [
+                    html.H4(f"PSA {res['grade']} Return on Investment:", className="mb-3"),
+                    html.P("No graded sales exist in the market.", className="text-secondary")
+                ],
+                className="h-100 d-flex flex-column justify-content-start"
+            )
+        else:
+            # Extract ROI % and dollar value
+            roi_pct = content_text.split("(")[1].split(")")[0]
+            roi_dollar = content_text.split("ROI: ")[1].split(" (")[0]
+            verdict_text = content_text.split("\n")[1]
+
+            card_body = dbc.CardBody(
+                [
+                    html.H4(f"PSA {res['grade']} Return on Investment:", className="mb-3"),
+
+                    html.H2(
+                        roi_pct,
+                        className=f"text-{res['color']} mb-2",
+                        style={"fontWeight": "bold"}
+                    ),
+
+                    html.P(
+                        roi_dollar,
+                        style={"fontSize": "1.2rem"},
+                        className="mb-3"
+                    ),
+
+                    dbc.Badge(
+                        verdict_text,
+                        color=res['color'],
+                        className="p-2",
+                        style={"fontSize": "1.1rem"}
+                    ),
+                ],
+                className="h-100 d-flex flex-column justify-content-start"
+            )
+
+        cards.append(
+            dbc.Card(
+                card_body,
+                className="w-100",
+                style={"margin-bottom": "10px"}
+            )
+        )
+
+    return dbc.Stack(cards)

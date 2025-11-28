@@ -172,7 +172,7 @@ def update_portfolio_metrics(pathname, value, selected_cards):
 
     selected_cards_df = pd.DataFrame(selected_cards)
 
-    print(value)
+    #print(value)
     if value == "all":
         days = None
     else:
@@ -196,7 +196,7 @@ def update_portfolio_metrics(pathname, selected_cards):
     logger.debug(f"Pathname: {pathname}")
     logger.debug(f"Selected Cards: {selected_cards}")
     calc_holding_cards = calculate_holdings_price_change(selected_cards)
-    logger.debug(f"Calculated Holdings Cards: {calc_holding_cards}")
+    #logger.debug(f"Calculated Holdings Cards: {calc_holding_cards}")
     portfolio_metrics = create_holdings_table(data=selected_cards)
 
     return portfolio_metrics
