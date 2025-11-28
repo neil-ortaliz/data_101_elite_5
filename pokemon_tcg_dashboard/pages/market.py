@@ -38,7 +38,7 @@ market_set_filter = dbc.Row(
                 ],
                 value=30
             ),
-            width=6
+            width=4
         ),
 
         # Set filter dropdown
@@ -51,8 +51,19 @@ market_set_filter = dbc.Row(
                 clearable=False,
                 style={"borderRadius": "5px"}
             ),
-            width=6
-        )
+            width=4
+        ),
+
+        # Clear button
+        dbc.Col([
+            dbc.Button(
+                "Clear Filters",
+                id="clear-filters-btn",
+                color="secondary",
+                outline=True,
+                className="w-100"
+            )
+        ], width=4)
     ]
 )
 

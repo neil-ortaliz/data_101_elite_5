@@ -113,7 +113,7 @@ def create_market_filters():
                     type="text"
                 ),
             ])
-        ], width=4),
+        ], width=6),
         
         # Rarity filter
         dbc.Col([
@@ -126,18 +126,7 @@ def create_market_filters():
                 clearable=False,
                 style={"borderRadius": "5px"}
             )
-        ], width=4),
-        
-        # Clear button
-        dbc.Col([
-            dbc.Button(
-                "Clear Filters",
-                id="clear-filters-btn",
-                color="secondary",
-                outline=True,
-                className="w-100"
-            )
-        ], width=4),
+        ], width=6)
     ])
     
     return filters
