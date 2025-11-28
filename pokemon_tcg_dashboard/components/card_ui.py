@@ -1,6 +1,9 @@
 import dash_bootstrap_components as dbc
 from dash import html
 
+from global_variables import FALLBACK_IMAGE
+import pandas as pd
+
 def create_card_header(card_data=None):
     """
     Create header section for Card View
@@ -25,12 +28,17 @@ def create_card_header(card_data=None):
             "total_listings": 234
         }
     
+    image_url = card_data.get("image_url")
+
+    if pd.isna(image_url):
+        image_url = FALLBACK_IMAGE
+
     header = dbc.Row([
         # Left: Card Image
         dbc.Col([
             html.Div([
                 html.Img(
-                    src=card_data.get("image_url", ""),
+                    src=image_url,
                     alt=card_data.get("name", ""),
                     className="card-image img-fluid",
                     style={

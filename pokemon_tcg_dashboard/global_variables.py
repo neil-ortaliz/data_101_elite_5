@@ -24,3 +24,4 @@ SET_PRICE_HISTORY_DFS = get_set_price_history()
 SET_OPTIONS = sorted(CARD_METADATA_DF["setName"].dropna().unique())
 RARITY_OPTIONS = sorted(CARD_METADATA_DF["rarity"].dropna().unique())
 
+FALLBACK_IMAGE = "/assets/no_image_available.jpg"

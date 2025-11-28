@@ -8,7 +8,7 @@ from utils import get_image_urls, calculate_holdings_price_change
 from components import ban_card_container, graph_container, tab_card_container, table_container, portfolio_view_collection_pie_chart
 from components.portfolio_ui import create_portfolio_summary_metrics, create_risk_indicators, create_holdings_table
 
-from global_variables import PRICE_HISTORY_DF, CARD_METADATA_DF
+from global_variables import PRICE_HISTORY_DF, CARD_METADATA_DF, FALLBACK_IMAGE
 
 import logging
 logger = logging.getLogger(__name__)
@@ -113,14 +113,17 @@ def show_portfolio(selected_ids):
 
     cards = []
     for _, row in portfolio_df.iterrows():
+        image_url = row["imageUrl"] if pd.notna(row["imageUrl"]) else FALLBACK_IMAGE
+
+        print(image_url)
         cards.append(
             dbc.Button(
                 dbc.Card(
                     [
                         dbc.CardImg(
-                            src=row["imageUrl"],
+                            src=image_url,
                             top=True,
-                            class_name="portfolio-card-image"
+                            class_name="card-image"
                         ),
                         dbc.CardImgOverlay(
                             dbc.CardBody(

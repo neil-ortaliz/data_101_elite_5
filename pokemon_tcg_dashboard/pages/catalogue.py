@@ -7,7 +7,7 @@ from datetime import date
 import logging
 logger = logging.getLogger(__name__)
 
-from global_variables import PRICE_HISTORY_DF, CARD_METADATA_DF, SET_OPTIONS, RARITY_OPTIONS
+from global_variables import PRICE_HISTORY_DF, CARD_METADATA_DF, SET_OPTIONS, RARITY_OPTIONS, FALLBACK_IMAGE
 
 dash.register_page(
     __name__,
@@ -292,12 +292,13 @@ def update_images(selected_sets, selected_types, searched_text,page, cards_metad
     filtered = filtered.iloc[start:end]
     cards = []
     for _, row in filtered.iterrows():
+        image_url = row["imageUrl"] if row["imageUrl"] else FALLBACK_IMAGE
         cards.append(
             html.Div(
                 dbc.Card(
                     [
                         dbc.CardImg(
-                            src=row["imageUrl"],
+                            src=image_url,
                             top=True,
                             class_name='card-image'
                         ),
@@ -432,11 +433,12 @@ def handle_offcanvas(
     if isinstance(trigger, dict) and trigger.get("type") == "add-portfolio-button":
         card_id = trigger["index"]
         row = df.loc[card_id]
+        image_url = row["imageUrl"] if pd.notna(row["imageUrl"]) else FALLBACK_IMAGE
 
         unit_price = float(row["prices.market"])
         img = html.Div(
             html.Img(
-                src=row["imageUrl"],
+                src=image_url,
                 style={"width": "100%", "height": "350px", "objectFit": "contain"}
             )
         )
