@@ -31,7 +31,6 @@ A comprehensive interactive dashboard built with **Dash** and **Plotly** to trac
 - **Card Grades:** Supports tracking of ungraded and graded cards with price and ROI metrics.
 
 
-
 ## Installation
 1. Clone the repository:
 ```bash
