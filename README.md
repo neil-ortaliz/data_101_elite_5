@@ -31,6 +31,7 @@ A comprehensive interactive dashboard built with **Dash** and **Plotly** to trac
 - **Card Grades:** Supports tracking of ungraded and graded cards with price and ROI metrics.
 
 ## Repository Structure
+```bash
 data_101_elite_5/                     ← root
 ├── notebooks/                       ← folder
 ├── pokemon_tcg_dashboard/           ← folder (the main app)
@@ -39,7 +40,7 @@ data_101_elite_5/                     ← root
 │   └── components                   ← contains the UI component files
 │   └── data                         ← contains the data being used
 │   └── docs
-│   └── pages                        ← contains the codes used for how the pages are displayed
+│   └── pages                        ← contains the codes used to display the pages
 │   └── tests
 │   └── utils                        ← contains the codes of the formulas
 ├── .gitignore                       ← git ignore file
@@ -47,6 +48,7 @@ data_101_elite_5/                     ← root
 ├── README.md                        ← repo readme / project description
 ├── pyproject.toml                   ← Python project config
 └── requirements.txt                 ← Python dependencies list
+```
 
 ## Installation
 1. Clone the repository:
