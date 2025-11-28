@@ -100,7 +100,7 @@ layout = html.Div([
                 # create_top_movers_table(),
                 table_container(
                     table="",
-                    title="Top Price Movers (Set)",
+                    title="Set Price Movements",
                     #fig_id="top-movers-table-fig",
                     container_id="top-movers-table-fig"
                 )

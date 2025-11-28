@@ -172,9 +172,9 @@ layout = html.Div([
     dcc.Store(id="page-number", data=0),
     dcc.Store(id="offcanvas-unit-price", data=0),
     dcc.Store(id="offcanvas-tcgplayerid", data=None),
-    html.Pre(id="debug-output",
+    '''html.Pre(id="debug-output",
              style={"whiteSpace": "pre-wrap", "background": "#222",
-                    "color": "lime", "padding": "10px"}),
+                    "color": "lime", "padding": "10px"}),'''
     offcanvas,
     dbc.Stack([
         html.Div([
