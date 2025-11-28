@@ -9,7 +9,7 @@ from components import ban_card_container, graph_container, create_set_line_char
 from components.market_ui import create_market_overview_metrics, create_market_filters, create_top_movers_table, create_set_release_date_table
 from components.charts import market_view_set_performance_bar_chart, create_top_sets_table
 from utils.lgs_map import create_spatial_map
-from global_variables import MAP_LOCATIONS_DF, RELEASE_DATE_DF
+from global_variables import MAP_LOCATIONS_DF, RELEASE_DATE_DF, CARD_METADATA_DF
 from global_variables import SET_OPTIONS
 
 from utils import calculate_top_movers
@@ -203,3 +203,18 @@ def update_top_movers_table(days, set_names):
 def clear_all_filters(_):
     """Resets all filters instantly."""
     return None, None, ""
+
+
+@callback(
+    Output('main-url', 'pathname'),
+    Input('top-movers-table', 'active_cell'),
+    Input('top-movers-table', 'data'),
+
+)
+def display_click(active_cell, table_data):
+    
+    if active_cell:
+        if active_cell['column_id'] == 'name':
+            card_name = table_data[active_cell['row']][active_cell['column_id']]
+            card_tcgplayerid = CARD_METADATA_DF.loc[CARD_METADATA_DF['name'] == card_name, "tcgPlayerId"].values[0]
+            return f"card/{card_tcgplayerid}"

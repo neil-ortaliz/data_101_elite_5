@@ -263,7 +263,8 @@ def create_top_movers_table(data=None):
                 'backgroundColor': 'rgba(0, 117, 190, 0.1)',
                 'border': '1px solid #0075BE'
             }
-        ]
+        ],
+        cell_selectable=True
     )
     
     # Add toggle buttons for Gainers/Losers

@@ -115,7 +115,7 @@ def show_portfolio(selected_ids):
     for _, row in portfolio_df.iterrows():
         image_url = row["imageUrl"] if pd.notna(row["imageUrl"]) else FALLBACK_IMAGE
 
-        print(image_url)
+        #print(image_url)
         cards.append(
             dbc.Button(
                 dbc.Card(

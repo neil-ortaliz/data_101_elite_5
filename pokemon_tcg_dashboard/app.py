@@ -40,6 +40,7 @@ nav = dbc.Nav(
 
 # Layout
 app.layout = html.Div([
+    dcc.Location(id='main-url', refresh=True),
     dcc.Store(id="selected-cards", storage_type="session"),
     dcc.Store(id="cards-metadata", data=load_data("cards_metadata_table.csv").to_dict("records")),
     #dcc.Store(id='price-history', data=get_price_history().to_dict("records")),
