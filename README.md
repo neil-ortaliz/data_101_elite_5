@@ -30,13 +30,53 @@ A comprehensive interactive dashboard built with **Dash** and **Plotly** to trac
 - **Sources:** Market data and portfolio data are taken from the Pokemon Price Tracker API.
 - **Card Grades:** Supports tracking of ungraded and graded cards with price and ROI metrics.
 
-
+## Repository Structure
+data_101_elite_5/                     ← root
+├── notebooks/                       ← folder
+├── pokemon_tcg_dashboard/           ← folder (the main app)
+│   ├── assets                       ← contains CSS file and favicon
+│   └── callbacks                    
+│   └── components                   ← contains the UI component files
+│   └── data                         ← contains the data being used
+│   └── docs
+│   └── pages                        ← contains the codes used for how the pages are displayed
+│   └── tests
+│   └── utils                        ← contains the codes of the formulas
+├── .gitignore                       ← git ignore file
+├── LICENSE                          ← license file (MIT) 
+├── README.md                        ← repo readme / project description
+├── pyproject.toml                   ← Python project config
+└── requirements.txt                 ← Python dependencies list
 
 ## Installation
 1. Clone the repository:
 ```bash
 git clone https://github.com/neil-ortaliz/data_101_elite_5/
-cd your-repo
+cd data_101_elite_5
+cd pokemon_tcg_dashboard 
 ```
 2. Ensure your current directory is the `pokemon_tcg_dashboard`
-3. Run the code `python app.py` in your terminal
+3. Setup a virtual environment (Optional but Recommended)
+```bash
+python -m venv venv
+```
+To activate it:
+macOS/Linux
+```bash
+source venv/bin/activate
+```
+
+Windows
+```bash
+venv\Scripts\activate
+```
+4. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+5. Run the code `python app.py` in your terminal
+6. Open your browser and go to:
+```bash
+http://127.0.0.1:8050/
+```
+   
