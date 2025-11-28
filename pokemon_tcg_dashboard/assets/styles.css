@@ -1,0 +1,150 @@
+header {
+    background: linear-gradient(135deg, #FF0000 0%, #0075BE 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+
+header h1 {
+  font-size: 5rem;
+  margin-bottom: 10px;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: #f8f9fa;
+    padding: 20px;
+}
+
+/* Apply Bootstrap font to all Dash DataTables */
+.dash-table-container .dash-spreadsheet-container {
+    font-family: "Helvetica, Arial, sans-serif";  /* same as Bootstrap */
+}
+
+
+.nav {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.nav-link {
+    font-size:1.5rem;
+    color: #0075BE;
+}
+
+.nav-pills .nav-link.active {
+    background-color: #0075BE; 
+}
+
+.card-selected {
+    border: 4px solid dodgerblue !important;
+}
+
+.card-normal {
+    border: 0px solid #ccc !important;
+}
+
+.card-text {
+    font-size: 1rem;
+}
+
+.card-normal .hover-overlay {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card-normal .card-image {
+    transition: opacity 0.3s ease;
+    height: 100%
+}
+
+.card-normal:hover .hover-overlay {
+    opacity: 1;
+}
+
+.card-normal:hover .card-image {
+    opacity: 0.3;
+}
+
+.card .card-body{
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.card-row {
+    display: flex;
+    align-items: stretch;
+}
+
+.card-row .card-normal {
+    height: 100%;
+}
+
+.card-row .card-normal img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    border: 1px solid #ccc !important;
+}
+
+/* Metric Cards */
+.metric-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.metric-card .card-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.metric-card .card-title {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Card View Styles */
+.card-image:hover {
+    transform: scale(1.05);
+    cursor: zoom-in;
+}
+
+.card-name {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.current-price {
+    font-size: 3rem;
+}
+
+@media (max-width: 768px) {
+    .card-name {
+        font-size: 1.8rem;
+    }
+    .current-price {
+        font-size: 2rem;
+    }
+}
+
+/* Action Buttons */
+.action-button {
+    transition: all 0.3s;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.action-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.add-portfolio-button {
+    font-size:0.7rem
+}

@@ -1,0 +1,330 @@
+import pandas as pd
+import numpy as np
+from datetime import datetime, timedelta
+from functools import lru_cache
+from typing import Optional, Dict, Any, List
+
+
+class MarketCalculator:
+    """Handles all market-level calculations"""
+
+    price_history: pd.DataFrame
+    card_metadata: pd.DataFrame
+
+    def __init__(self, price_history_df: pd.DataFrame, card_metadata_df: pd.DataFrame) -> None:
+        self.price_history = price_history_df.copy()
+        self.card_metadata = card_metadata_df.copy()
+
+        # Ensure date is clean datetime
+        self.price_history['date'] = (
+            pd.to_datetime(self.price_history['date'], errors='coerce')
+              .dt.tz_localize(None)
+        )
+
+    # ---------------------------------------------------------
+    # TOTAL MARKET VALUE
+    # ---------------------------------------------------------
+    @lru_cache(maxsize=32)
+    def calculate_total_market_value(self) -> Dict[str, Any]:
+        """Latest total market value"""
+        try:
+            latest_prices = self.price_history.sort_values('date').groupby('tcgPlayerId').last()
+            total_value = latest_prices['market'].sum()
+        except Exception:
+            total_value = 0
+
+        # Formatting
+        if total_value >= 1_000_000:
+            formatted = f"${total_value / 1_000_000:.1f}M"
+        elif total_value >= 1_000:
+            formatted = f"${total_value:,}"
+        else:
+            formatted = f"${total_value:.2f}"
+
+        return {'value': total_value, 'formatted': formatted}
+
+    # ---------------------------------------------------------
+    # N-DAY OR ALL-TIME MARKET CHANGE
+    # ---------------------------------------------------------
+    def calculate_change(self, days: Optional[int] = -1) -> Dict[str, Any]:
+        """
+        Calculate market change.
+        days=None means all-time.
+        """
+
+        df = self.price_history.sort_values("date")
+
+        try:
+            # Latest price
+            latest = df.groupby('tcgPlayerId').last()['market']
+
+            if days is -1:
+                # Use earliest available price
+                past = df.groupby('tcgPlayerId').first()['market']
+            else:
+                comparison_date = df['date'].max() - timedelta(days=days)
+                past = (
+                    df[df['date'] <= comparison_date]
+                      .sort_values("date")
+                      .groupby('tcgPlayerId')
+                      .last()['market']
+                )
+
+            # Align card IDs
+            common = latest.index.intersection(past.index)
+
+            latest_total = latest[common].sum()
+            past_total = past[common].sum()
+
+            if past_total <= 0:
+                raise ValueError("Invalid past market value")
+
+            change_value = latest_total - past_total
+            change_pct = (change_value / past_total) * 100
+
+            sign = "+" if change_value >= 0 else ""
+            formatted_pct = f"{sign}{change_pct:.1f}%"
+
+            if abs(change_value) >= 1_000_000:
+                formatted_value = f"{sign}${abs(change_value)/1_000_000:.1f}M"
+            elif abs(change_value) >= 1_000:
+                formatted_value = f"{sign}${abs(change_value):,}"
+            else:
+                formatted_value = f"{sign}${abs(change_value):.2f}"
+
+        except Exception:
+            return {
+                'change_pct': 0,
+                'change_value': 0,
+                'formatted_pct': '0.0%',
+                'formatted_value': '$0'
+            }
+
+        return {
+            'change_pct': change_pct,
+            'change_value': change_value,
+            'formatted_pct': formatted_pct,
+            'formatted_value': formatted_value
+        }
+
+    # ---------------------------------------------------------
+    # BEST PERFORMING SET (N-DAY OR ALL-TIME)
+    # ---------------------------------------------------------
+    def calculate_best_performing_set(self, days: Optional[int] = -1) -> Dict[str, Any]:
+        """
+        Best performing set over N days or all-time.
+        days=-1 means all-time.
+        """
+
+        df = self.price_history.sort_values("date")
+
+        try:
+            if days is -1:
+                recent = df
+            else:
+                cutoff = df['date'].max() - timedelta(days=days)
+                recent = df[df['date'] >= cutoff]
+
+            prices_with_sets = recent.merge(
+                self.card_metadata[['tcgPlayerId', 'setName']],
+                on='tcgPlayerId',
+                how='left'
+            )
+
+            prices_with_sets.dropna(subset=['setName'], inplace=True)
+
+            performances: List[Dict[str, Any]] = []
+
+            for set_name in prices_with_sets['setName'].unique():
+                set_data = prices_with_sets[prices_with_sets['setName'] == set_name]
+
+                earliest = set_data.groupby('tcgPlayerId').first()['market']
+                latest = set_data.groupby('tcgPlayerId').last()['market']
+
+                if len(earliest) == 0 or earliest.sum() <= 0:
+                    continue
+
+                change = ((latest.sum() - earliest.sum()) / earliest.sum()) * 100
+                performances.append({'set': set_name, 'change_pct': change})
+
+            if not performances:
+                return {'set_name': 'N/A', 'change_pct': 0, 'formatted': 'N/A'}
+
+            best = max(performances, key=lambda x: x['change_pct'])
+
+            return {
+                'set_name': best['set'],
+                'change_pct': best['change_pct'],
+                'formatted': f"{best['set']} (+{best['change_pct']:.1f}%)"
+            }
+
+        except Exception:
+            return {'set_name': 'N/A', 'change_pct': 0, 'formatted': 'N/A'}
+
+    # ---------------------------------------------------------
+    # ACTIVE LISTINGS (N-DAY OR ALL-TIME)
+    # ---------------------------------------------------------
+    def count_active_listings(self, days: Optional[int] = -1) -> Dict[str, Any]:
+        """
+        Count active listings.
+        days=-1 means all-time.
+        """
+
+        try:
+            if days is -1:
+                active = self.price_history
+            else:
+                cutoff = self.price_history['date'].max() - timedelta(days=days)
+                active = self.price_history[self.price_history['date'] >= cutoff]
+
+            if active.empty:
+                return {'count': 0, 'formatted': '0'}
+
+            latest = (
+                active.sort_values('date')
+                      .groupby('tcgPlayerId')
+                      .last()
+            )
+
+            count = latest['volume'].sum()
+
+        except Exception:
+            count = 0
+
+        return {'count': count, 'formatted': f"{int(count):,}"}
+
+    # ---------------------------------------------------------
+    # TOP MOVERS (N-DAY OR ALL-TIME)
+    # ---------------------------------------------------------
+    def calculate_top_movers(self, days: Optional[int] = 1, n: int = 5, min_volume: Optional[int] = None) -> Dict[str, List[Dict[str, Any]]]:
+        """
+        Calculate top gainers and losers over the past `days`.
+        days: number of days to look back; None means all time.
+        """
+        if self.price_history.empty:
+            return {'gainers': [], 'losers': []}
+
+        df = self.price_history.sort_values('date')
+
+        # Filter by days
+        if days is None:
+            period_data = df.copy()
+        else:
+            cutoff = df['date'].max() - timedelta(days=days)
+            period_data = df[df['date'] >= cutoff]
+
+        if period_data.empty:
+            return {'gainers': [], 'losers': []}
+
+        changes: List[Dict[str, Any]] = []
+
+        for card_id in period_data['tcgPlayerId'].unique():
+            card_data = period_data[period_data['tcgPlayerId'] == card_id].sort_values('date')
+
+            if len(card_data) < 2:
+                continue
+
+            start_price = card_data.iloc[0]['market']
+            end_price = card_data.iloc[-1]['market']
+
+            if start_price <= 0:
+                continue
+
+            if min_volume is not None and 'volume' in card_data.columns:
+                if card_data['volume'].sum() < min_volume:
+                    continue
+
+            change_pct = ((end_price - start_price) / start_price) * 100
+            change_value = end_price - start_price
+
+            meta = self.card_metadata[self.card_metadata['tcgPlayerId'] == card_id]
+            if not meta.empty:
+                name = meta.iloc[0]['name']
+                set_name = meta.iloc[0]['setName']
+            else:
+                name = str(card_id)
+                set_name = "Unknown"
+
+            changes.append({
+                'card_id': card_id,
+                'name': name,
+                'set': set_name,
+                'current_price': end_price,
+                'change_pct': change_pct,
+                'change_value': change_value,
+                'change_pct_formatted': f"{'+' if change_pct >= 0 else ''}{change_pct:.1f}%",
+                'change_value_formatted': f"{'+' if change_value >= 0 else ''}${change_value:.2f}"
+            })
+
+        if not changes:
+            return {'gainers': [], 'losers': []}
+
+        df_changes = pd.DataFrame(changes)
+
+        cutoff_gain = df_changes['change_pct'].nlargest(n).min()
+        cutoff_loss = df_changes['change_pct'].nsmallest(n).max()
+
+        gainers = df_changes[df_changes['change_pct'] >= cutoff_gain].sort_values('change_pct', ascending=False).to_dict('records')
+        losers  = df_changes[df_changes['change_pct'] <= cutoff_loss].sort_values('change_pct', ascending=True).to_dict('records')
+
+        return {'gainers': gainers, 'losers': losers}
+
+    def get_all_market_metrics(self) -> Dict[str, Any]:
+        """Return all major market metrics across all time windows."""
+        return {
+            'total_market_value': self.calculate_total_market_value(),
+
+            # Market Change
+            'market_change': {
+                '1d':  self.calculate_change(days=1),
+                '7d':  self.calculate_change(days=7),
+                '15d': self.calculate_change(days=15),
+                '30d': self.calculate_change(days=30),
+                'all': self.calculate_change(days=None),
+            },
+
+            # Best Performing Sets
+            'best_performing_set': {
+                '1d':  self.calculate_best_performing_set(days=1),
+                '7d':  self.calculate_best_performing_set(days=7),
+                '15d': self.calculate_best_performing_set(days=15),
+                '30d': self.calculate_best_performing_set(days=30),
+                'all': self.calculate_best_performing_set(days=None),
+            },
+
+            # Active Listings
+            'active_listings': {
+                '1d':  self.count_active_listings(days=1),
+                '7d':  self.count_active_listings(days=7),
+                '15d': self.count_active_listings(days=15),
+                '30d': self.count_active_listings(days=30),
+                'all': self.count_active_listings(days=None),
+            }
+        }
+
+
+# ---------------------------------------------------------
+# Testing Zone
+# ---------------------------------------------------------
+if __name__ == "__main__":
+    price_history_df: pd.DataFrame = pd.read_csv('pokemon_tcg_dashboard/data/price_history.csv', parse_dates=['date'])
+    card_metadata_df: pd.DataFrame = pd.read_csv('pokemon_tcg_dashboard/data/cards_metadata_table.csv')
+
+    market_calc: MarketCalculator = MarketCalculator(price_history_df, card_metadata_df)
+
+    tot_market_val: Dict[str, Any] = market_calc.calculate_total_market_value()
+    market_change: Dict[str, Any] = market_calc.calculate_change(days=1)
+    best_perf_set: Dict[str, Any] = market_calc.calculate_best_performing_set(days=30)
+    active_listings: Dict[str, Any] = market_calc.count_active_listings(days=7)
+    all_func: Dict[str, Any] = market_calc.get_all_market_metrics()
+    
+    top_movers_none: Dict[str, List[Dict[str, Any]]] = market_calc.calculate_top_movers(days = None, n=10)
+    top_movers_7: Dict[str, List[Dict[str, Any]]] = market_calc.calculate_top_movers(days = 7, n=10)
+
+    print(tot_market_val)
+    print(market_change)
+    print(best_perf_set)
+    print(active_listings)
+    print(all_func)
+    print(top_movers_none)
+    print(top_movers_7)
