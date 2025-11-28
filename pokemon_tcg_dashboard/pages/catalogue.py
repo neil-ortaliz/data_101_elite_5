@@ -11,9 +11,9 @@ from global_variables import PRICE_HISTORY_DF, CARD_METADATA_DF, SET_OPTIONS, RA
 
 dash.register_page(
     __name__,
-    path="/portfolio_picker",
-    title="Portfolio Picker",
-    name="Portfolio Picker",
+    path="/catalogue",
+    title="Catalogue",
+    name="Catalogue",
     order=4
 )
 

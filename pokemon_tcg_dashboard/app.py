@@ -32,7 +32,7 @@ nav = dbc.Nav(
     [
         dbc.NavItem(dbc.NavLink("Market View", href="/", active="exact")),
         dbc.NavItem(dbc.NavLink("Portfolio", href="/portfolio", active="exact")),
-        dbc.NavItem(dbc.NavLink("Portfolio Picker", href="/portfolio_picker", active="exact"), class_name="ms-auto"),
+        dbc.NavItem(dbc.NavLink("Catalogue", href="/catalogue", active="exact"), class_name="ms-auto"),
     ],
     pills=True,
     navbar=True

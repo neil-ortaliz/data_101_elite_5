@@ -4,9 +4,13 @@ import pandas as pd
 import numpy as np
 from typing import Dict, Any
 
+import pandas as pd
+import numpy as np
+from pathlib import Path
+from typing import Any, Dict, List
 
 def generate_trading_signal(
-    card_id: Any,
+    card_id: int|str,
     price_history: pd.DataFrame,
     lookback_days: int = 90,
     *,
@@ -18,7 +22,8 @@ def generate_trading_signal(
 ) -> Dict[str, Any]:
     """
     Generate a Buy/Sell/Hold trading signal for a card based on technical indicators.
-
+    Input:
+        card_id: Required. Any Datatype
     Returns:
         {
             'signal': 'Strong Buy'|'Buy'|'Hold'|'Sell'|'Strong Sell',
@@ -205,15 +210,9 @@ def generate_trading_signal(
         },
     }
 
-# Task 8 - Backtesting and Validation
-
-import pandas as pd
-import numpy as np
-from pathlib import Path
-from typing import Any, Dict, List
 
 
-# Simple trading signal (used by backtest)
+
 
 def generate_trading_signal_simple(
     card_id: Any,

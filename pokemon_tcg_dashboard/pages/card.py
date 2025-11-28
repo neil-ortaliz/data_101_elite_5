@@ -4,9 +4,10 @@ import dash_bootstrap_components as dbc
 from datetime import timedelta
 from components.card_ui import create_card_header
 from components.charts import card_view_price_history_line_chart, card_view_card_grade_price_comparison
-from components import graph_container
+from components import graph_container, tab_card_container
 from global_variables import CARD_DATA_FETCHER, PRICE_HISTORY_DF, EBAY_METADATA_DF
 from utils.grade_analysis import create_grade_distribution_chart
+from utils import calculate_roi
 
 # ---------------- Register page ----------------
 dash.register_page(
@@ -112,7 +113,11 @@ def layout(card_id=None, **kwargs):
         html.Hr(),
 
         # --- GRADE COMPARISON ---
-        html.Div(id='grade-comparison-container', style={"marginTop": "20px"})
+        dbc.Row([
+            dbc.Col(id='grade-comparison-container', width=8),
+            dbc.Col([tab_card_container()],id="roi", width="auto")
+        ])
+        #html.Div(id='grade-comparison-container', style={"marginTop": "20px"})
     ])
 
 
@@ -265,3 +270,34 @@ def update_grade_comparison_chart(pathname):
         card_name=card_metadata["name"]
     )
     return graph_container(fig=fig, title = 'Ungraded vs Graded Comparison')
+
+@callback(
+    Output("roi", "children"),
+    Input("url", "pathname")
+)
+def update_grade_comparison_chart(pathname):
+    card_number = pathname.split("/")[-1]
+    try:
+        card_id = int(card_number)
+    except ValueError:
+        return html.Div("Invalid Card ID")
+
+    card_metadata = CARD_DATA_FETCHER.get_card_by_id(card_id=card_id, days=None, condition='any')
+    if card_metadata is None:
+        return html.Div("Card Not Found")
+
+    print(card_metadata["name"])
+    
+    results = calculate_roi(
+        price_history_df = PRICE_HISTORY_DF,
+        ebay_history_df = EBAY_METADATA_DF,
+        card_id=card_id,
+        card_name=card_metadata["name"]
+    )
+
+    if results is None:
+        pass
+    
+    (categories_volume, counts), (categories_price, prices) = results
+
+    return #(fig=fig, title = 'Ungraded vs Graded Comparison')

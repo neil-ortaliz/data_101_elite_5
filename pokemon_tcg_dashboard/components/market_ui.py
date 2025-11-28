@@ -4,61 +4,12 @@ import pandas as pd
 from dash import dcc
 from utils.market_calcs import MarketCalculator
 from utils.loader import load_data
+from components import create_metric_card
 
 from global_variables import SET_OPTIONS, RARITY_OPTIONS, PRICE_HISTORY_DF, CARD_METADATA_DF
 
 import logging
 logger = logging.getLogger(__name__)
-
-
-
-def create_metric_card(title, value, change=None, change_type="neutral"):
-    """
-    Create a single metric card
-    
-    Args:
-        title: Card title (e.g., "Total Market Value")
-        value: Main value to display (e.g., "$45.2M")
-        change: Optional change value (e.g., "+1.8%")
-        change_type: "positive", "negative", or "neutral"
-    
-    Returns:
-        dbc.Card component
-    """
-    # Color based on change type
-    color_map = {
-        "positive": "#1E90FF",  # Blue for gains
-        "negative": "#FF8C00",  # Orange for losses
-        "neutral": "#808080"    # Gray for neutral
-    }
-    change_color = color_map.get(change_type, "#808080")
-    
-    # Arrow icon based on change type
-    arrow = "↑" if change_type == "positive" else "↓" if change_type == "negative" else ""
-    
-    card = dbc.Card(
-        dbc.CardBody([
-            html.H6(title, className="card-title text-muted mb-2"),
-            html.H3(value, className="card-value mb-1"),
-            html.P(
-                [
-                    html.Span(arrow, style={"marginRight": "5px"}),
-                    html.Span(change if change else "")
-                ],
-                style={"color": change_color, "fontWeight": "bold"},
-                className="mb-0"
-            ) if change else html.Div()
-        ]),
-        className="metric-card shadow-sm h-100",
-        style={
-            "borderRadius": "10px",
-            "border": "none",
-            "transition": "transform 0.2s",
-            "cursor": "pointer"
-        }
-    )
-    
-    return card
 
 def create_market_overview_metrics(days:int=1):
     """

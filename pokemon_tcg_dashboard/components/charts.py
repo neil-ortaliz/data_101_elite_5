@@ -47,7 +47,9 @@ import logging
 # initialize module logger
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
+
 from global_variables import PRICE_HISTORY_DF, CARD_METADATA_DF, EBAY_METADATA_DF, SET_PRICE_HISTORY_DFS
+from utils import calculate_roi
 # ----------------------------- Call data -------------------------------------
 ebay_df = EBAY_METADATA_DF.set_index('date')
 metadata_df = CARD_METADATA_DF
@@ -101,8 +103,7 @@ def merge_all_pricing_dfs():
 
     market_df = market_df.dropna(subset='setName_x')
 
-
-
+    return market_df
 
 
 # ------------------------------- Compute Change in Price -------------------------
@@ -661,6 +662,7 @@ def card_view_price_history_line_chart(card_name, card_id, card_df, price_column
     )
 
     return fig
+
 # ----------------- FUNCTION 5: Grade Price Comparison  -----------
 def card_view_card_grade_price_comparison(price_history_df, ebay_history_df, card_id, card_name, grading_cost=20):
     """
@@ -685,45 +687,21 @@ def card_view_card_grade_price_comparison(price_history_df, ebay_history_df, car
         "PSA 10": "#2ecc71"
     }
 
-    logger.debug(f"Calling card_view_card_grade_price_comparison for {card_name} ({card_id})")
+    result = calculate_roi(price_history_df, ebay_history_df, card_id, grading_cost)
 
-    # -------------------- Filter Data --------------------
-    graded_data = ebay_history_df[ebay_history_df['tcgPlayerId'] == card_id].copy()
-    ungraded_data = price_history_df[price_history_df['tcgPlayerId'] == card_id].copy()
-    
-    logger.debug(f"Found graded rows={len(graded_data)}, ungraded rows={len(ungraded_data)} for '{card_name}'")
-
-    if graded_data.empty:
+    if result is None:
         fig = go.Figure()
         fig.update_layout(
             title=f"No graded data found for {card_name}",
             template="plotly_white"
         )
         return fig
-
-    # Extract numeric PSA grades
-    graded_data['psa_grade_numeric'] = graded_data['grade'].str.extract(r'psa(\d+)', expand=False).astype(float)
-    graded_data = graded_data[graded_data['psa_grade_numeric'].isin([8.0, 9.0, 10.0])]
-
-    # Ungraded average price and sales count
-    if ungraded_data.empty:
-        ungraded_avg_price = graded_data['average'].iloc[0] if 'average' in graded_data.columns else 0
-        ungraded_sales_count = 0
+    
     else:
-        ungraded_avg_price = ungraded_data['market'].mean() if 'market' in ungraded_data.columns else 0
-        ungraded_sales_count = len(ungraded_data)
+        (categories_volume, counts), (categories_price, prices) = result
 
-    # -------------------- Prepare Data --------------------
-    # Sales Volume
-    grade_counts = graded_data['psa_grade_numeric'].value_counts().sort_index()
-    categories_volume = ['Ungraded'] + [f'PSA {int(g)}' for g in grade_counts.index]
-    counts = [max(ungraded_sales_count, 1)] + grade_counts.tolist()
     colors_volume = [GRADE_COLORS.get(cat, "#7f8c8d") for cat in categories_volume]  # fallback color if missing
 
-    # Price
-    price_by_grade = graded_data.groupby('psa_grade_numeric')['average'].mean().sort_index()
-    categories_price = ['Ungraded'] + [f'PSA {int(g)}' for g in price_by_grade.index]
-    prices = [ungraded_avg_price] + price_by_grade.tolist()
     colors_price = [GRADE_COLORS.get(cat, "#7f8c8d") for cat in categories_price]  # fallback color
 
     # -------------------- Create Subplots --------------------
@@ -755,24 +733,25 @@ def card_view_card_grade_price_comparison(price_history_df, ebay_history_df, car
     ), row=1, col=2)
 
     # -------------------- ROI Annotations for PSA 8, 9, 10 (horizontal) --------------------
-    y_pos = -0.15  # row below the chart in paper coordinates
-    x_start = 0.02  # starting horizontal position
-    x_step = 0.32   # space between annotations (adjust as needed)
 
+    #BUFFER_PRICE = 27.99
+    '''roi_list = []
     for i, grade in enumerate([8.0, 9.0, 10.0]):
         if grade in price_by_grade.index:
+            #y_pos = pos_mapping[grade][0]
+            #x_pos = pos_mapping[grade][1]
             psa_price = price_by_grade[grade]
-            roi = psa_price - ungraded_avg_price - grading_cost
+            roi = psa_price - ungraded_avg_price - grading_cost - ungraded_avg_price * 0.1
             roi_pct = (roi / (ungraded_avg_price + grading_cost)) * 100
             verdict = "✓ WORTH GRADING" if roi > 0 else "✗ NOT WORTH GRADING"
             color = 'green' if roi > 0 else 'red'
 
             fig.add_annotation(
-                x=x_start + i * x_step,  # position horizontally
-                y=y_pos,
+                x=x_pos,  # position horizontally
+                y=y_pos + y_step,
                 xref='paper',
                 yref='paper',
-                text=f"PSA {int(grade)} ROI: ${roi:.2f} ({roi_pct:+.0f}%) | {verdict}",
+                text=f"PSA {int(grade)} ROI: ${roi:.2f} ({roi_pct:+.0f}%) <br> {verdict}",
                 showarrow=False,
                 font=dict(size=12, color=color),
                 align='center',
@@ -782,6 +761,7 @@ def card_view_card_grade_price_comparison(price_history_df, ebay_history_df, car
                 bgcolor='wheat',
                 opacity=0.8
             )
+'''
     return fig
 '''
 # -------------------- CALL FUNCTION --------------------

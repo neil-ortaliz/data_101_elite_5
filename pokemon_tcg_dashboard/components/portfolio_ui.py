@@ -1,6 +1,6 @@
 import dash_bootstrap_components as dbc
 from dash import html, dash_table
-from components.market_ui import create_metric_card  # Reuse!
+from components import create_metric_card 
 
 from utils.portfolio_calcs import PortfolioCalculator
 from global_variables import PRICE_HISTORY_DF, CARD_METADATA_DF
