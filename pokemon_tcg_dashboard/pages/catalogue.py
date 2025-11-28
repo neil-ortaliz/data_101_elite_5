@@ -197,7 +197,7 @@ layout = html.Div([
             id="image-grid",
             style={
                 "display": "grid",
-                "gridTemplateColumns": "repeat(auto-fit, minmax(200px, 1fr))",
+                "gridTemplateColumns": "repeat(auto-fill, minmax(200px, 1fr))",
                 "gap": "16px"
             }
         )
