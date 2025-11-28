@@ -209,7 +209,7 @@ def clear_all_filters(_):
     Output('main-url', 'pathname'),
     Input('top-movers-table', 'active_cell'),
     Input('top-movers-table', 'data'),
-
+    prevent_initial_call=True
 )
 def display_click(active_cell, table_data):
     

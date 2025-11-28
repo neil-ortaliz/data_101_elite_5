@@ -359,12 +359,12 @@ def update_classes(selected_ids, ids):
             classes.append("card-normal")
     return classes
 
-@callback(
+'''@callback(
     Output("debug-output", "children"),
     Input("selected-cards", "data")
 )
 def show_debug(selected):
-    return f"Selected IDs = {selected}"
+    return f"Selected IDs = {selected}"'''
 
 
 @callback(
@@ -378,7 +378,6 @@ def show_debug(selected):
     Output("offcanvas-unit-price", "data"),
     Output("offcanvas-tcgplayerid", "data"),
     Output("selected-cards","data"),
-
     Input({"type": "add-portfolio-button", "index": ALL}, "n_clicks"),
     Input({"type":"btn-plus","index":"offcanvas"}, "n_clicks"),
     Input({"type":"btn-minus","index":"offcanvas"}, "n_clicks"),
@@ -390,7 +389,7 @@ def show_debug(selected):
     State("offcanvas-unit-price", "data"),
     State("offcanvas-tcgplayerid", "data"),
     State("selected-cards", "data"),
-    Input("offcanvas-price", "children"),
+    State("offcanvas-price", "children"),
     prevent_initial_call=True
 )
 def handle_offcanvas(
@@ -408,9 +407,8 @@ def handle_offcanvas(
     qty = qty or 0
     selected_cards = selected_cards or []
     card_data = CARD_METADATA_DF
-    # ----------------------------------------------------
-    # 1) CLEAR PORTFOLIO
-    # ----------------------------------------------------
+    
+    #clear portfolio
     if trigger == "clear-portfolio":
         return (
             is_open, no_update, no_update, no_update, #no_update,
@@ -424,9 +422,7 @@ def handle_offcanvas(
     # Convert card metadata to DataFrame
     df = pd.DataFrame(card_data).set_index("tcgPlayerId")
 
-    # ----------------------------------------------------
-    # 2) ADD-PORTFOLIO BUTTON → OPEN OFFCANVAS
-    # ----------------------------------------------------
+    # open offcanvas for add to portfolio button
     if isinstance(trigger, dict) and trigger.get("type") == "add-portfolio-button":
         card_id = trigger["index"]
         row = df.loc[card_id]
@@ -453,9 +449,7 @@ def handle_offcanvas(
             selected_cards
         )
 
-    # ----------------------------------------------------
-    # 3) ADD-TO-PORTFOLIO BUTTON → APPEND SELECTED CARD
-    # ----------------------------------------------------
+    # add to portfolio (dcc.store) callback
     if trigger == "add-to-portfolio":
         if stored_id is not None:
             if qty > 0:
@@ -492,37 +486,7 @@ def handle_offcanvas(
                 selected_cards
             )
 
-    # ----------------------------------------------------
-    # 4) DATE PICKER → UPDATE PRICE
-    # ----------------------------------------------------
-    '''if trigger == "date-picker":
-        card_id = stored_id
-        unit_price = stored_unit_price
-
-        try:
-            mask = PRICE_HISTORY_DF["tcgPlayerId"] == card_id
-            day_prices = PRICE_HISTORY_DF[mask].set_index("date")
-
-            if selected_date in day_prices.index:
-                unit_price = float(day_prices.loc[selected_date]["market"])
-        except:
-            pass
-
-        total_price = qty * unit_price
-        return (
-            True, no_update, no_update,
-            f"${unit_price:,.2f}",
-            no_update,
-            qty,
-            f"${total_price:,.2f}",
-            unit_price,
-            stored_id,
-            selected_cards
-        )'''
-
-    # ----------------------------------------------------
-    # 5) PLUS / MINUS BUTTONS
-    # ----------------------------------------------------
+    # Plus minus buttons callback
     if isinstance(trigger, dict) and trigger.get("type") in ["btn-plus", "btn-minus"]:
         unit_price = stored_unit_price
 
