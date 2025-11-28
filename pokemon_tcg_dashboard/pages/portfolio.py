@@ -70,7 +70,7 @@ owned_cards = html.Div(
             id="portfolio-image-grid",
             style={
                 "display": "grid",
-                "gridTemplateColumns": "repeat(auto-fill, minmax(200px, 1fr))",
+                "gridTemplateColumns": "repeat(auto-fill, minmax(180px, 1fr))",
                 "gap": "16px"
             }
         )
@@ -110,38 +110,44 @@ def show_portfolio(selected_ids):
     
     selected_ids_list = [item['tcgPlayerId'] for item in selected_ids]
     portfolio_df = get_image_urls(ids=selected_ids_list)
-    #print(portfolio_df)
 
     cards = []
     for _, row in portfolio_df.iterrows():
         cards.append(
             dbc.Button(
                 dbc.Card(
-                    [dbc.CardImg(
-                                src=row["imageUrl"], 
-                                top=True,
-                                class_name="card-image"),
-                    dbc.CardImgOverlay(
-                        dbc.CardBody(
-                            dbc.Button("View Details", color="Link")
+                    [
+                        dbc.CardImg(
+                            src=row["imageUrl"],
+                            top=True,
+                            class_name="portfolio-card-image"
                         ),
-                        class_name="hover-overlay"
-                    ),
-                    dbc.CardFooter([
-                        html.H4(row["name"], className="card-text")])],
+                        dbc.CardImgOverlay(
+                            dbc.CardBody(
+                                dbc.Button("View Details", color="link")
+                            ),
+                            class_name="hover-overlay"
+                        ),
+                        dbc.CardFooter(
+                            html.H4(row["name"], className="card-text")
+                        )
+                    ],
                     class_name="card-normal",
                     style={
                         "borderRadius": "8px",
+                        "width": "100%",
+                        "height": "100%",
                     }
                 ),
                 id={"type": "portfolio-card-button", "index": row["tcgPlayerId"]},
-                style={"padding": 0, 
+                style={
+                    "padding": 0,
                     "border": "none",
                     "background": "none",
-                    "maxWidth": "150px",
-                    "maxHeight": "200px",
-                    #"width": "100%",
-                    "height": "auto",},
+                    "width": "100%",     
+                    "height": "100%",
+                    "display": "block"   
+                },
                 href=f"/card/{row['tcgPlayerId']}",
             )
         )

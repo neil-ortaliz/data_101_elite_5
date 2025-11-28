@@ -5,7 +5,7 @@ from dash import dcc
 from utils.market_calcs import MarketCalculator
 from utils.loader import load_data
 
-from global_variables import SET_OPTIONS, RARITY_OPTIONS, PRICE_HISTORY_DF, CARD_METADATA_DF
+from global_variables import RARITY_OPTIONS, PRICE_HISTORY_DF, CARD_METADATA_DF
 
 import logging
 logger = logging.getLogger(__name__)
@@ -162,20 +162,7 @@ def create_market_filters():
                     type="text"
                 ),
             ])
-        ], width=12, md=4, className="mb-3"),
-        
-        # Set filter
-        dbc.Col([
-            dcc.Dropdown(
-                id="market-set-select",
-                options=SET_OPTIONS,
-                #value="all",
-                multi=True,
-                placeholder="Filter by Set",
-                clearable=False,
-                style={"borderRadius": "5px"}
-            )
-        ], width=12, md=3, className="mb-3"),
+        ], width=4),
         
         # Rarity filter
         dbc.Col([
@@ -188,7 +175,7 @@ def create_market_filters():
                 clearable=False,
                 style={"borderRadius": "5px"}
             )
-        ], width=12, md=3, className="mb-3"),
+        ], width=4),
         
         # Clear button
         dbc.Col([
@@ -199,8 +186,8 @@ def create_market_filters():
                 outline=True,
                 className="w-100"
             )
-        ], width=12, md=2, className="mb-3"),
-    ], className="mb-4")
+        ], width=4),
+    ])
     
     return filters
 

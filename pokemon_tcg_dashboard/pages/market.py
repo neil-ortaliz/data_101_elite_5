@@ -10,6 +10,7 @@ from components.market_ui import create_market_overview_metrics, create_market_f
 from components.charts import market_view_set_performance_bar_chart, create_top_sets_table
 from utils.lgs_map import create_spatial_map
 from global_variables import MAP_LOCATIONS_DF, RELEASE_DATE_DF
+from global_variables import SET_OPTIONS
 
 from utils import calculate_top_movers
 
@@ -21,19 +22,39 @@ dash.register_page(__name__, path="/",
                     name="Market",
                     order=1)
 
-select = dbc.Select(
-    id="select-market",
-    options=[
-        {"label": "24 Hours", "value": 1},
-        {"label": "7 Days", "value": 7},
-        {"label": "1 Month", "value": 30},
-        {"label": "3 Months", "value": 90},
-        {"label": "1 Year", "value": 365},
-        {"label": "All Time", "value": -1},
-    ],
-    value=30
-)
+market_set_filter = dbc.Row(
+    [
+        # Time range select
+        dbc.Col(
+            dbc.Select(
+                id="select-market",
+                options=[
+                    {"label": "24 Hours", "value": 1},
+                    {"label": "7 Days", "value": 7},
+                    {"label": "1 Month", "value": 30},
+                    {"label": "3 Months", "value": 90},
+                    {"label": "1 Year", "value": 365},
+                    {"label": "All Time", "value": -1},
+                ],
+                value=30
+            ),
+            width=6
+        ),
 
+        # Set filter dropdown
+        dbc.Col(
+            dcc.Dropdown(
+                id="market-set-select",
+                options=SET_OPTIONS,
+                multi=True,
+                placeholder="Filter by Set",
+                clearable=False,
+                style={"borderRadius": "5px"}
+            ),
+            width=6
+        )
+    ]
+)
 
 ban_row = html.Div(
     create_market_overview_metrics(days=-1),
@@ -64,8 +85,8 @@ layout = html.Div([
     dbc.Stack(
         [
             ban_row,
-            dbc.Row([create_market_filters()]),
-            dbc.Row([select]),
+            dbc.Row([market_set_filter]),
+            html.Hr(),
             dbc.Row([
                 graph_container(
                     fig=create_set_line_chart(),
@@ -73,8 +94,6 @@ layout = html.Div([
                     title="Set Performance Overview"
                 ),
             ]),
-            html.Hr(),
-            map_row,
             html.Hr(),
             dbc.Row([
                 # html.H4("Top Price Movers", className="mb-3"),
@@ -86,6 +105,10 @@ layout = html.Div([
                     container_id="top-movers-table-fig"
                 )
             ], id="top-movers-row"),
+            html.Hr(),
+            map_row,
+            html.Hr(),
+            dbc.Row([create_market_filters()]),
             html.Hr(),
             dbc.Row([
                 table_container(
