@@ -196,7 +196,7 @@ class MarketCalculator:
     # ---------------------------------------------------------
     # TOP MOVERS (N-DAY OR ALL-TIME)
     # ---------------------------------------------------------
-    def calculate_top_movers(self, days: Optional[int] = 1, n: int = 20, min_volume: Optional[int] = None) -> Dict[str, List[Dict[str, Any]]]:
+    def calculate_top_movers(self, days: Optional[int] = 1, n: int = 5, min_volume: Optional[int] = None) -> Dict[str, List[Dict[str, Any]]]:
         """
         Calculate top gainers and losers over the past `days`.
         days: number of days to look back; None means all time.

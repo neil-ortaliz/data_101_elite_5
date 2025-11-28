@@ -66,7 +66,8 @@ map_row = dbc.Row([
         dcc.Graph(
             id="pokemon-store-map",
             figure=create_spatial_map(MAP_LOCATIONS_DF),
-            style={'height': '500px', 'width': '100%'}
+            style={'height': '500px', 'width': '100%'},
+            config={'scrollZoom': True} 
         )
     ], width=7, style={'height': '500px', 'display': 'flex', 'flexDirection': 'column'}),
 
@@ -106,8 +107,6 @@ layout = html.Div([
                 )
             ], id="top-movers-row"),
             html.Hr(),
-            map_row,
-            html.Hr(),
             dbc.Row([create_market_filters()]),
             html.Hr(),
             dbc.Row([
@@ -119,6 +118,8 @@ layout = html.Div([
                 )
             ]),
             html.Hr(),
+            map_row,
+            html.Hr()
         ],
     )
 ])

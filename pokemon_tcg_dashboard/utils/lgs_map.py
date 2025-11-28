@@ -39,8 +39,16 @@ def create_spatial_map(data: pd.DataFrame):
             center=dict(lat=center_lat, lon=center_lon),
             zoom=12
         ),
-        margin=dict(l=0, r=0, t=0, b=0),  
+        margin=dict(l=0, r=0, t=0, b=0), 
         autosize=True
+    )
+
+    fig.update_layout(
+        mapbox=dict(
+            accesstoken=None,  
+            zoom=12,
+        ),
+        dragmode='zoom'  
     )
 
     return fig
